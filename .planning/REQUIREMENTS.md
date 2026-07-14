@@ -1,0 +1,79 @@
+# Requirements: Linguo Wizard
+
+**Defined:** 2026-07-14
+**Core Value:** The voice conversation loop — speak naturally to an AI character, get immersive practice, and receive actionable feedback afterward.
+
+## v1 Requirements
+
+### Core Conversation
+
+- [ ] **CONV-01**: User can browse and select from curated real-world scenarios
+- [ ] **CONV-02**: User can filter scenarios by CEFR level (A1–C1)
+- [ ] **CONV-03**: User enters a free-flow voice conversation with an AI character
+- [ ] **CONV-04**: AI stays in character throughout the conversation (has a name, personality)
+- [ ] **CONV-05**: User sees their own voice message bubbles with transcript
+- [ ] **CONV-06**: User sees AI response bubbles with transcript
+- [ ] **CONV-07**: Progress indicator at top shows scenario goal
+
+### Feedback
+
+- [ ] **FDBK-01**: Post-conversation screen shows full transcript with inline grammar corrections
+- [ ] **FDBK-02**: Post-conversation screen shows summary score (fluency, grammar, vocabulary)
+- [ ] **FDBK-03**: User earns XP for completing scenarios
+
+### Onboarding
+
+- [ ] **ONBD-01**: Splash screen with claymorphism aesthetic
+- [ ] **ONBD-02**: User selects target language, CEFR level (A1–C1), and goal (travel/work/exam)
+
+### Platform & Infrastructure
+
+- [ ] **PLAT-01**: Works on iOS, Android, and Web
+- [ ] **PLAT-02**: Guest mode with local-only progress storage
+- [ ] **PLAT-03**: Device/IP-based daily AI-call rate limiting (server-side)
+
+## v2 Requirements
+
+(None yet — will emerge from v1 validation)
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Sign-up/login & cloud sync | Deferred to Phase 2 |
+| Streaks, badges, leaderboard | Deferred to Phase 3 |
+| Premium gating / monetization | Deferred to Phase 4 |
+| Pronunciation scoring (phoneme-level) | Requires paid API, deferred to Phase 4 |
+| Real-time conversation | Voice messages, not live phone-call style |
+| AI mid-conversation corrections | Post-conversation only to preserve immersion |
+| Multiple languages | English only in v1 |
+| Offline mode | Requires AI API connection |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| CONV-01 | Phase 1 | Pending |
+| CONV-02 | Phase 2 | Pending |
+| CONV-03 | Phase 1 | Pending |
+| CONV-04 | Phase 1 | Pending |
+| CONV-05 | Phase 1 | Pending |
+| CONV-06 | Phase 1 | Pending |
+| CONV-07 | Phase 2 | Pending |
+| FDBK-01 | Phase 3 | Pending |
+| FDBK-02 | Phase 3 | Pending |
+| FDBK-03 | Phase 3 | Pending |
+| ONBD-01 | Phase 2 | Pending |
+| ONBD-02 | Phase 2 | Pending |
+| PLAT-01 | Phase 1 | Pending |
+| PLAT-02 | Phase 4 | Pending |
+| PLAT-03 | Phase 4 | Pending |
+
+**Coverage:**
+- v1 requirements: 15 total
+- Mapped to phases: 15
+- Unmapped: 0 ✓
+
+---
+*Requirements defined: 2026-07-14*
+*Last updated: 2026-07-14 after initial definition*
