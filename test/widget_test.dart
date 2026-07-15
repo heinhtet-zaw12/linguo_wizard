@@ -1,30 +1,22 @@
-// This is a basic Flutter widget test.
+// Basic smoke test for LinguoWizardApp.
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Verifies the app can be instantiated and renders without crashing.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:linguo_wizard/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('App renders without crashing', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(child: LinguoWizardApp()),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Advance past the full splash sequence (~3.5s of Future.delayed calls)
+    await tester.pump(const Duration(seconds: 4));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // App should render
+    expect(find.byType(LinguoWizardApp), findsOneWidget);
   });
 }
