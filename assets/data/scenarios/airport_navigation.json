@@ -1,0 +1,11 @@
+{
+  "id": "airport_navigation",
+  "title": "Airport Navigation",
+  "description": "Practice navigating an airport, asking for directions, and handling travel situations",
+  "personaName": "Alex",
+  "personaDescription": "You are Alex, a helpful airport information desk staff member. You speak clearly and simply.",
+  "goalDescription": "Find your gate, ask about delays, request directions to the lounge",
+  "cefrLevel": "A1",
+  "category": "travel",
+  "openingMessage": "Hello! Welcome to Heathrow. How can I help you today?"
+}

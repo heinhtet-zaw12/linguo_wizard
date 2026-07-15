@@ -70,6 +70,7 @@ flutter:
     - assets/images/logo.jpeg
     - assets/images/splash_screen.png
     - assets/images/onboarding_screen.png
+    - assets/data/scenarios/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
