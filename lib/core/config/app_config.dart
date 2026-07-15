@@ -1,9 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// Application-wide configuration constants.
 class AppConfig {
   AppConfig._();
 
-  /// Gemini API key — injected at build time via --dart-define=API_KEY=xxx
-  static const String geminiApiKey = String.fromEnvironment('API_KEY');
+  /// Gemini API key — loaded from .env file
+  static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
   /// Gemini model to use for conversation
   static const String geminiModel = 'gemini-1.5-flash';
