@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'features/splash/splash_screen.dart';
+import 'features/scenario_selection/screens/scenario_selection_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +11,7 @@ void main() {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
   ));
-  runApp(const LinguoWizardApp());
+  runApp(const ProviderScope(child: LinguoWizardApp()));
 }
 
 class LinguoWizardApp extends StatelessWidget {
@@ -21,11 +23,20 @@ class LinguoWizardApp extends StatelessWidget {
       title: 'Linguo Wizard',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: SplashScreen(
-        onSplashDone: () {
-          // TODO: navigate to onboarding / home
-        },
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SplashScreen(
+              onSplashDone: () {
+                Navigator.pushReplacementNamed(context, '/scenarios');
+              },
+            ),
+        '/scenarios': (context) => const ScenarioSelectionScreen(),
+        '/conversation': (context) => const Scaffold(
+              body: Center(
+                child: Text('Conversation screen — coming soon'),
+              ),
+            ),
+      },
     );
   }
 }
