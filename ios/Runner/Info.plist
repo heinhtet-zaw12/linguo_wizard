@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Linguo Wizard uses speech recognition to convert your spoken English into text for conversation practice.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Linguo Wizard needs microphone access to listen to your spoken English during conversation practice.</string>
 </dict>
 </plist>
