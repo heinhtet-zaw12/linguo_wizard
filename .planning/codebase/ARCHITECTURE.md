@@ -31,29 +31,41 @@
 
 ## Current State
 
-**Stage:** Initial template — only default Flutter counter app exists.
+**Stage:** Phase 1 ~70% — MVVM architecture implemented, core voice loop working.
 
-**Entry point:** `lib/main.dart` (123 lines, unmodified Flutter template)
+**Entry point:** `lib/main.dart` — loads .env, wraps in ProviderScope, sets up routes.
 
-**Implemented:** MaterialApp scaffold with single counter screen. No feature code.
-
-**Planned architecture:** MVVM with Feature-First folder structure (per CLAUDE.md project brief).
+**Implemented features:**
+- Splash screen (3D claymorphism animation)
+- Scenario selection (2-column grid, CEFR filter chips)
+- Conversation screen (voice message loop: STT → AI → TTS)
+- Core services (SttService, TtsService, AiService)
+- Data models (Message, Scenario)
+- MVVM architecture (ViewModels extract business logic from screens)
 
 ## Component Responsibilities
 
 | Component | Responsibility | File |
 |-----------|----------------|------|
-| `MyApp` (MaterialApp) | Root widget, theme, routing | `lib/main.dart:7` |
-| `MyHomePage` | Demo counter screen (template) | `lib/main.dart:38` |
+| `LinguoWizardApp` | Root widget, theme, routing | `lib/main.dart` |
+| `SplashScreen` | Animated entry, navigates to scenarios | `lib/features/splash/splash_screen.dart` |
+| `ScenarioSelectionViewModel` | Loads scenarios, manages CEFR filter | `lib/features/scenario_selection/viewmodels/scenario_selection_viewmodel.dart` |
+| `ScenarioSelectionScreen` | Displays scenario grid, filter chips | `lib/features/scenario_selection/screens/scenario_selection_screen.dart` |
+| `ScenarioCard` | Individual scenario card widget | `lib/features/scenario_selection/widgets/scenario_card.dart` |
+| `ConversationViewModel` | Voice loop state machine, STT/TTS/AI orchestration | `lib/features/conversation/viewmodels/conversation_viewmodel.dart` |
+| `ConversationScreen` | Displays conversation UI, forwards actions to ViewModel | `lib/features/conversation/screens/conversation_screen.dart` |
+| `VoiceMessageBubble` | Voice message bubble (user/AI) with transcript | `lib/features/conversation/widgets/voice_message_bubble.dart` |
+| `MicButton` | Animated mic button reflecting loop state | `lib/features/conversation/widgets/mic_button.dart` |
+| `SttService` | Speech-to-text wrapper | `lib/core/services/stt_service.dart` |
+| `TtsService` | Text-to-speech wrapper | `lib/core/services/tts_service.dart` |
+| `AiService` | Gemini API chat wrapper | `lib/core/services/ai_service.dart` |
+| `AppConfig` | Environment config, constants | `lib/core/config/app_config.dart` |
 
 **Planned components (not yet implemented):**
 
 | Component | Responsibility | Planned Location |
 |-----------|----------------|------------------|
-| Splash Screen | App entry/loading | `lib/features/splash/` |
 | Onboarding | User preference setup | `lib/features/onboarding/` |
-| Scenario Selection | CEFR-filtered scenario cards | `lib/features/scenarios/` |
-| Conversation | Voice-based AI dialogue | `lib/features/conversation/` |
 | Feedback & Score | XP, grammar summary | `lib/features/feedback/` |
 | Home Dashboard | Streaks, goals, recommendations | `lib/features/home/` |
 
@@ -138,12 +150,14 @@
 
 ## State Management
 
-**Framework:** Riverpod (planned, not yet installed)
+**Framework:** Riverpod (installed, in use)
 
-**Provider Types to Use:**
-- `StateNotifierProvider` — for complex mutable state (conversation state, user progress)
-- `Provider` — for read-only dependencies (services, repositories)
-- `FutureProvider` — for async data loading (scenarios, user profile)
+**Provider Types in Use:**
+- `StateNotifierProvider` — ViewModel state (ConversationViewModel, ScenarioSelectionViewModel)
+- `StateProvider` — simple mutable state (selectedScenarioProvider)
+- `FutureProvider` — async data loading (scenarios, user profile — planned)
+
+**Provider Types Planned:**
 - `StreamProvider` — for real-time data (Firestore listener for streaks)
 
 **State Scope:**

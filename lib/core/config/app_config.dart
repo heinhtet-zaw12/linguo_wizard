@@ -1,11 +1,35 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart';
 
 /// Application-wide configuration constants.
 class AppConfig {
   AppConfig._();
 
+  static final Map<String, String> _env = {};
+
+  /// Loads environment variables from the bundled .env asset.
+  static Future<void> loadEnv() async {
+    try {
+      final content = await rootBundle.loadString('.env');
+      for (final line in content.split('\n')) {
+        final trimmed = line.trim();
+        if (trimmed.isEmpty || trimmed.startsWith('#')) continue;
+        final eqIndex = trimmed.indexOf('=');
+        if (eqIndex == -1) continue;
+        final key = trimmed.substring(0, eqIndex).trim();
+        final value = trimmed.substring(eqIndex + 1).trim();
+        // Strip surrounding quotes if present
+        final unquoted = (value.startsWith('"') && value.endsWith('"'))
+            ? value.substring(1, value.length - 1)
+            : value;
+        _env[key] = unquoted;
+      }
+    } catch (_) {
+      // .env not found — geminiApiKey will return empty string
+    }
+  }
+
   /// Gemini API key — loaded from .env file
-  static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
+  static String get geminiApiKey => _env['GEMINI_API_KEY'] ?? '';
 
   /// Gemini model to use for conversation
   static const String geminiModel = 'gemini-3.1-flash-lite';

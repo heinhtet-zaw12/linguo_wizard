@@ -3,63 +3,76 @@
 **Mode:** horizontal-layers
 **Phases:** 4
 **Requirements mapped:** 15/15 ✓
+**Architecture:** MVVM (Model-View-ViewModel) + Feature-First
 
 ---
 
-## Phase 1: Foundation & Core Voice Loop
+## Phase 1: Foundation & Core Voice Loop ✅ ~70%
 
-**Goal:** Build the foundational architecture and get a working voice conversation loop end-to-end
+**Goal:** Build MVVM architecture, foundational services, and a working voice conversation loop end-to-end
 **Success Criteria:**
 
-1. User can speak into mic and see their voice message bubble with transcript
-2. User can receive AI response as voice message bubble with transcript
-3. AI responds in character with appropriate persona
-4. Basic scenario selection works (at least 3 curated scenarios)
+1. ✅ MVVM architecture established — ViewModels own business logic, screens are pure UI
+2. ✅ User can speak into mic and see their voice message bubble with transcript
+3. ✅ User can receive AI response as voice message bubble with transcript
+4. ✅ AI responds in character with appropriate persona (Gemini API)
+5. ✅ Scenario selection works with 3 curated scenarios
+6. ✅ CEFR level filter chips on scenario selection screen
+7. ⬜ Onboarding flow collects language, CEFR level, and goal
+8. ⬜ Goal progress indicator shows scenario goal during conversation
+9. ⬜ Task-based goal evaluation (AI assesses completion)
+10. ⬜ Feedback & Score screen (XP, grammar corrections)
+11. ⬜ Local progress storage (guest mode)
+12. ⬜ Rate limiting (device/IP based)
 
-**Requirements:** CONV-01, CONV-03, CONV-04, CONV-05, CONV-06, PLAT-01
+**Requirements:** CONV-01 ✅, CONV-02 ✅, CONV-03 ✅, CONV-04 ✅, CONV-05 ✅, CONV-06 ✅, CONV-07 ⬜, ONBD-01 ⬜, ONBD-02 ⬜, PLAT-01 ✅
 
 ---
 
-## Phase 2: Onboarding & Scenario Experience
+## Phase 2: Accounts & Cloud Sync
 
-**Goal:** Complete the user journey from first open to scenario selection
+**Goal:** Add authentication, cloud sync, and home dashboard
 **Success Criteria:**
 
-1. Splash screen displays with claymorphism aesthetic
-2. Onboarding flow collects language, CEFR level, and goal
-3. Scenario selection screen shows scenarios with CEFR filter chips
-4. Progress indicator shows scenario goal during conversation
+1. Sign up / login (email, Google, continue-as-guest)
+2. Home Dashboard with streak, daily goal ring, recommended scenarios
+3. Guest mode "sign up to save progress" banner
+4. Full Firestore cloud sync for progress data
+5. Guest-to-authenticated data migration
 
-**Requirements:** ONBD-01, ONBD-02, CONV-02, CONV-07
+**Requirements:** PLAT-02 (partial)
+
+**Depends on:** Phase 1 complete (onboarding, local storage, rate limiting)
 
 ---
 
-## Phase 3: Feedback & Gamification
+## Phase 3: Gamification & Retention
 
-**Goal:** Deliver post-conversation feedback and basic progression
+**Goal:** Add engagement mechanics and learning intelligence
 **Success Criteria:**
 
-1. Post-conversation transcript shows inline grammar corrections
-2. Summary score displays (fluency, grammar, vocabulary)
-3. XP earned for completing scenarios
-4. User sees their accumulated XP
+1. Streak count + flame icon, XP, badges
+2. Spaced repetition (SRS) for missed vocab/phrases
+3. Mistake pattern dashboard (time-series)
+4. Leaderboard/social features (requires account)
 
 **Requirements:** FDBK-01, FDBK-02, FDBK-03
 
 ---
 
-## Phase 4: Polish & Platform
+## Phase 4: Premium & Polish
 
-**Goal:** Production-ready app with guest mode and rate limiting
+**Goal:** Monetization, pronunciation scoring, production polish
 **Success Criteria:**
 
-1. Guest mode works with local-only progress storage
-2. Rate limiting prevents AI call abuse (server-side)
-3. App works on iOS, Android, and Web
-4. All edge cases handled (network errors, mic permissions, etc.)
+1. Premium gating: unlimited conversations, advanced scenarios, ad-free
+2. Pronunciation-level feedback (Azure Speech / Speechace)
+3. "Today's twist" — Gemini-generated scenario variation
+4. Cross-platform polish (iOS, Android, Web)
+5. All edge cases handled (network errors, mic permissions, etc.)
 
-**Requirements:** PLAT-02, PLAT-03
+**Requirements:** PLAT-03
 
 ---
 
-*Last updated: 2026-07-14 after roadmap creation*
+*Last updated: 2026-07-15 after MVVM refactor and Phase 1 progress*

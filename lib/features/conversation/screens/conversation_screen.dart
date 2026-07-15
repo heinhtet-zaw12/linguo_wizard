@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/config/app_config.dart';
-import '../../../core/services/ai_service.dart';
-import '../../../core/services/stt_service.dart';
-import '../../../core/services/tts_service.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../scenario_selection/providers/scenario_provider.dart';
+import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
 import '../models/message.dart';
 import '../models/scenario.dart';
 import '../providers/conversation_provider.dart';
+import '../viewmodels/conversation_viewmodel.dart';
 import '../widgets/mic_button.dart';
 import '../widgets/voice_message_bubble.dart';
 
 /// The main conversation screen — displays the voice message loop.
 ///
-/// Manages STT/TTS/AI service initialization and orchestrates the
-/// voice conversation state machine.
+/// Pure view layer: watches [conversationProvider] state and forwards
+/// user actions (mic taps) to the ViewModel. Zero business logic here.
 class ConversationScreen extends ConsumerStatefulWidget {
   const ConversationScreen({super.key});
 
@@ -26,67 +23,20 @@ class ConversationScreen extends ConsumerStatefulWidget {
 }
 
 class _ConversationScreenState extends ConsumerState<ConversationScreen> {
-  late final SttService _sttService;
-  late final TtsService _ttsService;
-  late final AiService _aiService;
-
   final ScrollController _scrollController = ScrollController();
-  bool _servicesInitialized = false;
+  Scenario? _scenario;
 
   @override
   void initState() {
     super.initState();
-    _sttService = SttService();
-    _ttsService = TtsService();
-    _aiService = AiService();
+    _scenario = ref.read(selectedScenarioProvider);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_servicesInitialized) return;
-    _servicesInitialized = true;
-    _initializeServices();
-  }
-
-  Future<void> _initializeServices() async {
-    await _sttService.initialize();
-    await _ttsService.initialize();
-
-    final scenario = ref.read(selectedScenarioProvider);
-    if (scenario == null || !mounted) return;
-
-    // Initialize AI persona
-    _aiService.initializePersona(
-      personaName: scenario.personaName,
-      personaDescription: scenario.personaDescription,
-      scenarioGoal: scenario.goalDescription,
-    );
-
-    // Add opening message
-    final openingMessage = Message.create(
-      sender: MessageSender.ai,
-      transcript: scenario.openingMessage,
-    );
-
-    // Set initial state
-    ref.read(conversationStateProvider.notifier).state = ConversationState(
-      scenario: scenario,
-      messages: [openingMessage],
-    );
-
-    // Set up TTS completion handler
-    _ttsService.setCompletionHandler(() {
-      if (mounted) {
-        final current = ref.read(conversationStateProvider);
-        ref.read(conversationStateProvider.notifier).state = current.copyWith(
-          loopState: ConversationLoopState.idle,
-          isAiSpeaking: false,
-        );
-      }
-    });
-
-    setState(() {});
+    // Lazily read the scenario on first dependency pass (after initState).
+    _scenario ??= ref.read(selectedScenarioProvider);
   }
 
   @override
@@ -95,101 +45,15 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     super.dispose();
   }
 
+  // ─── User action forwarding ───
+
   void _onMicPressed() {
-    final state = ref.read(conversationStateProvider);
-    final loopState = state.loopState;
-
-    if (loopState == ConversationLoopState.idle) {
-      _startRecording();
-    } else if (loopState == ConversationLoopState.recording) {
-      _stopRecording();
-    }
+    final scenario = _scenario;
+    if (scenario == null) return;
+    ref.read(conversationProvider(scenario).notifier).onMicPressed();
   }
 
-  void _startRecording() {
-    final state = ref.read(conversationStateProvider);
-    if (state.turnCount >= AppConfig.maxConversationTurns) return;
-
-    ref.read(conversationStateProvider.notifier).state = state.copyWith(
-      loopState: ConversationLoopState.recording,
-      isRecording: true,
-      currentPartialTranscript: '',
-    );
-
-    _sttService.startListening(
-      onResult: (result) {
-        if (!mounted) return;
-        final transcript = result.recognizedWords;
-        if (result.finalResult) {
-          _processFinalTranscript(transcript);
-        } else {
-          final current = ref.read(conversationStateProvider);
-          ref.read(conversationStateProvider.notifier).state =
-              current.copyWith(currentPartialTranscript: transcript);
-        }
-      },
-    );
-  }
-
-  void _stopRecording() {
-    _sttService.stopListening();
-    // The onResult callback with finalResult=true will handle the transition
-  }
-
-  Future<void> _processFinalTranscript(String transcript) async {
-    if (transcript.trim().isEmpty) {
-      final current = ref.read(conversationStateProvider);
-      ref.read(conversationStateProvider.notifier).state = current.copyWith(
-        loopState: ConversationLoopState.idle,
-        isRecording: false,
-        currentPartialTranscript: '',
-      );
-      return;
-    }
-
-    // Transition to processing
-    var current = ref.read(conversationStateProvider);
-    ref.read(conversationStateProvider.notifier).state = current.copyWith(
-      loopState: ConversationLoopState.processing,
-      isRecording: false,
-      currentPartialTranscript: '',
-    );
-
-    // Add user message
-    final userMessage = Message.create(
-      sender: MessageSender.user,
-      transcript: transcript,
-    );
-    current = ref.read(conversationStateProvider);
-    ref.read(conversationStateProvider.notifier).state = current.copyWith(
-      messages: [...current.messages, userMessage],
-      turnCount: current.turnCount + 1,
-    );
-
-    // Get AI response
-    final aiResponseText = await _aiService.sendMessage(transcript);
-
-    // Add AI message
-    final aiMessage = Message.create(
-      sender: MessageSender.ai,
-      transcript: aiResponseText,
-    );
-    current = ref.read(conversationStateProvider);
-    ref.read(conversationStateProvider.notifier).state = current.copyWith(
-      messages: [...current.messages, aiMessage],
-    );
-
-    // Transition to speaking
-    ref.read(conversationStateProvider.notifier).state = ref
-        .read(conversationStateProvider)
-        .copyWith(
-          loopState: ConversationLoopState.speaking,
-          isAiSpeaking: true,
-        );
-
-    // Speak the AI response (TTS completion handler will set back to idle)
-    await _ttsService.speak(aiResponseText);
-  }
+  // ─── Helpers ───
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -203,18 +67,23 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     });
   }
 
+  // ─── Build ───
+
   @override
   Widget build(BuildContext context) {
-    if (!_servicesInitialized) {
+    final scenario = _scenario;
+
+    // Loading state — scenario not yet selected.
+    if (scenario == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    final state = ref.watch(conversationStateProvider);
-    final scenario = state.scenario;
+    final state = ref.watch(conversationProvider(scenario));
+    final vm = ref.read(conversationProvider(scenario).notifier);
 
-    // Scroll to bottom when new messages arrive
+    // Scroll to bottom when new messages arrive.
     if (state.messages.isNotEmpty) {
       _scrollToBottom();
     }
@@ -229,14 +98,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             if (state.loopState == ConversationLoopState.recording &&
                 state.currentPartialTranscript.isNotEmpty)
               _buildPartialTranscript(state.currentPartialTranscript),
-            _buildBottomControls(state),
+            _buildBottomControls(state, vm),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTopBar(Scenario? scenario) {
+  // ─── UI building blocks ───
+
+  Widget _buildTopBar(Scenario scenario) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -262,7 +133,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  scenario?.title ?? 'Conversation',
+                  scenario.title,
                   style: const TextStyle(
                     fontFamily: 'Quicksand',
                     fontSize: 18,
@@ -272,7 +143,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  scenario?.goalDescription ?? '',
+                  scenario.goalDescription,
                   style: const TextStyle(
                     fontFamily: 'Quicksand',
                     fontSize: 13,
@@ -328,7 +199,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     );
   }
 
-  Widget _buildBottomControls(ConversationState state) {
+  Widget _buildBottomControls(ConversationState state, ConversationViewModel vm) {
     return Container(
       padding: const EdgeInsets.only(bottom: 32, top: 16),
       child: Column(
@@ -351,7 +222,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            _getMicHint(state.loopState),
+            vm.micHint,
             style: const TextStyle(
               fontFamily: 'Quicksand',
               fontSize: 12,
@@ -361,18 +232,5 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         ],
       ),
     );
-  }
-
-  String _getMicHint(ConversationLoopState loopState) {
-    switch (loopState) {
-      case ConversationLoopState.idle:
-        return 'Tap to speak';
-      case ConversationLoopState.recording:
-        return 'Listening... tap to stop';
-      case ConversationLoopState.processing:
-        return 'Thinking...';
-      case ConversationLoopState.speaking:
-        return 'AI is speaking...';
-    }
   }
 }

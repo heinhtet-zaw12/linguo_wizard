@@ -18,7 +18,24 @@ Theme: **3D Claymorphism** (soft, rounded, matte clay-style 3D character illustr
 
 
 ## Architecture
-MVVM,Feature First folders
+
+**Pattern:** MVVM (Model-View-ViewModel) + Feature-first folder structure
+
+### Layer Responsibilities
+
+| Layer | Responsibility | Location |
+|---|---|---|
+| **Model** | Data classes, JSON serialization | `features/*/models/` |
+| **ViewModel** | Business logic, state management, service orchestration. Extends `StateNotifier`. Owns the state machine and coordinates services (STT, TTS, AI). Never imports widgets. | `features/*/viewmodels/` |
+| **View** | Pure UI rendering. Watches ViewModel state via Riverpod providers. Forwards user actions to ViewModel. Zero business logic. | `features/*/screens/`, `features/*/widgets/` |
+| **Service** | Wrappers around external packages (Gemini, STT, TTS). Stateless, injectable, testable. | `core/services/` |
+
+### Rules
+- Screens (Views) NEVER directly call services — they go through the ViewModel
+- ViewModels NEVER import Flutter widgets or UI packages
+- Models are plain Dart classes with no framework dependencies
+- Services are injected into ViewModels for testability
+- Each feature owns its own ViewModel, models, screens, and widgets
 
 
 ## Build Phases

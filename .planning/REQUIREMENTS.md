@@ -53,21 +53,21 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONV-01 | Phase 1 | Pending |
-| CONV-02 | Phase 2 | Pending |
-| CONV-03 | Phase 1 | Pending |
-| CONV-04 | Phase 1 | Pending |
-| CONV-05 | Phase 1 | Pending |
-| CONV-06 | Phase 1 | Pending |
-| CONV-07 | Phase 2 | Pending |
+| CONV-01 | Phase 1 | ✅ Done |
+| CONV-02 | Phase 1 | ✅ Done |
+| CONV-03 | Phase 1 | ✅ Done |
+| CONV-04 | Phase 1 | ✅ Done |
+| CONV-05 | Phase 1 | ✅ Done |
+| CONV-06 | Phase 1 | ✅ Done |
+| CONV-07 | Phase 1 | Pending |
 | FDBK-01 | Phase 3 | Pending |
 | FDBK-02 | Phase 3 | Pending |
 | FDBK-03 | Phase 3 | Pending |
-| ONBD-01 | Phase 2 | Pending |
-| ONBD-02 | Phase 2 | Pending |
-| PLAT-01 | Phase 1 | Pending |
-| PLAT-02 | Phase 4 | Pending |
-| PLAT-03 | Phase 4 | Pending |
+| ONBD-01 | Phase 1 | Pending |
+| ONBD-02 | Phase 1 | Pending |
+| PLAT-01 | Phase 1 | ✅ Done |
+| PLAT-02 | Phase 2 | Pending |
+| PLAT-03 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 15 total

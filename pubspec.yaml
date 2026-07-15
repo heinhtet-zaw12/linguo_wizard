@@ -36,7 +36,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   flutter_riverpod: ^2.6.0
-  flutter_dotenv: ^5.2.0
   speech_to_text: ^7.4.0
   flutter_tts: ^4.0.0
   google_generative_ai: ^0.4.6
@@ -68,6 +67,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - .env
     - assets/images/logo.jpeg
     - assets/images/splash_screen.png
     - assets/images/onboarding_screen.png

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/message.dart';
 import '../models/scenario.dart';
+import '../viewmodels/conversation_viewmodel.dart';
 
 /// State machine phases for the voice conversation loop.
 enum ConversationLoopState { idle, recording, processing, speaking }
@@ -51,3 +52,9 @@ class ConversationState {
 /// The conversation state provider — managed by ConversationScreen.
 final conversationStateProvider =
     StateProvider<ConversationState>((ref) => const ConversationState());
+
+/// ViewModel provider, scoped per scenario.
+final conversationProvider =
+    StateNotifierProvider.family<ConversationViewModel, ConversationState, Scenario>(
+  (ref, scenario) => ConversationViewModel(scenario: scenario)..init(),
+);
