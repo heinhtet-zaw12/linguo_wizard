@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'features/splash/splash_screen.dart';
+import 'features/conversation/screens/conversation_screen.dart';
 import 'features/scenario_selection/screens/scenario_selection_screen.dart';
 
 void main() {
@@ -31,11 +32,7 @@ class LinguoWizardApp extends StatelessWidget {
               },
             ),
         '/scenarios': (context) => const ScenarioSelectionScreen(),
-        '/conversation': (context) => const Scaffold(
-              body: Center(
-                child: Text('Conversation screen — coming soon'),
-              ),
-            ),
+        '/conversation': (context) => const ConversationScreen(),
       },
     );
   }
