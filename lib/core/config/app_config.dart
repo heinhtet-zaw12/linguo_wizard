@@ -8,7 +8,7 @@ class AppConfig {
   static String get geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
   /// Gemini model to use for conversation
-  static const String geminiModel = 'gemini-1.5-flash';
+  static const String geminiModel = 'gemini-3.1-flash-lite';
 
   /// Maximum conversation turns before prompting to end
   static const int maxConversationTurns = 20;

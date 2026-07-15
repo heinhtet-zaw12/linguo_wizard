@@ -18,9 +18,17 @@ class AiService {
     required String personaDescription,
     required String scenarioGoal,
   }) {
+    final apiKey = AppConfig.geminiApiKey;
+    if (apiKey.isEmpty) {
+      throw StateError(
+        'Gemini API key is missing. '
+        'Make sure your .env file contains GEMINI_API_KEY=your_key (no quotes).',
+      );
+    }
+
     _model = GenerativeModel(
       model: AppConfig.geminiModel,
-      apiKey: AppConfig.geminiApiKey,
+      apiKey: apiKey,
       systemInstruction: Content.system(
         'You are $personaName. $personaDescription '
         'Your goal in this conversation: $scenarioGoal. '
