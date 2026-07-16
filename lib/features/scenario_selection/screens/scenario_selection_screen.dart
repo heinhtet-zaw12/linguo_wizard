@@ -14,10 +14,8 @@ class ScenarioSelectionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(scenarioSelectionProvider);
+    final asyncState = ref.watch(scenarioSelectionProvider);
     final notifier = ref.read(scenarioSelectionProvider.notifier);
-
-    final displayScenarios = state.filteredScenarios;
 
     return Scaffold(
       body: Container(
@@ -29,126 +27,133 @@ class ScenarioSelectionScreen extends ConsumerWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Choose a Scenario',
-                    style: GoogleFonts.fredoka(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                ),
+          child: asyncState.when(
+            loading: () => const Center(
+              child: CircularProgressIndicator(color: AppColors.primaryPink),
+            ),
+            error: (e, _) => Center(
+              child: Text('Failed to load scenarios: $e',
+                  style: GoogleFonts.quicksand(color: AppColors.textMuted)),
+            ),
+            data: (state) => _buildContent(context, ref, state, notifier),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    WidgetRef ref,
+    ScenarioSelectionState state,
+    ScenarioSelectionViewModel notifier,
+  ) {
+    final displayScenarios = state.filteredScenarios;
+
+    return Column(
+      children: [
+        // Header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Choose a Scenario',
+              style: GoogleFonts.fredoka(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDark,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Pick a real-world situation to practice',
+              style: GoogleFonts.quicksand(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textMuted,
+              ),
+            ),
+          ),
+        ),
+
+        // CEFR filter chips
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SizedBox(
+            height: 38,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _cefrLevels.length + 1, // +1 for "All"
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  final isSelected = state.selectedCefrLevel == null;
+                  return _CefrChip(
+                    label: 'All',
+                    isSelected: isSelected,
+                    onTap: () => notifier.setCefrFilter(null),
+                  );
+                }
+                final level = _cefrLevels[index - 1];
+                final isSelected =
+                    state.selectedCefrLevel?.toUpperCase() ==
+                        level.toUpperCase();
+                return _CefrChip(
+                  label: level,
+                  isSelected: isSelected,
+                  onTap: () => notifier.setCefrFilter(level),
+                );
+              },
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 12),
+
+        // Scenario grid
+        Expanded(
+          child: displayScenarios.isEmpty
+              ? Center(
                   child: Text(
-                    'Pick a real-world situation to practice',
+                    'No scenarios found for this level',
                     style: GoogleFonts.quicksand(
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
                       color: AppColors.textMuted,
                     ),
                   ),
-                ),
-              ),
-
-              // CEFR filter chips
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SizedBox(
-                  height: 38,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _cefrLevels.length + 1, // +1 for "All"
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                )
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.78,
+                    ),
+                    itemCount: displayScenarios.length,
                     itemBuilder: (context, index) {
-                      if (index == 0) {
-                        // "All" chip
-                        final isSelected = state.selectedCefrLevel == null;
-                        return _CefrChip(
-                          label: 'All',
-                          isSelected: isSelected,
-                          onTap: () => notifier.setCefrFilter(null),
-                        );
-                      }
-                      final level = _cefrLevels[index - 1];
-                      final isSelected =
-                          state.selectedCefrLevel?.toUpperCase() ==
-                              level.toUpperCase();
-                      return _CefrChip(
-                        label: level,
-                        isSelected: isSelected,
-                        onTap: () => notifier.setCefrFilter(level),
+                      final scenario = displayScenarios[index];
+                      return ScenarioCard(
+                        scenario: scenario,
+                        onTap: () {
+                          ref.read(selectedScenarioProvider.notifier).state =
+                              scenario;
+                          Navigator.pushNamed(context, '/conversation');
+                        },
                       );
                     },
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // Scenario grid or loading
-              Expanded(
-                child: state.isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primaryPink,
-                        ),
-                      )
-                    : displayScenarios.isEmpty
-                        ? Center(
-                            child: Text(
-                              'No scenarios found for this level',
-                              style: GoogleFonts.quicksand(
-                                fontSize: 14,
-                                color: AppColors.textMuted,
-                              ),
-                            ),
-                          )
-                        : Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            child: GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
-                                childAspectRatio: 0.78,
-                              ),
-                              itemCount: displayScenarios.length,
-                              itemBuilder: (context, index) {
-                                final scenario = displayScenarios[index];
-                                return ScenarioCard(
-                                  scenario: scenario,
-                                  onTap: () {
-                                    ref
-                                            .read(
-                                                selectedScenarioProvider
-                                                    .notifier)
-                                            .state =
-                                        scenario;
-                                    Navigator.pushNamed(
-                                        context, '/conversation');
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-              ),
-            ],
-          ),
         ),
-      ),
+      ],
     );
   }
 }

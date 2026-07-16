@@ -80,26 +80,34 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       );
     }
 
-    final state = ref.watch(conversationProvider(scenario));
+    final asyncState = ref.watch(conversationProvider(scenario));
     final vm = ref.read(conversationProvider(scenario).notifier);
-
-    // Scroll to bottom when new messages arrive.
-    if (state.messages.isNotEmpty) {
-      _scrollToBottom();
-    }
 
     return Scaffold(
       backgroundColor: AppColors.bgTop,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildTopBar(scenario),
-            _buildMessageList(state),
-            if (state.loopState == ConversationLoopState.recording &&
-                state.currentPartialTranscript.isNotEmpty)
-              _buildPartialTranscript(state.currentPartialTranscript),
-            _buildBottomControls(state, vm),
-          ],
+        child: asyncState.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(
+            child: Text('Error: $e', style: const TextStyle(fontFamily: 'Quicksand')),
+          ),
+          data: (state) {
+            // Scroll to bottom when new messages arrive.
+            if (state.messages.isNotEmpty) {
+              _scrollToBottom();
+            }
+
+            return Column(
+              children: [
+                _buildTopBar(scenario),
+                _buildMessageList(state),
+                if (state.loopState == ConversationLoopState.recording &&
+                    state.currentPartialTranscript.isNotEmpty)
+                  _buildPartialTranscript(state.currentPartialTranscript),
+                _buildBottomControls(state, vm),
+              ],
+            );
+          },
         ),
       ),
     );

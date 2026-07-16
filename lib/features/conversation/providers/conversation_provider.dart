@@ -49,12 +49,8 @@ class ConversationState {
   }
 }
 
-/// The conversation state provider — managed by ConversationScreen.
-final conversationStateProvider =
-    StateProvider<ConversationState>((ref) => const ConversationState());
-
 /// ViewModel provider, scoped per scenario.
 final conversationProvider =
-    StateNotifierProvider.family<ConversationViewModel, ConversationState, Scenario>(
-  (ref, scenario) => ConversationViewModel(scenario: scenario)..init(),
+    AsyncNotifierProvider.family<ConversationViewModel, ConversationState, Scenario>(
+  ConversationViewModel.new,
 );

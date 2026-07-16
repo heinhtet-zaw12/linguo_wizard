@@ -12,35 +12,20 @@ import '../providers/conversation_provider.dart';
 /// Orchestrates the voice conversation loop: STT → user message → AI → TTS → repeat.
 /// Owns all business logic; the screen is a pure view layer that watches state
 /// and forwards user actions here.
-class ConversationViewModel extends StateNotifier<ConversationState> {
-  ConversationViewModel({
-    required this.scenario,
-    SttService? sttService,
-    TtsService? ttsService,
-    AiService? aiService,
-  })  : _sttService = sttService ?? SttService(),
-        _ttsService = ttsService ?? TtsService(),
-        _aiService = aiService ?? AiService(),
-        super(const ConversationState());
-
-  final Scenario scenario;
-  final SttService _sttService;
-  final TtsService _ttsService;
-  final AiService _aiService;
-
-  bool _initialized = false;
+class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scenario> {
+  late final SttService _sttService;
+  late final TtsService _ttsService;
+  late final AiService _aiService;
 
   /// Initialize services, AI persona, and seed the opening message.
-  ///
-  /// Must be called once from the screen's `initState` after the first frame.
-  Future<void> init() async {
-    if (_initialized || !mounted) return;
-    _initialized = true;
+  @override
+  Future<ConversationState> build(Scenario scenario) async {
+    _sttService = SttService();
+    _ttsService = TtsService();
+    _aiService = AiService();
 
     await _sttService.initialize();
     await _ttsService.initialize();
-
-    if (!mounted) return;
 
     _aiService.initializePersona(
       personaName: scenario.personaName,
@@ -53,28 +38,34 @@ class ConversationViewModel extends StateNotifier<ConversationState> {
       transcript: scenario.openingMessage,
     );
 
-    state = state.copyWith(
+    _ttsService.setCompletionHandler(() {
+      try {
+        final current = state.value;
+        if (current != null) {
+          state = AsyncData(current.copyWith(
+            loopState: ConversationLoopState.idle,
+            isAiSpeaking: false,
+          ));
+        }
+      } catch (_) {
+        // Provider disposed — ignore.
+      }
+    });
+
+    return ConversationState(
       scenario: scenario,
       messages: [openingMessage],
     );
-
-    _ttsService.setCompletionHandler(() {
-      if (mounted) {
-        state = state.copyWith(
-          loopState: ConversationLoopState.idle,
-          isAiSpeaking: false,
-        );
-      }
-    });
   }
-
-  bool get servicesReady => _initialized;
 
   // ─── Mic button actions ───
 
   /// Toggle recording on/off based on current loop state.
   void onMicPressed() {
-    switch (state.loopState) {
+    final current = state.value;
+    if (current == null) return;
+
+    switch (current.loopState) {
       case ConversationLoopState.idle:
         _startRecording();
       case ConversationLoopState.recording:
@@ -86,23 +77,27 @@ class ConversationViewModel extends StateNotifier<ConversationState> {
   }
 
   void _startRecording() {
-    if (state.turnCount >= 20) return; // maxConversationTurns
+    final current = state.value;
+    if (current == null) return;
+    if (current.turnCount >= 20) return; // maxConversationTurns
 
-    state = state.copyWith(
+    state = AsyncData(current.copyWith(
       loopState: ConversationLoopState.recording,
       isRecording: true,
       currentPartialTranscript: '',
-    );
+    ));
 
     _sttService.startListening(
       onResult: (result) {
-        if (!mounted) return;
         if (result.finalResult) {
           _processFinalTranscript(result.recognizedWords);
         } else {
-          state = state.copyWith(
-            currentPartialTranscript: result.recognizedWords,
-          );
+          final current = state.value;
+          if (current != null) {
+            state = AsyncData(current.copyWith(
+              currentPartialTranscript: result.recognizedWords,
+            ));
+          }
         }
       },
     );
@@ -115,47 +110,57 @@ class ConversationViewModel extends StateNotifier<ConversationState> {
 
   Future<void> _processFinalTranscript(String transcript) async {
     if (transcript.trim().isEmpty) {
-      state = state.copyWith(
-        loopState: ConversationLoopState.idle,
-        isRecording: false,
-        currentPartialTranscript: '',
-      );
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(current.copyWith(
+          loopState: ConversationLoopState.idle,
+          isRecording: false,
+          currentPartialTranscript: '',
+        ));
+      }
       return;
     }
 
+    var current = state.value;
+    if (current == null) return;
+
     // Transition to processing
-    state = state.copyWith(
+    state = AsyncData(current.copyWith(
       loopState: ConversationLoopState.processing,
       isRecording: false,
       currentPartialTranscript: '',
-    );
+    ));
 
     // Add user message
     final userMessage = Message.create(
       sender: MessageSender.user,
       transcript: transcript,
     );
-    state = state.copyWith(
-      messages: [...state.messages, userMessage],
-      turnCount: state.turnCount + 1,
-    );
+    current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(
+      messages: [...current.messages, userMessage],
+      turnCount: current.turnCount + 1,
+    ));
 
     // Get AI response
     final aiResponseText = await _aiService.sendMessage(transcript);
-    if (!mounted) return;
-
     // Add AI message
+    current = state.value;
+    if (current == null) return;
     final aiMessage = Message.create(
       sender: MessageSender.ai,
       transcript: aiResponseText,
     );
-    state = state.copyWith(messages: [...state.messages, aiMessage]);
+    state = AsyncData(current.copyWith(messages: [...current.messages, aiMessage]));
 
     // Transition to speaking
-    state = state.copyWith(
+    current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(
       loopState: ConversationLoopState.speaking,
       isAiSpeaking: true,
-    );
+    ));
 
     // Speak the AI response (TTS completion handler sets back to idle)
     await _ttsService.speak(aiResponseText);
@@ -165,7 +170,9 @@ class ConversationViewModel extends StateNotifier<ConversationState> {
 
   /// Hint text shown below the mic button.
   String get micHint {
-    switch (state.loopState) {
+    final current = state.value;
+    if (current == null) return '';
+    switch (current.loopState) {
       case ConversationLoopState.idle:
         return 'Tap to speak';
       case ConversationLoopState.recording:
