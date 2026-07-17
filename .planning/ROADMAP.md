@@ -35,9 +35,15 @@
 5. Local progress storage (guest mode)
 6. Rate limiting (device/IP based)
 
-**Requirements:** CONV-07, ONBD-01, ONBD-02
+**Requirements:** CONV-07, ONBD-01, ONBD-02, FDBK-01, FDBK-02, FDBK-03, PLAT-02, PLAT-03
 
 **Depends on:** Phase 1 complete
+
+**Plans:** 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Foundation: rate limiter, onboarding persistence, end conversation action
+- [ ] 02-02-PLAN.md — Feedback feature: evaluation service, score screen, route integration
 
 ---
 
