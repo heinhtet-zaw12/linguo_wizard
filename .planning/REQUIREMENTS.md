@@ -7,13 +7,13 @@
 
 ### Core Conversation
 
-- [ ] **CONV-01**: User can browse and select from curated real-world scenarios
-- [ ] **CONV-02**: User can filter scenarios by CEFR level (A1–C1)
-- [ ] **CONV-03**: User enters a free-flow voice conversation with an AI character
-- [ ] **CONV-04**: AI stays in character throughout the conversation (has a name, personality)
-- [ ] **CONV-05**: User sees their own voice message bubbles with transcript
-- [ ] **CONV-06**: User sees AI response bubbles with transcript
-- [ ] **CONV-07**: Progress indicator at top shows scenario goal
+- [x] **CONV-01**: User can browse and select from curated real-world scenarios
+- [x] **CONV-02**: User can filter scenarios by CEFR level (A1–C1)
+- [x] **CONV-03**: User enters a free-flow voice conversation with an AI character
+- [x] **CONV-04**: AI stays in character throughout the conversation (has a name, personality)
+- [x] **CONV-05**: User sees their own voice message bubbles with transcript
+- [x] **CONV-06**: User sees AI response bubbles with transcript
+- [x] **CONV-07**: Progress indicator at top shows scenario goal
 
 ### Feedback
 
@@ -23,12 +23,12 @@
 
 ### Onboarding
 
-- [ ] **ONBD-01**: Splash screen with claymorphism aesthetic
-- [ ] **ONBD-02**: User selects target language, CEFR level (A1–C1), and goal (travel/work/exam)
+- [x] **ONBD-01**: Splash screen with claymorphism aesthetic
+- [x] **ONBD-02**: User selects target language, CEFR level (A1–C1), and goal (travel/work/exam)
 
 ### Platform & Infrastructure
 
-- [ ] **PLAT-01**: Works on iOS, Android, and Web
+- [x] **PLAT-01**: Works on iOS, Android, and Web
 - [ ] **PLAT-02**: Guest mode with local-only progress storage
 - [ ] **PLAT-03**: Device/IP-based daily AI-call rate limiting (server-side)
 
@@ -59,17 +59,18 @@
 | CONV-04 | Phase 1 | ✅ Done |
 | CONV-05 | Phase 1 | ✅ Done |
 | CONV-06 | Phase 1 | ✅ Done |
-| CONV-07 | Phase 1 | Pending |
+| CONV-07 | Phase 1 | Complete |
 | FDBK-01 | Phase 3 | Pending |
 | FDBK-02 | Phase 3 | Pending |
 | FDBK-03 | Phase 3 | Pending |
-| ONBD-01 | Phase 1 | Pending |
-| ONBD-02 | Phase 1 | Pending |
+| ONBD-01 | Phase 1 | Complete |
+| ONBD-02 | Phase 1 | Complete |
 | PLAT-01 | Phase 1 | ✅ Done |
 | PLAT-02 | Phase 2 | Pending |
 | PLAT-03 | Phase 1 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 15 total
 - Mapped to phases: 15
 - Unmapped: 0 ✓
