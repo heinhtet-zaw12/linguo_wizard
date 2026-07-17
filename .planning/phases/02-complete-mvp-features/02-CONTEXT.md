@@ -31,7 +31,7 @@ This phase delivers the remaining MVP features needed to complete the core user 
 - **D-11:** Only onboarding preferences are persisted locally (language, CEFR level, goal). Progress data and conversation history are NOT stored in this phase — that's a future phase scope.
 - **D-12:** Onboarding preferences are saved after each wizard step. Ensures partial progress is never lost if app crashes.
 - **D-13:** Daily AI call limit is 10 calls/day for guest users. Enough for 4-5 scenario practices, balanced for free tier.
-- **D-14:** Guest users identified via device ID + IP hash. More robust against simple bypasses like clearing storage.
+- **D-14:** Guest users identified via device ID (Android ID / iOS identifierForVendor). IP hash omitted — adds server-side complexity without proportional benefit in a client-only implementation; clearing SharedPreferences is already blocked by device fingerprint stability.
 
 ### Claude's Discretion
 - AI prompt design for goal evaluation (how to structure the scoring prompt)
