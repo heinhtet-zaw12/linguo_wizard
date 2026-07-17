@@ -1,13 +1,13 @@
 # Roadmap: Linguo Wizard
 
 **Mode:** horizontal-layers
-**Phases:** 4
+**Phases:** 5
 **Requirements mapped:** 15/15 ✓
 **Architecture:** MVVM (Model-View-ViewModel) + Feature-First
 
 ---
 
-## Phase 1: Foundation & Core Voice Loop ✅ ~70%
+## Phase 1: Foundation & Core Voice Loop ✅
 
 **Goal:** Build MVVM architecture, foundational services, and a working voice conversation loop end-to-end
 **Success Criteria:**
@@ -18,18 +18,30 @@
 4. ✅ AI responds in character with appropriate persona (Gemini API)
 5. ✅ Scenario selection works with 3 curated scenarios
 6. ✅ CEFR level filter chips on scenario selection screen
-7. ⬜ Onboarding flow collects language, CEFR level, and goal
-8. ⬜ Goal progress indicator shows scenario goal during conversation
-9. ⬜ Task-based goal evaluation (AI assesses completion)
-10. ⬜ Feedback & Score screen (XP, grammar corrections)
-11. ⬜ Local progress storage (guest mode)
-12. ⬜ Rate limiting (device/IP based)
 
-**Requirements:** CONV-01 ✅, CONV-02 ✅, CONV-03 ✅, CONV-04 ✅, CONV-05 ✅, CONV-06 ✅, CONV-07 ⬜, ONBD-01 ⬜, ONBD-02 ⬜, PLAT-01 ✅
+**Requirements:** CONV-01 ✅, CONV-03 ✅, CONV-04 ✅, CONV-05 ✅, CONV-06 ✅, PLAT-01 ✅
 
 ---
 
-## Phase 2: Accounts & Cloud Sync
+## Phase 2: Complete MVP Features (onboarding, feedback, local storage)
+
+**Goal:** Add onboarding, goal tracking, feedback, and local persistence to complete the core MVP
+**Success Criteria:**
+
+1. Onboarding flow collects language, CEFR level, and goal
+2. Goal progress indicator shows scenario goal during conversation
+3. Task-based goal evaluation (AI assesses completion)
+4. Feedback & Score screen (XP, grammar corrections)
+5. Local progress storage (guest mode)
+6. Rate limiting (device/IP based)
+
+**Requirements:** CONV-07, ONBD-01, ONBD-02
+
+**Depends on:** Phase 1 complete
+
+---
+
+## Phase 3: Accounts & Cloud Sync
 
 **Goal:** Add authentication, cloud sync, and home dashboard
 **Success Criteria:**
@@ -42,11 +54,11 @@
 
 **Requirements:** PLAT-02 (partial)
 
-**Depends on:** Phase 1 complete (onboarding, local storage, rate limiting)
+**Depends on:** Phase 2 complete (onboarding, local storage)
 
 ---
 
-## Phase 3: Gamification & Retention
+## Phase 4: Gamification & Retention
 
 **Goal:** Add engagement mechanics and learning intelligence
 **Success Criteria:**
@@ -60,7 +72,7 @@
 
 ---
 
-## Phase 4: Premium & Polish
+## Phase 5: Premium & Polish
 
 **Goal:** Monetization, pronunciation scoring, production polish
 **Success Criteria:**
@@ -75,4 +87,4 @@
 
 ---
 
-*Last updated: 2026-07-15 after MVVM refactor and Phase 1 progress*
+*Last updated: 2026-07-18 after Phase 1 completion and roadmap restructure*
