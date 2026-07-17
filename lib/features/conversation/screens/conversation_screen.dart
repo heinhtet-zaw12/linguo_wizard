@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
 import '../models/message.dart';
-import '../models/scenario.dart';
+import '../../scenario_selection/models/scenario.dart';
 import '../providers/conversation_provider.dart';
 import '../viewmodels/conversation_viewmodel.dart';
 import '../widgets/mic_button.dart';

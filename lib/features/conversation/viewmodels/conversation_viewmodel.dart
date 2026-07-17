@@ -4,7 +4,7 @@ import '../../../core/services/ai_service.dart';
 import '../../../core/services/stt_service.dart';
 import '../../../core/services/tts_service.dart';
 import '../models/message.dart';
-import '../models/scenario.dart';
+import '../../scenario_selection/models/scenario.dart';
 import '../providers/conversation_provider.dart';
 
 /// ViewModel for the conversation screen.

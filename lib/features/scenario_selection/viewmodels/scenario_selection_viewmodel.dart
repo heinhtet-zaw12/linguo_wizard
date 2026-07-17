@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../conversation/models/scenario.dart';
+import '../models/scenario.dart';
 
 // State for the scenario selection screen.
 class ScenarioSelectionState {
@@ -27,7 +27,7 @@ class ScenarioSelectionState {
     );
   }
 
-  /// Returns scenarios filtered by the selected CEFR level.
+  // Returns scenarios filtered by the selected CEFR level.
   List<Scenario> get filteredScenarios {
     if (selectedCefrLevel == null) return scenarios;
     return scenarios.where((s) => s.cefrLevel == selectedCefrLevel).toList();
@@ -39,8 +39,8 @@ class ScenarioSelectionState {
 // Loads curated scenarios from bundled JSON assets and manages
 // CEFR level filtering.
 class ScenarioSelectionViewModel extends AsyncNotifier<ScenarioSelectionState> {
-  /// Load all curated scenarios from bundled JSON assets and
-  /// pre-seed the CEFR filter from onboarding.
+  // Load all curated scenarios from bundled JSON assets and
+  // pre-seed the CEFR filter from onboarding.
   @override
   Future<ScenarioSelectionState> build() async {
     final files = [
@@ -65,7 +65,7 @@ class ScenarioSelectionViewModel extends AsyncNotifier<ScenarioSelectionState> {
     );
   }
 
-  /// Set the active CEFR level filter. Pass null to show all.
+  // Set the active CEFR level filter. Pass null to show all.
   void setCefrFilter(String? level) {
     final current = state.value;
     if (current == null) return;

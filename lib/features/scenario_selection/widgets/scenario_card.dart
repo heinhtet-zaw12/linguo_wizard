@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../conversation/models/scenario.dart';
+import '../models/scenario.dart';
 
 /// A card displaying a scenario's title, description, CEFR badge, and category.
 class ScenarioCard extends StatelessWidget {

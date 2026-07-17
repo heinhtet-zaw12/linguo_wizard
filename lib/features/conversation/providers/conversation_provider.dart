@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/message.dart';
-import '../models/scenario.dart';
+import '../../scenario_selection/models/scenario.dart';
 import '../viewmodels/conversation_viewmodel.dart';
 
 /// State machine phases for the voice conversation loop.
