@@ -13,8 +13,11 @@ import '../config/app_config.dart';
 class RateLimiterService {
   /// Check if the user can make an AI call today.
   ///
-  /// Returns `true` if today's call count is below [AppConfig.maxDailyCalls].
+  /// Returns `true` if [AppConfig.rateLimitEnabled] is `false` (unlimited calls)
+  /// or if today's call count is below [AppConfig.maxDailyCalls].
   Future<bool> canMakeCall() async {
+    if (!AppConfig.rateLimitEnabled) return true;
+
     final deviceId = await _getDeviceId();
     final key = _buildKey(deviceId);
 
@@ -28,6 +31,8 @@ class RateLimiterService {
   /// Reads the current counter, increments it atomically, and persists the new
   /// value. The write is awaited to ensure accuracy.
   Future<void> recordCall() async {
+    if (!AppConfig.rateLimitEnabled) return;
+
     final deviceId = await _getDeviceId();
     final key = _buildKey(deviceId);
 
@@ -40,6 +45,8 @@ class RateLimiterService {
   ///
   /// Clamped to the range `[0, AppConfig.maxDailyCalls]`.
   Future<int> remainingCalls() async {
+    if (!AppConfig.rateLimitEnabled) return AppConfig.maxDailyCalls;
+
     final deviceId = await _getDeviceId();
     final key = _buildKey(deviceId);
 

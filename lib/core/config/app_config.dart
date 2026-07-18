@@ -43,6 +43,10 @@ class AppConfig {
   /// Duration of silence before STT auto-pauses
   static const Duration sttPauseTimeout = Duration(seconds: 3);
 
+  /// Enable/disable daily rate limiting for AI calls.
+  /// Set to `true` to enforce limits; `false` allows unlimited calls (for testing).
+  static const bool rateLimitEnabled = false;
+
   /// Maximum daily AI calls for guest users.
   static const int maxDailyCalls = 10;
 

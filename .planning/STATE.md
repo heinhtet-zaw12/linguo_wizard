@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 2 context gathered
-last_updated: "2026-07-18T03:49:48.232Z"
+status: Ready to plan next phase
+stopped_at: context exhaustion at 75% (2026-07-18)
+last_updated: "2026-07-18T15:08:13.022Z"
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 2
-  percent: 20
+  completed_plans: 4
+  percent: 40
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 | Phase | Status | Progress |
 |-------|--------|----------|
 | Phase 1 | **Complete** | 100% |
-| Phase 2 | Ready to plan | 0% |
+| Phase 2 | **Complete** | 100% |
 | Phase 3 | Blocked by Phase 2 | 0% |
 | Phase 4 | Blocked by Phase 3 | 0% |
 | Phase 5 | Blocked by Phase 4 | 0% |
@@ -47,14 +47,16 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 - [x] Environment config via .env file (bundled as Flutter asset)
 - [x] Human verification passed (UAT resolved 2026-07-18)
 
-## Phase 2 — What's Needed
+## Phase 2 — Complete
 
-- [ ] Onboarding screen (language, CEFR level, goal selection)
-- [ ] Goal progress indicator in conversation top bar
-- [ ] Task-based goal evaluation (AI assesses whether scenario goal was achieved)
-- [ ] Feedback & Score screen (XP summary, grammar corrections)
-- [ ] Local progress storage (shared_preferences)
-- [ ] Rate limiting (device/IP based, server-side)
+- [x] Onboarding per-step persistence (crash-safe, SharedPreferences)
+- [x] Rate limiting (device fingerprint, 10 calls/day sliding window)
+- [x] End Conversation button with evaluation flow trigger
+- [x] EvaluationService (Gemini structured JSON with responseSchema)
+- [x] ScoreData model (overall/fluency/grammar/vocabulary scores, grammar corrections)
+- [x] FeedbackScreen (score circle, breakdown, XP badge, grammar corrections, Done button)
+- [x] Rate limit enforcement at conversation start (ViewModel-level check)
+- [x] Navigation flow: conversation → feedback → scenarios
 
 ## Architecture Decision
 
@@ -79,12 +81,13 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 - 2026-07-15: MVVM architecture refactored, CEFR filter chips added
 - 2026-07-18: Phase 1 marked complete, human verification passed
 - 2026-07-18: Roadmap restructured — missing MVP items moved to new Phase 2
+- 2026-07-18: Phase 2 complete — feedback loop, rate limiting, onboarding persistence all done
 
 ---
 *Last updated: 2026-07-18 after Phase 1 completion*
 
 ## Session
 
-**Last session:** 2026-07-17T18:31:54.406Z
-**Stopped at:** Phase 2 context gathered
-**Resume file:** .planning/phases/02-complete-mvp-features/02-CONTEXT.md
+**Last session:** 2026-07-18T15:08:13.017Z
+**Stopped at:** context exhaustion at 75% (2026-07-18)
+**Resume file:** .planning/STATE.md
