@@ -237,6 +237,30 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               color: AppColors.textMuted,
             ),
           ),
+          if (state.turnCount > 0 && state.loopState == ConversationLoopState.idle)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: ElevatedButton(
+                onPressed: () => vm.endConversation(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryPink,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  elevation: 2,
+                ),
+                child: const Text(
+                  'End Conversation',
+                  style: TextStyle(
+                    fontFamily: 'Quicksand',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

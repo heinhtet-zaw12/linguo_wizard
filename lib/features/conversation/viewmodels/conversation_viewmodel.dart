@@ -183,4 +183,39 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
         return 'AI is speaking...';
     }
   }
+
+  /// End the conversation and trigger the evaluation flow.
+  ///
+  /// Stops any playing audio, sets the evaluating state, and builds a
+  /// transcript for downstream evaluation. The actual AI evaluation service
+  /// integration is deferred to Plan 02.
+  Future<void> endConversation() async {
+    final current = state.value;
+    if (current == null || current.isEvaluating) return;
+
+    // Stop any playing audio.
+    await _ttsService.stop();
+
+    // Transition to evaluating state.
+    state = AsyncData(current.copyWith(
+      loopState: ConversationLoopState.idle,
+      isAiSpeaking: false,
+      isRecording: false,
+      isEvaluating: true,
+    ));
+
+    // Build transcript from messages list.
+    final transcript = current.messages
+        .map((m) => '${m.sender == MessageSender.user ? "User" : "AI"}: ${m.transcript}')
+        .join('\n');
+
+    // TODO(Phase2): wire to EvaluationService in Plan 02
+    // For now, store the transcript and mark evaluation as complete.
+    state = AsyncData(
+      (state.value ?? current).copyWith(
+        isEvaluating: false,
+        scoreData: {'transcript': transcript},
+      ),
+    );
+  }
 }
