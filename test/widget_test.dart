@@ -10,7 +10,7 @@ import 'package:linguo_wizard/main.dart';
 void main() {
   testWidgets('App renders without crashing', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const ProviderScope(child: LinguoWizardApp()),
+      const ProviderScope(child: LinguoWizardApp(onboardingDone: false)),
     );
 
     // Advance past the full splash sequence (~3.5s of Future.delayed calls)

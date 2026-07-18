@@ -17,9 +17,9 @@
 
 ### Feedback
 
-- [ ] **FDBK-01**: Post-conversation screen shows full transcript with inline grammar corrections
-- [ ] **FDBK-02**: Post-conversation screen shows summary score (fluency, grammar, vocabulary)
-- [ ] **FDBK-03**: User earns XP for completing scenarios
+- [x] **FDBK-01**: Post-conversation screen shows full transcript with inline grammar corrections
+- [x] **FDBK-02**: Post-conversation screen shows summary score (fluency, grammar, vocabulary)
+- [x] **FDBK-03**: User earns XP for completing scenarios
 
 ### Onboarding
 
@@ -29,8 +29,8 @@
 ### Platform & Infrastructure
 
 - [x] **PLAT-01**: Works on iOS, Android, and Web
-- [ ] **PLAT-02**: Guest mode with local-only progress storage
-- [ ] **PLAT-03**: Device/IP-based daily AI-call rate limiting (server-side)
+- [x] **PLAT-02**: Guest mode with local-only progress storage
+- [x] **PLAT-03**: Device/IP-based daily AI-call rate limiting (server-side)
 
 ## v2 Requirements
 
@@ -59,22 +59,23 @@
 | CONV-04 | Phase 1 | ✅ Done |
 | CONV-05 | Phase 1 | ✅ Done |
 | CONV-06 | Phase 1 | ✅ Done |
-| CONV-07 | Phase 1 | Complete |
-| FDBK-01 | Phase 3 | Pending |
-| FDBK-02 | Phase 3 | Pending |
-| FDBK-03 | Phase 3 | Pending |
-| ONBD-01 | Phase 1 | Complete |
-| ONBD-02 | Phase 1 | Complete |
+| CONV-07 | Phase 2 | ✅ Done |
+| FDBK-01 | Phase 2 | ✅ Done |
+| FDBK-02 | Phase 2 | ✅ Done |
+| FDBK-03 | Phase 2 | ✅ Done |
+| ONBD-01 | Phase 1 | ✅ Done |
+| ONBD-02 | Phase 2 | ✅ Done |
 | PLAT-01 | Phase 1 | ✅ Done |
-| PLAT-02 | Phase 2 | Pending |
-| PLAT-03 | Phase 1 | Pending |
+| PLAT-02 | Phase 2 | ✅ Done |
+| PLAT-03 | Phase 2 | ✅ Done |
 
 **Coverage:**
 
 - v1 requirements: 15 total
 - Mapped to phases: 15
+- Complete: 15/15 ✓
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-14*
-*Last updated: 2026-07-14 after initial definition*
+*Last updated: 2026-07-18 after Phase 2 completion*

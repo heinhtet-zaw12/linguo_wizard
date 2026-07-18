@@ -23,28 +23,28 @@
 
 ---
 
-## Phase 2: Complete MVP Features (onboarding, feedback, local storage)
+## Phase 2: Complete MVP Features (onboarding, feedback, local storage) ✅
 
 **Goal:** Add onboarding, goal tracking, feedback, and local persistence to complete the core MVP
 **Success Criteria:**
 
-1. Onboarding flow collects language, CEFR level, and goal
-2. Goal progress indicator shows scenario goal during conversation
-3. Task-based goal evaluation (AI assesses completion)
-4. Feedback & Score screen (XP, grammar corrections)
-5. Local progress storage (guest mode)
-6. Rate limiting (device/IP based)
+1. ✅ Onboarding flow collects language, CEFR level, and goal (with per-step persistence)
+2. ✅ Goal progress indicator shows scenario goal during conversation
+3. ✅ Task-based goal evaluation (Gemini structured JSON with responseSchema)
+4. ✅ Feedback & Score screen (score circle, breakdown, XP badge, grammar corrections)
+5. ✅ Local progress storage (SharedPreferences, crash-safe per-step save)
+6. ✅ Rate limiting (device fingerprint, 10 calls/day sliding window)
 
-**Requirements:** CONV-07, ONBD-01, ONBD-02, FDBK-01, FDBK-02, FDBK-03, PLAT-02, PLAT-03
+**Requirements:** CONV-07 ✅, ONBD-01 ✅, ONBD-02 ✅, FDBK-01 ✅, FDBK-02 ✅, FDBK-03 ✅, PLAT-02 ✅, PLAT-03 ✅
 
 **Depends on:** Phase 1 complete
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans executed
 
 Plans:
 
 - [x] 02-01-PLAN.md — Foundation: rate limiter, onboarding persistence, end conversation action
-- [ ] 02-02-PLAN.md — Feedback feature: evaluation service, score screen, route integration
+- [x] 02-02-PLAN.md — Feedback feature: evaluation service, score screen, route integration
 
 ---
 
@@ -94,4 +94,4 @@ Plans:
 
 ---
 
-*Last updated: 2026-07-18 after Phase 1 completion and roadmap restructure*
+*Last updated: 2026-07-18 after Phase 2 completion*
