@@ -1,10 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_config.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/ai_service.dart';
 import '../../../core/services/evaluation_service.dart';
 import '../../../core/services/rate_limiter.dart';
 import '../../../core/services/stt_service.dart';
 import '../../../core/services/tts_service.dart';
+import '../../feedback/models/score_data.dart';
 import '../models/message.dart';
 import '../../scenario_selection/models/scenario.dart';
 import '../providers/conversation_provider.dart';
@@ -75,13 +78,24 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     switch (current.loopState) {
       case ConversationLoopState.idle:
         // Check rate limit before starting a new conversation turn.
-        final canMakeCall = await _rateLimiter.canMakeCall();
+        final user = ref.read(currentUserProvider);
+        final isAuth = user != null && !user.isAnonymous;
+        bool canMakeCall;
+        if (isAuth) {
+          canMakeCall = await _rateLimiter.canMakeCallForUser(user.uid);
+        } else {
+          canMakeCall = await _rateLimiter.canMakeCall();
+        }
         if (!canMakeCall) {
           state = AsyncData(current.copyWith(rateLimitExceeded: true));
           return;
         }
         // Record the call before starting.
-        await _rateLimiter.recordCall();
+        if (isAuth) {
+          await _rateLimiter.recordCallForUser(user.uid);
+        } else {
+          await _rateLimiter.recordCall();
+        }
         _startRecording();
       case ConversationLoopState.recording:
         _stopRecording();
@@ -238,6 +252,9 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
         scoreData: scoreData,
       ),
     );
+
+    // Sync results to Firestore (fire-and-forget, only for authenticated users).
+    _syncToFirestore(current.scenario!, scoreData);
   }
 
   /// Clear the rate limit exceeded error state.
@@ -247,5 +264,67 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     final current = state.value;
     if (current == null) return;
     state = AsyncData(current.copyWith(rateLimitExceeded: false));
+  }
+
+  // ─── Firestore sync ───
+
+  /// Sync scenario results and progress to Firestore after evaluation.
+  ///
+  /// Only runs for authenticated (non-guest) users. Fire-and-forget —
+  /// failures are logged but do not affect the UI.
+  Future<void> _syncToFirestore(Scenario scenario, ScoreData score) async {
+    final user = ref.read(currentUserProvider);
+    if (user == null || user.isAnonymous) return;
+
+    try {
+      final fs = ref.read(firestoreServiceProvider);
+      final uid = user.uid;
+
+      // Read current progress from Firestore.
+      final progress = await fs.getProgress(uid);
+      final existingXp = progress?['totalXp'] as int? ?? 0;
+      final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
+
+      // Save updated progress.
+      await fs.saveProgress(
+        uid,
+        totalXp: existingXp + AppConfig.xpPerScenario,
+        scenariosCompleted: existingCompleted + 1,
+        lastScenarioAt: DateTime.now(),
+      );
+
+      // Read existing scenario result to get attempt count.
+      final scenarios = await fs.getScenarios(uid);
+      final existingScenario = scenarios.firstWhere(
+        (s) => s['id'] == scenario.id,
+        orElse: () => {},
+      );
+      final existingAttempts = existingScenario['attempts'] as int? ?? 0;
+      final existingScores =
+          (existingScenario['scores'] as List<dynamic>?) ?? [];
+
+      // Build new score entry.
+      final newScoreEntry = {
+        'overall': score.overallScore,
+        'fluency': score.fluencyScore,
+        'grammar': score.grammarScore,
+        'vocabulary': score.vocabularyScore,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      // Calculate new best score.
+      final bestScore = score.overallScore.toDouble();
+
+      // Save scenario result.
+      await fs.saveScenarioResult(
+        uid,
+        scenario.id,
+        bestScore: bestScore,
+        attempts: existingAttempts + 1,
+        scores: [...existingScores.map((e) => Map<String, dynamic>.from(e as Map)), newScoreEntry],
+      );
+    } catch (_) {
+      // Firestore sync failed — non-critical, data will sync on next attempt.
+    }
   }
 }
