@@ -7,6 +7,7 @@ import '../../../core/services/stt_service.dart';
 import '../../../core/services/tts_service.dart';
 import '../models/message.dart';
 import '../../scenario_selection/models/scenario.dart';
+import '../../feedback/models/score_data.dart';
 import '../providers/conversation_provider.dart';
 
 /// ViewModel for the conversation screen.
@@ -123,7 +124,17 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
           }
         }
       },
-    );
+    ).catchError((_) {
+      // Mic permission denied or STT failure — reset to idle.
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(current.copyWith(
+          loopState: ConversationLoopState.idle,
+          isRecording: false,
+          errorMessage: 'Could not access microphone. Please check permissions.',
+        ));
+      }
+    });
   }
 
   void _stopRecording() {
@@ -246,11 +257,16 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
         .map((m) => '${m.sender == MessageSender.user ? "User" : "AI"}: ${m.transcript}')
         .join('\n');
 
-    // Call the AI evaluation service.
-    final scoreData = await _evaluationService.evaluateGoal(
-      scenarioGoal: current.scenario!.goalDescription,
-      transcript: transcript,
-    );
+    // Call the AI evaluation service — fallback on failure.
+    ScoreData scoreData;
+    try {
+      scoreData = await _evaluationService.evaluateGoal(
+        scenarioGoal: current.scenario!.goalDescription,
+        transcript: transcript,
+      );
+    } catch (_) {
+      scoreData = ScoreData.fallback();
+    }
 
     // Update state with evaluation results.
     state = AsyncData(

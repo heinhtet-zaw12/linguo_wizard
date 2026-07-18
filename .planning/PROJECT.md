@@ -16,21 +16,21 @@ The voice conversation loop — speak naturally to an AI character, get immersiv
 
 ### Active
 
-- [ ] User can browse and select from curated real-world scenarios (with CEFR level filter chips)
-- [ ] User enters a free-flow voice conversation with an AI character (speaks via mic, AI responds via TTS)
-- [ ] AI stays in character throughout the conversation (has a name, personality, context)
+- [x] User can browse and select from curated real-world scenarios (with CEFR level filter chips)
+- [x] User enters a free-flow voice conversation with an AI character (speaks via mic, AI responds via TTS)
+- [x] AI stays in character throughout the conversation (has a name, personality, context)
 - [ ] AI adapts to user's level — simple prompts for beginners, natural speech for advanced
-- [ ] User sees their own voice message bubbles (with transcript) and AI response bubbles (with transcript)
-- [ ] Progress indicator at top shows scenario goal (e.g., "Order your coffee")
-- [ ] Post-conversation screen shows full transcript with inline grammar corrections
-- [ ] Post-conversation screen shows summary score (fluency, grammar, vocabulary)
-- [ ] User earns XP for completing scenarios
-- [ ] Works on iOS, Android, and Web (Flutter cross-platform)
-- [ ] Splash screen with claymorphism aesthetic
-- [ ] Onboarding: select target language, CEFR level (A1–C1), goal (travel/work/exam)
-- [ ] Scenario selection screen with CEFR filter chips
-- [ ] Guest mode with local-only progress storage
-- [ ] Device/IP-based daily AI-call rate limiting (server-side, not client-side)
+- [x] User sees their own voice message bubbles (with transcript) and AI response bubbles (with transcript)
+- [x] Progress indicator at top shows scenario goal (e.g., "Order your coffee")
+- [x] Post-conversation screen shows full transcript with inline grammar corrections
+- [x] Post-conversation screen shows summary score (fluency, grammar, vocabulary)
+- [x] User earns XP for completing scenarios
+- [x] Works on iOS, Android, and Web (Flutter cross-platform)
+- [x] Splash screen with claymorphism aesthetic
+- [x] Onboarding: select target language, CEFR level (A1–C1), goal (travel/work/exam)
+- [x] Scenario selection screen with CEFR filter chips
+- [x] Guest mode with local-only progress storage
+- [x] Device/IP-based daily AI-call rate limiting (server-side, not client-side)
 
 ### Out of Scope
 
@@ -66,11 +66,11 @@ The voice conversation loop — speak naturally to an AI character, get immersiv
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Free-flow dialogue over guided repetition | More immersive, matches casual learner motivation | — Pending |
-| Post-conversation feedback (not mid-conversation) | Preserves immersion, keeps AI in character | — Pending |
-| AI as named characters | Creates emotional connection, more engaging than neutral guide | — Pending |
-| Voice messages not free-typing chat | Core product differentiator — speaking practice, not typing | — Pending |
-| Web support alongside mobile | Broader reach, Flutter makes it feasible | — Pending |
+| Free-flow dialogue over guided repetition | More immersive, matches casual learner motivation | ✅ Validated — core loop works end-to-end |
+| Post-conversation feedback (not mid-conversation) | Preserves immersion, keeps AI in character | ✅ Validated — Gemini evaluation with structured JSON |
+| AI as named characters | Creates emotional connection, more engaging than neutral guide | ✅ Validated — 3 personas (cafe, airport, interview) |
+| Voice messages not free-typing chat | Core product differentiator — speaking practice, not typing | ✅ Validated — STT→AI→TTS pipeline works |
+| Web support alongside mobile | Broader reach, Flutter makes it feasible | ✅ Implemented — Flutter cross-platform |
 
 ## Evolution
 
@@ -90,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-14 after initialization*
+*Last updated: 2026-07-18 after Phase 2 completion*
