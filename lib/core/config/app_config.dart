@@ -42,4 +42,10 @@ class AppConfig {
 
   /// Duration of silence before STT auto-pauses
   static const Duration sttPauseTimeout = Duration(seconds: 3);
+
+  /// Maximum daily AI calls for guest users.
+  static const int maxDailyCalls = 10;
+
+  /// SharedPreferences key prefix for rate-limit counters.
+  static const String rateLimitPrefix = 'rate_limit_';
 }
