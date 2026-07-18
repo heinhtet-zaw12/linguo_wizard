@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/message.dart';
 import '../../scenario_selection/models/scenario.dart';
+import '../../feedback/models/score_data.dart';
 import '../viewmodels/conversation_viewmodel.dart';
 
 /// State machine phases for the voice conversation loop.
@@ -13,17 +14,19 @@ class ConversationState {
   final bool isRecording;
   final bool isAiSpeaking;
   final bool isEvaluating;
+  final bool rateLimitExceeded;
   final String currentPartialTranscript;
   final ConversationLoopState loopState;
   final Scenario? scenario;
   final int turnCount;
-  final Map<String, dynamic>? scoreData;
+  final ScoreData? scoreData;
 
   const ConversationState({
     this.messages = const [],
     this.isRecording = false,
     this.isAiSpeaking = false,
     this.isEvaluating = false,
+    this.rateLimitExceeded = false,
     this.currentPartialTranscript = '',
     this.loopState = ConversationLoopState.idle,
     this.scenario,
@@ -36,17 +39,19 @@ class ConversationState {
     bool? isRecording,
     bool? isAiSpeaking,
     bool? isEvaluating,
+    bool? rateLimitExceeded,
     String? currentPartialTranscript,
     ConversationLoopState? loopState,
     Scenario? scenario,
     int? turnCount,
-    Map<String, dynamic>? scoreData,
+    ScoreData? scoreData,
   }) {
     return ConversationState(
       messages: messages ?? this.messages,
       isRecording: isRecording ?? this.isRecording,
       isAiSpeaking: isAiSpeaking ?? this.isAiSpeaking,
       isEvaluating: isEvaluating ?? this.isEvaluating,
+      rateLimitExceeded: rateLimitExceeded ?? this.rateLimitExceeded,
       currentPartialTranscript:
           currentPartialTranscript ?? this.currentPartialTranscript,
       loopState: loopState ?? this.loopState,

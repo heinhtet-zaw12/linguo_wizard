@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../feedback/viewmodels/feedback_viewmodel.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
 import '../models/message.dart';
 import '../../scenario_selection/models/scenario.dart';
@@ -95,6 +96,46 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             // Scroll to bottom when new messages arrive.
             if (state.messages.isNotEmpty) {
               _scrollToBottom();
+            }
+
+            // Navigate to feedback screen when evaluation completes.
+            if (state.scoreData != null && !state.isEvaluating) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                // Set the score data in the feedback provider before navigating.
+                ref.read(currentScoreProvider.notifier).state = state.scoreData;
+                Navigator.pushReplacementNamed(context, '/feedback');
+              });
+            }
+
+            // Show rate limit exceeded dialog.
+            if (state.rateLimitExceeded) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Daily Limit Reached',
+                      style: TextStyle(fontFamily: 'Quicksand'),
+                    ),
+                    content: Text(
+                      "You've used all your practices for today. Come back tomorrow!",
+                      style: TextStyle(fontFamily: 'Quicksand'),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          vm.clearRateLimitError();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'OK',
+                          style: TextStyle(fontFamily: 'Quicksand'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
             }
 
             return Column(

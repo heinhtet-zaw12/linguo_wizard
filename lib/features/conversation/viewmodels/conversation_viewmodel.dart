@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/ai_service.dart';
+import '../../../core/services/evaluation_service.dart';
+import '../../../core/services/rate_limiter.dart';
 import '../../../core/services/stt_service.dart';
 import '../../../core/services/tts_service.dart';
 import '../models/message.dart';
@@ -16,6 +18,8 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   late final SttService _sttService;
   late final TtsService _ttsService;
   late final AiService _aiService;
+  late final EvaluationService _evaluationService;
+  final RateLimiterService _rateLimiter = RateLimiterService();
 
   /// Initialize services, AI persona, and seed the opening message.
   @override
@@ -23,6 +27,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     _sttService = SttService();
     _ttsService = TtsService();
     _aiService = AiService();
+    _evaluationService = EvaluationService();
 
     await _sttService.initialize();
     await _ttsService.initialize();
@@ -61,12 +66,22 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   // ─── Mic button actions ───
 
   /// Toggle recording on/off based on current loop state.
-  void onMicPressed() {
+  ///
+  /// Checks rate limit before starting a new recording.
+  void onMicPressed() async {
     final current = state.value;
     if (current == null) return;
 
     switch (current.loopState) {
       case ConversationLoopState.idle:
+        // Check rate limit before starting a new conversation turn.
+        final canMakeCall = await _rateLimiter.canMakeCall();
+        if (!canMakeCall) {
+          state = AsyncData(current.copyWith(rateLimitExceeded: true));
+          return;
+        }
+        // Record the call before starting.
+        await _rateLimiter.recordCall();
         _startRecording();
       case ConversationLoopState.recording:
         _stopRecording();
@@ -186,9 +201,10 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
 
   /// End the conversation and trigger the evaluation flow.
   ///
-  /// Stops any playing audio, sets the evaluating state, and builds a
-  /// transcript for downstream evaluation. The actual AI evaluation service
-  /// integration is deferred to Plan 02.
+  /// Stops any playing audio, sets the evaluating state, builds a transcript,
+  /// and calls [EvaluationService] to score the conversation. The screen
+  /// watches [ConversationState.scoreData] and navigates to the feedback
+  /// screen when evaluation completes.
   Future<void> endConversation() async {
     final current = state.value;
     if (current == null || current.isEvaluating) return;
@@ -209,13 +225,27 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
         .map((m) => '${m.sender == MessageSender.user ? "User" : "AI"}: ${m.transcript}')
         .join('\n');
 
-    // TODO(Phase2): wire to EvaluationService in Plan 02
-    // For now, store the transcript and mark evaluation as complete.
+    // Call the AI evaluation service.
+    final scoreData = await _evaluationService.evaluateGoal(
+      scenarioGoal: current.scenario!.goalDescription,
+      transcript: transcript,
+    );
+
+    // Update state with evaluation results.
     state = AsyncData(
       (state.value ?? current).copyWith(
         isEvaluating: false,
-        scoreData: {'transcript': transcript},
+        scoreData: scoreData,
       ),
     );
+  }
+
+  /// Clear the rate limit exceeded error state.
+  ///
+  /// Called when the user dismisses the rate limit dialog.
+  void clearRateLimitError() {
+    final current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(rateLimitExceeded: false));
   }
 }

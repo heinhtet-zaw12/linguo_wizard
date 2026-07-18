@@ -5,6 +5,7 @@ import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
 import 'features/splash/splash_screen.dart';
 import 'features/conversation/screens/conversation_screen.dart';
+import 'features/feedback/screens/feedback_screen.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
 import 'features/scenario_selection/screens/scenario_selection_screen.dart';
 import 'features/onboarding/viewmodels/onboarding_viewmodel.dart';
@@ -43,6 +44,7 @@ class LinguoWizardApp extends StatelessWidget {
         '/onboarding': (context) => const OnboardingScreen(),
         '/scenarios': (context) => const ScenarioSelectionScreen(),
         '/conversation': (context) => const ConversationScreen(),
+        '/feedback': (context) => const FeedbackScreen(),
       },
     );
   }
