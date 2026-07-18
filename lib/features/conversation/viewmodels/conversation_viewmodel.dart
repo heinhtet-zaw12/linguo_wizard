@@ -266,6 +266,13 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     state = AsyncData(current.copyWith(rateLimitExceeded: false));
   }
 
+  /// Clear the general error message.
+  void clearError() {
+    final current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(clearError: true));
+  }
+
   // ─── Firestore sync ───
 
   /// Sync scenario results and progress to Firestore after evaluation.
