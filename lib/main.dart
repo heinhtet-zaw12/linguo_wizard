@@ -1,7 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/config/app_config.dart';
+import 'core/config/firebase_options.dart';
 import 'core/theme/app_theme.dart';
 import 'features/splash/splash_screen.dart';
 import 'features/conversation/screens/conversation_screen.dart';
@@ -12,6 +14,7 @@ import 'features/onboarding/viewmodels/onboarding_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AppConfig.loadEnv();
   final onboardingDone = await OnboardingViewModel.hasCompletedOnboarding();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
