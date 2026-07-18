@@ -63,6 +63,13 @@ Plans:
 
 **Depends on:** Phase 2 complete (onboarding, local storage)
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Firebase foundation: dependencies, AuthService, FirestoreService, auth state providers
+- [ ] 03-02-PLAN.md — Auth UI and Home dashboard: login, sign-up, forgot password, home screen, navigation
+- [ ] 03-03-PLAN.md — Cloud sync integration: guest migration, Firestore sync, user-based rate limiting
+
 ---
 
 ## Phase 4: Gamification & Retention
