@@ -10,44 +10,42 @@ import 'features/conversation/screens/conversation_screen.dart';
 import 'features/feedback/screens/feedback_screen.dart';
 import 'features/onboarding/screens/onboarding_screen.dart';
 import 'features/scenario_selection/screens/scenario_selection_screen.dart';
-import 'features/onboarding/viewmodels/onboarding_viewmodel.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'features/auth/screens/signup_screen.dart';
+import 'features/auth/screens/forgot_password_screen.dart';
+import 'features/home/screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AppConfig.loadEnv();
-  final onboardingDone = await OnboardingViewModel.hasCompletedOnboarding();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
   ));
-  runApp(ProviderScope(child: LinguoWizardApp(onboardingDone: onboardingDone)));
+  runApp(const ProviderScope(child: LinguoWizardApp()));
 }
 
 class LinguoWizardApp extends StatelessWidget {
-  const LinguoWizardApp({super.key, required this.onboardingDone});
-
-  final bool onboardingDone;
+  const LinguoWizardApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final initialRoute = onboardingDone ? '/scenarios' : '/onboarding';
-
     return MaterialApp(
       title: 'Linguo Wizard',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(
-              onSplashDone: () {
-                Navigator.pushReplacementNamed(context, initialRoute);
-              },
-            ),
+        '/': (context) => const SplashScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
+        '/home': (context) => const HomeScreen(),
         '/scenarios': (context) => const ScenarioSelectionScreen(),
         '/conversation': (context) => const ConversationScreen(),
         '/feedback': (context) => const FeedbackScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen(),
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
       },
     );
   }

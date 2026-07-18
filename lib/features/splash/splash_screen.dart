@@ -1,28 +1,25 @@
 import 'dart:math' as math;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
+import '../onboarding/viewmodels/onboarding_viewmodel.dart';
 
 /// Animated splash screen — 3D Claymorphism style.
 ///
-/// Choreography (~3.5 s total):
-///   0.0 s  Background gradient fades in
-///   0.2 s  Wizard logo scales up with elastic overshoot
-///   0.5 s  Idle floating bob begins
-///   0.8 s  App name fades + slides up
-///   1.1 s  Tagline fades + slides up
-///   1.4 s  Sparkle dots burst outward
-///   2.8 s  Fade-to-white exit
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key, this.onSplashDone});
-
-  final VoidCallback? onSplashDone;
+/// Handles navigation internally based on auth state and onboarding status:
+///   - Not authenticated → /login
+///   - Guest/authenticated without onboarding → /onboarding
+///   - Guest/authenticated with onboarding done → /home
+class SplashScreen extends ConsumerStatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   late final AnimationController _logoCtrl;
   late final AnimationController _textCtrl;
@@ -124,7 +121,31 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     await _exitCtrl.forward();
 
-    widget.onSplashDone?.call();
+    // Determine navigation target based on auth + onboarding state
+    await _navigateAfterSplash();
+  }
+
+  Future<void> _navigateAfterSplash() async {
+    if (!mounted) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    final onboardingDone = await OnboardingViewModel.hasCompletedOnboarding();
+
+    if (!mounted) return;
+
+    String targetRoute;
+    if (user == null) {
+      // Not authenticated — go to login
+      targetRoute = '/login';
+    } else if (onboardingDone) {
+      // Authenticated/guest with onboarding done — go to home
+      targetRoute = '/home';
+    } else {
+      // Authenticated/guest without onboarding — go to onboarding
+      targetRoute = '/onboarding';
+    }
+
+    Navigator.pushReplacementNamed(context, targetRoute);
   }
 
   @override
