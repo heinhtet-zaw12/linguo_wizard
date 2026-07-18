@@ -66,8 +66,16 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 03-01-PLAN.md — Firebase foundation: dependencies, AuthService, FirestoreService, auth state providers
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 03-02-PLAN.md — Auth UI and Home dashboard: login, sign-up, forgot password, home screen, navigation
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 03-03-PLAN.md — Cloud sync integration: guest migration, Firestore sync, user-based rate limiting
 
 ---
