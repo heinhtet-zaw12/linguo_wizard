@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan next phase
+status: Phase 3 planned, ready to execute
 stopped_at: context exhaustion at 75% (2026-07-18)
-last_updated: "2026-07-18T15:08:13.022Z"
+last_updated: "2026-07-18T16:00:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 4
+  total_plans: 7
   completed_plans: 4
   percent: 40
 ---
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 |-------|--------|----------|
 | Phase 1 | **Complete** | 100% |
 | Phase 2 | **Complete** | 100% |
-| Phase 3 | Blocked by Phase 2 | 0% |
+| Phase 3 | **Planned** | 0% |
 | Phase 4 | Blocked by Phase 3 | 0% |
 | Phase 5 | Blocked by Phase 4 | 0% |
 
@@ -58,6 +58,14 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 - [x] Rate limit enforcement at conversation start (ViewModel-level check)
 - [x] Navigation flow: conversation → feedback → scenarios
 
+## Phase 3 — Planned
+
+- [ ] 03-01-PLAN.md — Firebase foundation: dependencies, AuthService, FirestoreService, auth state providers
+- [ ] 03-02-PLAN.md — Auth UI and Home dashboard: login, sign-up, forgot password, home screen, navigation
+- [ ] 03-03-PLAN.md — Cloud sync integration: guest migration, Firestore sync, user-based rate limiting
+
+**User setup required:** Firebase Console project creation, auth provider setup (Email/Password, Google, Anonymous), Firestore database, flutterfire configure
+
 ## Architecture Decision
 
 **MVVM (Model-View-ViewModel)** with Feature-First folder structure was implemented in Phase 1:
@@ -82,6 +90,7 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 - 2026-07-18: Phase 1 marked complete, human verification passed
 - 2026-07-18: Roadmap restructured — missing MVP items moved to new Phase 2
 - 2026-07-18: Phase 2 complete — feedback loop, rate limiting, onboarding persistence all done
+- 2026-07-18: Phase 3 planned — 3 plans for accounts and cloud sync
 
 ---
 *Last updated: 2026-07-18 after Phase 1 completion*
