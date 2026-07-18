@@ -48,4 +48,27 @@ class AppConfig {
 
   /// SharedPreferences key prefix for rate-limit counters.
   static const String rateLimitPrefix = 'rate_limit_';
+
+  /// XP earned per completed scenario (flat rate).
+  static const int xpPerScenario = 10;
+
+  /// Evaluation prompt template for Gemini structured JSON evaluation.
+  /// Placeholders: {goal}, {transcript}
+  static const String evaluationPromptTemplate = '''
+You are an English language teacher evaluating a student's conversation performance.
+
+The student's conversation goal was: {goal}
+
+Analyze the conversation transcript below and provide:
+1. An overall score (0-100) based on how well the student achieved the goal
+2. A fluency score (0-100) based on natural flow and coherence
+3. A grammar score (0-100) based on grammatical accuracy
+4. A vocabulary score (0-100) based on word choice and range
+5. A list of grammar corrections with original text, corrected text, and explanation
+
+Be fair but encouraging. Score generously for beginners (A1-A2) and stricter for advanced (B1+).
+
+Conversation transcript:
+{transcript}
+''';
 }
