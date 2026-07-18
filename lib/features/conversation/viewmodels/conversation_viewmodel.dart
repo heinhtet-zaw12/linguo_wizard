@@ -20,17 +20,25 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   late final AiService _aiService;
   late final EvaluationService _evaluationService;
   final RateLimiterService _rateLimiter = RateLimiterService();
+  bool _servicesInitialized = false;
 
   /// Initialize services, AI persona, and seed the opening message.
   @override
   Future<ConversationState> build(Scenario scenario) async {
-    _sttService = SttService();
-    _ttsService = TtsService();
-    _aiService = AiService();
-    _evaluationService = EvaluationService();
+    // Clear any stale scoreData from a previous conversation session.
+    // This runs synchronously before the screen can read the state,
+    // preventing the feedback navigation guard from firing on re-entry.
+    state = const AsyncData(ConversationState());
 
-    await _sttService.initialize();
-    await _ttsService.initialize();
+    if (!_servicesInitialized) {
+      _sttService = SttService();
+      _ttsService = TtsService();
+      _aiService = AiService();
+      _evaluationService = EvaluationService();
+      await _sttService.initialize();
+      await _ttsService.initialize();
+      _servicesInitialized = true;
+    }
 
     _aiService.initializePersona(
       personaName: scenario.personaName,
@@ -248,4 +256,5 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     if (current == null) return;
     state = AsyncData(current.copyWith(rateLimitExceeded: false));
   }
+
 }

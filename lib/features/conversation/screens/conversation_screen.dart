@@ -26,6 +26,7 @@ class ConversationScreen extends ConsumerStatefulWidget {
 class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   final ScrollController _scrollController = ScrollController();
   Scenario? _scenario;
+  bool _hasNavigatedToFeedback = false;
 
   @override
   void initState() {
@@ -98,8 +99,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               _scrollToBottom();
             }
 
-            // Navigate to feedback screen when evaluation completes.
-            if (state.scoreData != null && !state.isEvaluating) {
+            // Navigate to feedback screen when evaluation completes (only once).
+            if (state.scoreData != null && !state.isEvaluating && !_hasNavigatedToFeedback) {
+              _hasNavigatedToFeedback = true;
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 // Set the score data in the feedback provider before navigating.
                 ref.read(currentScoreProvider.notifier).state = state.scoreData;
@@ -282,24 +284,34 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: ElevatedButton(
-                onPressed: () => vm.endConversation(),
+                onPressed: state.isEvaluating ? null : () => vm.endConversation(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryPink,
                   foregroundColor: Colors.white,
+                  disabledBackgroundColor: AppColors.primaryPink.withValues(alpha: 0.5),
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),
                   elevation: 2,
                 ),
-                child: const Text(
-                  'End Conversation',
-                  style: TextStyle(
-                    fontFamily: 'Quicksand',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                child: state.isEvaluating
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'End Conversation',
+                        style: TextStyle(
+                          fontFamily: 'Quicksand',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
               ),
             ),
         ],
