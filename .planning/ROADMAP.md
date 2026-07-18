@@ -39,10 +39,11 @@
 
 **Depends on:** Phase 1 complete
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 02-01-PLAN.md — Foundation: rate limiter, onboarding persistence, end conversation action
+
+- [x] 02-01-PLAN.md — Foundation: rate limiter, onboarding persistence, end conversation action
 - [ ] 02-02-PLAN.md — Feedback feature: evaluation service, score screen, route integration
 
 ---
