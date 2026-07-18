@@ -140,6 +140,37 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               });
             }
 
+            // Show error dialog for AI/network failures.
+            if (state.errorMessage != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      'Something went wrong',
+                      style: TextStyle(fontFamily: 'Quicksand'),
+                    ),
+                    content: Text(
+                      state.errorMessage!,
+                      style: TextStyle(fontFamily: 'Quicksand'),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          vm.clearError();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'OK',
+                          style: TextStyle(fontFamily: 'Quicksand'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
+            }
+
             return Column(
               children: [
                 _buildTopBar(scenario),

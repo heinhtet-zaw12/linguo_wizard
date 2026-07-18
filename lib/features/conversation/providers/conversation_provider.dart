@@ -20,6 +20,7 @@ class ConversationState {
   final Scenario? scenario;
   final int turnCount;
   final ScoreData? scoreData;
+  final String? errorMessage;
 
   const ConversationState({
     this.messages = const [],
@@ -32,6 +33,7 @@ class ConversationState {
     this.scenario,
     this.turnCount = 0,
     this.scoreData,
+    this.errorMessage,
   });
 
   ConversationState copyWith({
@@ -45,6 +47,8 @@ class ConversationState {
     Scenario? scenario,
     int? turnCount,
     ScoreData? scoreData,
+    String? errorMessage,
+    bool clearError = false,
   }) {
     return ConversationState(
       messages: messages ?? this.messages,
@@ -58,6 +62,7 @@ class ConversationState {
       scenario: scenario ?? this.scenario,
       turnCount: turnCount ?? this.turnCount,
       scoreData: scoreData ?? this.scoreData,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
 }

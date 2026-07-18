@@ -166,8 +166,21 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
       turnCount: current.turnCount + 1,
     ));
 
-    // Get AI response
-    final aiResponseText = await _aiService.sendMessage(transcript);
+    // Get AI response — handle network/API errors gracefully.
+    String aiResponseText;
+    try {
+      aiResponseText = await _aiService.sendMessage(transcript);
+    } catch (e) {
+      current = state.value;
+      if (current != null) {
+        state = AsyncData(current.copyWith(
+          loopState: ConversationLoopState.idle,
+          errorMessage: 'AI response failed. Check your connection and try again.',
+        ));
+      }
+      return;
+    }
+
     // Add AI message
     current = state.value;
     if (current == null) return;
@@ -255,6 +268,13 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     final current = state.value;
     if (current == null) return;
     state = AsyncData(current.copyWith(rateLimitExceeded: false));
+  }
+
+  /// Clear the current error message.
+  void clearError() {
+    final current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(clearError: true));
   }
 
 }
