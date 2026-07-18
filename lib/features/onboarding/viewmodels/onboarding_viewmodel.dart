@@ -62,14 +62,24 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
 
   void setLanguage(String language) {
     state = state.copyWith(selectedLanguage: language);
+    // Fire-and-forget persistence — ensures selection survives app crashes.
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('onboarding_language', language);
+    });
   }
 
   void setCefrLevel(String level) {
     state = state.copyWith(selectedCefrLevel: level);
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('onboarding_cefr', level);
+    });
   }
 
   void setGoal(String goal) {
     state = state.copyWith(selectedGoal: goal);
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('onboarding_goal', goal);
+    });
   }
 
   void nextPage() {
@@ -107,6 +117,12 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
       cefrLevel: prefs.getString('onboarding_cefr') ?? 'A1',
       goal: prefs.getString('onboarding_goal') ?? 'Travel',
     );
+  }
+
+  /// Read saved CEFR level for scenario filtering.
+  static Future<String> loadSavedCefrLevel() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('onboarding_cefr') ?? 'A1';
   }
 }
 
