@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: Phase 3 planned, ready to execute
 stopped_at: context exhaustion at 75% (2026-07-18)
-last_updated: "2026-07-18T16:00:00.000Z"
+last_updated: "2026-07-18T16:31:11.992Z"
 progress:
   total_phases: 5
   completed_phases: 2
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-14)
 
 **Core value:** The voice conversation loop — speak naturally to an AI character, get immersive practice, and receive actionable feedback afterward.
-**Current focus:** Phase 02 — complete-mvp-features
+**Current focus:** Phase 03 — accounts-cloud-sync
 
 ## Progress
 
