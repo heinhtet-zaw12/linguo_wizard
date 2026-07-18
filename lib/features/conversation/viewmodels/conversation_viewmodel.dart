@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_config.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/ai_service.dart';
 import '../../../core/services/evaluation_service.dart';
 import '../../../core/services/rate_limiter.dart';
 import '../../../core/services/stt_service.dart';
 import '../../../core/services/tts_service.dart';
+import '../../feedback/models/score_data.dart';
 import '../models/message.dart';
 import '../../scenario_selection/models/scenario.dart';
-import '../../feedback/models/score_data.dart';
 import '../providers/conversation_provider.dart';
 
 /// ViewModel for the conversation screen.
@@ -21,25 +23,17 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   late final AiService _aiService;
   late final EvaluationService _evaluationService;
   final RateLimiterService _rateLimiter = RateLimiterService();
-  bool _servicesInitialized = false;
 
   /// Initialize services, AI persona, and seed the opening message.
   @override
   Future<ConversationState> build(Scenario scenario) async {
-    // Clear any stale scoreData from a previous conversation session.
-    // This runs synchronously before the screen can read the state,
-    // preventing the feedback navigation guard from firing on re-entry.
-    state = const AsyncData(ConversationState());
+    _sttService = SttService();
+    _ttsService = TtsService();
+    _aiService = AiService();
+    _evaluationService = EvaluationService();
 
-    if (!_servicesInitialized) {
-      _sttService = SttService();
-      _ttsService = TtsService();
-      _aiService = AiService();
-      _evaluationService = EvaluationService();
-      await _sttService.initialize();
-      await _ttsService.initialize();
-      _servicesInitialized = true;
-    }
+    await _sttService.initialize();
+    await _ttsService.initialize();
 
     _aiService.initializePersona(
       personaName: scenario.personaName,
@@ -84,13 +78,24 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     switch (current.loopState) {
       case ConversationLoopState.idle:
         // Check rate limit before starting a new conversation turn.
-        final canMakeCall = await _rateLimiter.canMakeCall();
+        final user = ref.read(currentUserProvider);
+        final isAuth = user != null && !user.isAnonymous;
+        bool canMakeCall;
+        if (isAuth) {
+          canMakeCall = await _rateLimiter.canMakeCallForUser(user.uid);
+        } else {
+          canMakeCall = await _rateLimiter.canMakeCall();
+        }
         if (!canMakeCall) {
           state = AsyncData(current.copyWith(rateLimitExceeded: true));
           return;
         }
         // Record the call before starting.
-        await _rateLimiter.recordCall();
+        if (isAuth) {
+          await _rateLimiter.recordCallForUser(user.uid);
+        } else {
+          await _rateLimiter.recordCall();
+        }
         _startRecording();
       case ConversationLoopState.recording:
         _stopRecording();
@@ -124,17 +129,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
           }
         }
       },
-    ).catchError((_) {
-      // Mic permission denied or STT failure — reset to idle.
-      final current = state.value;
-      if (current != null) {
-        state = AsyncData(current.copyWith(
-          loopState: ConversationLoopState.idle,
-          isRecording: false,
-          errorMessage: 'Could not access microphone. Please check permissions.',
-        ));
-      }
-    });
+    );
   }
 
   void _stopRecording() {
@@ -177,21 +172,8 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
       turnCount: current.turnCount + 1,
     ));
 
-    // Get AI response — handle network/API errors gracefully.
-    String aiResponseText;
-    try {
-      aiResponseText = await _aiService.sendMessage(transcript);
-    } catch (e) {
-      current = state.value;
-      if (current != null) {
-        state = AsyncData(current.copyWith(
-          loopState: ConversationLoopState.idle,
-          errorMessage: 'AI response failed. Check your connection and try again.',
-        ));
-      }
-      return;
-    }
-
+    // Get AI response
+    final aiResponseText = await _aiService.sendMessage(transcript);
     // Add AI message
     current = state.value;
     if (current == null) return;
@@ -257,16 +239,11 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
         .map((m) => '${m.sender == MessageSender.user ? "User" : "AI"}: ${m.transcript}')
         .join('\n');
 
-    // Call the AI evaluation service — fallback on failure.
-    ScoreData scoreData;
-    try {
-      scoreData = await _evaluationService.evaluateGoal(
-        scenarioGoal: current.scenario!.goalDescription,
-        transcript: transcript,
-      );
-    } catch (_) {
-      scoreData = ScoreData.fallback();
-    }
+    // Call the AI evaluation service.
+    final scoreData = await _evaluationService.evaluateGoal(
+      scenarioGoal: current.scenario!.goalDescription,
+      transcript: transcript,
+    );
 
     // Update state with evaluation results.
     state = AsyncData(
@@ -275,6 +252,9 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
         scoreData: scoreData,
       ),
     );
+
+    // Sync results to Firestore (fire-and-forget, only for authenticated users).
+    _syncToFirestore(current.scenario!, scoreData);
   }
 
   /// Clear the rate limit exceeded error state.
@@ -286,11 +266,65 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     state = AsyncData(current.copyWith(rateLimitExceeded: false));
   }
 
-  /// Clear the current error message.
-  void clearError() {
-    final current = state.value;
-    if (current == null) return;
-    state = AsyncData(current.copyWith(clearError: true));
-  }
+  // ─── Firestore sync ───
 
+  /// Sync scenario results and progress to Firestore after evaluation.
+  ///
+  /// Only runs for authenticated (non-guest) users. Fire-and-forget —
+  /// failures are logged but do not affect the UI.
+  Future<void> _syncToFirestore(Scenario scenario, ScoreData score) async {
+    final user = ref.read(currentUserProvider);
+    if (user == null || user.isAnonymous) return;
+
+    try {
+      final fs = ref.read(firestoreServiceProvider);
+      final uid = user.uid;
+
+      // Read current progress from Firestore.
+      final progress = await fs.getProgress(uid);
+      final existingXp = progress?['totalXp'] as int? ?? 0;
+      final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
+
+      // Save updated progress.
+      await fs.saveProgress(
+        uid,
+        totalXp: existingXp + AppConfig.xpPerScenario,
+        scenariosCompleted: existingCompleted + 1,
+        lastScenarioAt: DateTime.now(),
+      );
+
+      // Read existing scenario result to get attempt count.
+      final scenarios = await fs.getScenarios(uid);
+      final existingScenario = scenarios.firstWhere(
+        (s) => s['id'] == scenario.id,
+        orElse: () => {},
+      );
+      final existingAttempts = existingScenario['attempts'] as int? ?? 0;
+      final existingScores =
+          (existingScenario['scores'] as List<dynamic>?) ?? [];
+
+      // Build new score entry.
+      final newScoreEntry = {
+        'overall': score.overallScore,
+        'fluency': score.fluencyScore,
+        'grammar': score.grammarScore,
+        'vocabulary': score.vocabularyScore,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+
+      // Calculate new best score.
+      final bestScore = score.overallScore.toDouble();
+
+      // Save scenario result.
+      await fs.saveScenarioResult(
+        uid,
+        scenario.id,
+        bestScore: bestScore,
+        attempts: existingAttempts + 1,
+        scores: [...existingScores.map((e) => Map<String, dynamic>.from(e as Map)), newScoreEntry],
+      );
+    } catch (_) {
+      // Firestore sync failed — non-critical, data will sync on next attempt.
+    }
+  }
 }

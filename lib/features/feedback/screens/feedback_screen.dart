@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../conversation/providers/conversation_provider.dart';
 import '../models/score_data.dart';
 import '../viewmodels/feedback_viewmodel.dart';
 
@@ -71,9 +71,21 @@ class FeedbackScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Clear the stale conversation state so re-entering
-                      // the same scenario starts a fresh conversation.
-                      ref.invalidate(conversationProvider);
+                      // Belt-and-suspenders: sync XP to Firestore if authenticated.
+                      final user = ref.read(currentUserProvider);
+                      if (user != null && !user.isAnonymous) {
+                        final fs = ref.read(firestoreServiceProvider);
+                        fs.getProgress(user.uid).then((progress) {
+                          final existingXp = progress?['totalXp'] as int? ?? 0;
+                          final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
+                          fs.saveProgress(
+                            user.uid,
+                            totalXp: existingXp + scoreData.xpEarned,
+                            scenariosCompleted: existingCompleted,
+                            lastScenarioAt: DateTime.now(),
+                          );
+                        });
+                      }
                       Navigator.pushReplacementNamed(context, '/scenarios');
                     },
                     style: ElevatedButton.styleFrom(
