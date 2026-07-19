@@ -78,23 +78,25 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     switch (current.loopState) {
       case ConversationLoopState.idle:
         // Check rate limit before starting a new conversation turn.
-        final user = ref.read(currentUserProvider);
-        final isAuth = user != null && !user.isAnonymous;
-        bool canMakeCall;
-        if (isAuth) {
-          canMakeCall = await _rateLimiter.canMakeCallForUser(user.uid);
-        } else {
-          canMakeCall = await _rateLimiter.canMakeCall();
-        }
-        if (!canMakeCall) {
-          state = AsyncData(current.copyWith(rateLimitExceeded: true));
-          return;
-        }
-        // Record the call before starting.
-        if (isAuth) {
-          await _rateLimiter.recordCallForUser(user.uid);
-        } else {
-          await _rateLimiter.recordCall();
+        if (AppConfig.rateLimitEnabled) {
+          final user = ref.read(currentUserProvider);
+          final isAuth = user != null && !user.isAnonymous;
+          bool canMakeCall;
+          if (isAuth) {
+            canMakeCall = await _rateLimiter.canMakeCallForUser(user.uid);
+          } else {
+            canMakeCall = await _rateLimiter.canMakeCall();
+          }
+          if (!canMakeCall) {
+            state = AsyncData(current.copyWith(rateLimitExceeded: true));
+            return;
+          }
+          // Record the call before starting.
+          if (isAuth) {
+            await _rateLimiter.recordCallForUser(user.uid);
+          } else {
+            await _rateLimiter.recordCall();
+          }
         }
         _startRecording();
       case ConversationLoopState.recording:

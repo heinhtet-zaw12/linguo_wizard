@@ -66,24 +66,39 @@ class AuthViewModel extends Notifier<AuthState> {
       final wasAnonymous = previousUser?.isAnonymous == true;
 
       final authService = ref.read(authServiceProvider);
-      final credential = await authService.signUpWithEmail(email, password, displayName);
+
+      // ignore: avoid_print
+      print('[AuthViewModel] signUpWithEmail: calling Firebase createUser...');
+      final credential =
+          await authService.signUpWithEmail(email, password, displayName);
+      // ignore: avoid_print
+      print(
+          '[AuthViewModel] Firebase createUser success. UID: ${credential.user?.uid}');
 
       // Create empty Firestore profile for fresh sign-up.
       if (!wasAnonymous && credential.user != null) {
         try {
           final fs = ref.read(firestoreServiceProvider);
+          // ignore: avoid_print
+          print('[AuthViewModel] Creating Firestore user profile...');
           await fs.createUserProfile(
             credential.user!.uid,
             displayName: displayName,
             email: email,
           );
-        } catch (_) {
-          // Profile creation failed — non-critical.
+          // ignore: avoid_print
+          print('[AuthViewModel] Firestore profile created.');
+        } catch (fsError) {
+          // ignore: avoid_print
+          print(
+              '[AuthViewModel] Firestore profile creation failed (non-critical): $fsError');
         }
       }
 
       // Migrate guest data if previous user was anonymous.
       if (wasAnonymous && credential.user != null) {
+        // ignore: avoid_print
+        print('[AuthViewModel] Migrating guest data...');
         await _migrateGuestData(credential.user!.uid);
       }
 
@@ -210,16 +225,48 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   /// Convert raw exceptions to user-friendly messages.
+  ///
+  /// Logs the full error to the console for debugging, then returns
+  /// a human-readable message for the UI.
   String _friendlyError(Object e) {
+    // Log the full error so it's visible in the debug console.
+    // ignore: avoid_print
+    print('[AuthViewModel] ERROR: $e');
+
     final msg = e.toString();
+
+    // Firebase Auth error codes
     if (msg.contains('user-not-found')) return 'No account found with this email.';
     if (msg.contains('wrong-password')) return 'Incorrect password. Please try again.';
     if (msg.contains('email-already-in-use')) return 'An account already exists with this email.';
     if (msg.contains('weak-password')) return 'Password is too weak. Use at least 6 characters.';
     if (msg.contains('invalid-email')) return 'Please enter a valid email address.';
-    if (msg.contains('cancelled')) return 'Sign-in was cancelled.';
-    if (msg.contains('network')) return 'Network error. Check your connection.';
-    return 'Something went wrong. Please try again.';
+    if (msg.contains('user-disabled')) return 'This account has been disabled. Contact support.';
+    if (msg.contains('operation-not-allowed')) return 'This sign-in method is not enabled. Contact support.';
+    if (msg.contains('too-many-requests')) return 'Too many attempts. Please try again later.';
+    if (msg.contains('network-request-failed')) return 'Network error. Check your connection.';
+    if (msg.contains('invalid-credential')) return 'Invalid credentials. Please check and try again.';
+    if (msg.contains('auth/invalid-credential')) return 'Invalid credentials. Please check and try again.';
+    if (msg.contains('admin-restricted-operation')) return 'This operation is restricted. Contact support.';
+    if (msg.contains('requires-recent-login')) return 'Please sign out and sign in again, then retry.';
+
+    // Google sign-in errors
+    if (msg.contains('cancelled') || msg.contains('sign_in_canceled')) return 'Sign-in was cancelled.';
+    if (msg.contains('sign_in_failed')) return 'Google sign-in failed. Try again.';
+    if (msg.contains('network_error')) return 'Network error during sign-in. Check your connection.';
+
+    // Firestore errors
+    if (msg.contains('permission-denied')) return 'Permission denied. Check Firestore security rules.';
+    if (msg.contains('unavailable')) return 'Service temporarily unavailable. Try again.';
+    if (msg.contains('not-found')) return 'Requested resource not found.';
+
+    // Generic network catch-all
+    if (msg.contains('network') || msg.contains('SocketException')) return 'Network error. Check your connection.';
+
+    // Last resort: include the error code if present, else the full message
+    final codeMatch = RegExp(r'\[.*?\]\s*(.*)').firstMatch(msg);
+    final detail = codeMatch?.group(1) ?? msg;
+    return 'Something went wrong: $detail';
   }
 }
 
