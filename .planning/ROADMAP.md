@@ -87,10 +87,25 @@ Plans:
 
 1. Streak count + flame icon, XP, badges
 2. Spaced repetition (SRS) for missed vocab/phrases
-3. Mistake pattern dashboard (time-series)
+3. Mistake pattern dashboard (summary metrics, last 7 days)
 4. Leaderboard/social features (requires account)
 
 **Requirements:** FDBK-01, FDBK-02, FDBK-03
+
+**Plans:** 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 04-01-PLAN.md — GoRouter navigation shell: bottom nav, route guards, stateful tabs
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 04-02-PLAN.md — Gamification data layer: config files, models, services, Firestore extension
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 04-03-PLAN.md — UI screens and integration: Progress, Leaderboard, Pre-Scenario Review, Badge Popup, ViewModel wiring
 
 ---
 
