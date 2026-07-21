@@ -17,11 +17,7 @@ import 'features/home/screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Skip Firebase init when using placeholder config values (no Firebase project yet).
-  final projectId = DefaultFirebaseOptions.currentPlatform.projectId ?? '';
-  if (!projectId.startsWith('YOUR_')) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  }
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AppConfig.loadEnv();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
