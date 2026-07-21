@@ -8,6 +8,20 @@ service cloud.firestore {
       match /rateLimits/{docId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+
+      // Gamification subcollections — owner-only read/write.
+      match /scenarios/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      match /badges/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      match /srs_items/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      match /mistakes/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
     match /rate_limits/{docId} {
       allow read, write: if true;
