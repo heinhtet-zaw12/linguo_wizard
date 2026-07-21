@@ -12,7 +12,10 @@ The voice conversation loop — speak naturally to an AI character, get immersiv
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Streak count, XP, badges — Phase 4
+- ✓ Spaced repetition (SRS) for missed vocab/phrases — Phase 4
+- ✓ Mistake pattern dashboard (summary metrics) — Phase 4
+- ✓ Leaderboard/social features — Phase 4
 
 ### Active
 
@@ -34,10 +37,8 @@ The voice conversation loop — speak naturally to an AI character, get immersiv
 
 ### Out of Scope
 
-- **Sign-up/login & cloud sync** — deferred to Phase 2; guest mode only in v1
-- **Streaks, badges, leaderboard** — gamification deferred to Phase 3
-- **Premium gating / monetization** — deferred to Phase 4
-- **Pronunciation scoring (phoneme-level)** — requires paid API (Azure/Speechace), deferred to Phase 4
+- **Premium gating / monetization** — deferred to Phase 5
+- **Pronunciation scoring (phoneme-level)** — requires paid API (Azure/Speechace), deferred to Phase 5
 - **Real-time conversation** — voice messages, not live phone-call style
 - **AI mid-conversation corrections** — feedback is post-conversation only to preserve immersion
 - **Multiple languages** — English only in v1
@@ -71,6 +72,8 @@ The voice conversation loop — speak naturally to an AI character, get immersiv
 | AI as named characters | Creates emotional connection, more engaging than neutral guide | ✅ Validated — 3 personas (cafe, airport, interview) |
 | Voice messages not free-typing chat | Core product differentiator — speaking practice, not typing | ✅ Validated — STT→AI→TTS pipeline works |
 | Web support alongside mobile | Broader reach, Flutter makes it feasible | ✅ Implemented — Flutter cross-platform |
+| Config-driven badge system | New badges added via config list without code changes | ✅ Implemented — 8 badges, extensible |
+| SM-2 algorithm for SRS | Industry-standard spaced repetition, battle-tested | ✅ Implemented — ease factor + interval progression |
 
 ## Evolution
 
@@ -90,4 +93,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-18 after Phase 2 completion*
+*Last updated: 2026-07-21 after Phase 4 completion*

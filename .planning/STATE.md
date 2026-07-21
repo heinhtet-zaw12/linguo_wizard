@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
 stopped_at: context exhaustion at 75% (2026-07-21)
-last_updated: "2026-07-21T04:33:30.960Z"
+last_updated: "2026-07-21T05:21:26.076Z"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 7
-  percent: 60
+  completed_plans: 10
+  percent: 80
 ---
 
 # Project State
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-14)
 
 **Core value:** The voice conversation loop — speak naturally to an AI character, get immersive practice, and receive actionable feedback afterward.
-**Current focus:** Phase 04 — gamification-retention
+**Current focus:** Phase 05 — premium-&-polish
 
 ## Progress
 
@@ -28,9 +28,9 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 |-------|--------|----------|
 | Phase 1 | **Complete** | 100% |
 | Phase 2 | **Complete** | 100% |
-| Phase 3 | **Planned** | 0% |
-| Phase 4 | Blocked by Phase 3 | 0% |
-| Phase 5 | Blocked by Phase 4 | 0% |
+| Phase 3 | **Complete** | 100% |
+| Phase 4 | **Complete** | 100% |
+| Phase 5 | Ready to plan | 0% |
 
 ## Phase 1 — Complete
 
@@ -58,13 +58,19 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 - [x] Rate limit enforcement at conversation start (ViewModel-level check)
 - [x] Navigation flow: conversation → feedback → scenarios
 
-## Phase 3 — Planned
+## Phase 3 — Complete
 
-- [ ] 03-01-PLAN.md — Firebase foundation: dependencies, AuthService, FirestoreService, auth state providers
-- [ ] 03-02-PLAN.md — Auth UI and Home dashboard: login, sign-up, forgot password, home screen, navigation
-- [ ] 03-03-PLAN.md — Cloud sync integration: guest migration, Firestore sync, user-based rate limiting
+- [x] Firebase foundation: dependencies, AuthService, FirestoreService, auth state providers
+- [x] Auth UI and Home dashboard: login, sign-up, forgot password, home screen, navigation
+- [x] Cloud sync integration: guest migration, Firestore sync, user-based rate limiting
+- [x] Human verification passed (UAT resolved 2026-07-21)
 
-**User setup required:** Firebase Console project creation, auth provider setup (Email/Password, Google, Anonymous), Firestore database, flutterfire configure
+## Phase 4 — Complete
+
+- [x] GoRouter navigation shell: bottom nav, route guards, stateful tabs
+- [x] Gamification data layer: config files, models, services, Firestore extension
+- [x] UI screens and integration: Progress, Leaderboard, Pre-Scenario Review, Badge Popup, ViewModel wiring
+- [x] Human verification passed (UAT resolved 2026-07-21)
 
 ## Architecture Decision
 
@@ -90,13 +96,15 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 - 2026-07-18: Phase 1 marked complete, human verification passed
 - 2026-07-18: Roadmap restructured — missing MVP items moved to new Phase 2
 - 2026-07-18: Phase 2 complete — feedback loop, rate limiting, onboarding persistence all done
-- 2026-07-18: Phase 3 planned — 3 plans for accounts and cloud sync
+- 2026-07-21: Phase 3 complete — Firebase Auth, Firestore, cloud sync
+- 2026-07-21: Phase 4 complete — gamification (streaks, XP, badges, SRS, leaderboard, progress)
+- 2026-07-21: Phase 4 UAT passed — 13/13 automated verification tests
 
 ---
-*Last updated: 2026-07-18 after Phase 1 completion*
+*Last updated: 2026-07-21 after Phase 4 completion*
 
 ## Session
 
-**Last session:** 2026-07-21T04:19:22.630Z
-**Stopped at:** context exhaustion at 75% (2026-07-21)
-**Resume file:** .planning/phases/04-gamification-retention/04-CONTEXT.md
+**Last session:** 2026-07-21T05:21:00Z
+**Stopped at:** Phase 4 complete, ready to plan Phase 5
+**Resume file:** None
