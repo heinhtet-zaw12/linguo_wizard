@@ -92,12 +92,12 @@ Plans:
 
 **Requirements:** FDBK-01, FDBK-02, FDBK-03
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — GoRouter navigation shell: bottom nav, route guards, stateful tabs
+- [x] 04-01-PLAN.md — GoRouter navigation shell: bottom nav, route guards, stateful tabs
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
