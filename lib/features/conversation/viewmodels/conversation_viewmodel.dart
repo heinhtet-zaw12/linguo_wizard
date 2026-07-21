@@ -1,13 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/models/mistake_record.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/service_providers.dart';
 import '../../../core/services/ai_service.dart';
 import '../../../core/services/evaluation_service.dart';
 import '../../../core/services/rate_limiter.dart';
 import '../../../core/services/stt_service.dart';
 import '../../../core/services/tts_service.dart';
 import '../../feedback/models/score_data.dart';
+import '../../feedback/viewmodels/feedback_viewmodel.dart';
 import '../models/message.dart';
 import '../../scenario_selection/models/scenario.dart';
 import '../providers/conversation_provider.dart';
@@ -255,8 +258,8 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
       ),
     );
 
-    // Sync results to Firestore (fire-and-forget, only for authenticated users).
-    _syncToFirestore(current.scenario!, scoreData);
+    // Trigger gamification updates and sync to Firestore (fire-and-forget).
+    _triggerGamification(current.scenario!, scoreData);
   }
 
   /// Clear the rate limit exceeded error state.
@@ -275,35 +278,85 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     state = AsyncData(current.copyWith(clearError: true));
   }
 
-  // ─── Firestore sync ───
+  // ─── Gamification & Firestore sync ───
 
-  /// Sync scenario results and progress to Firestore after evaluation.
+  /// Trigger gamification updates and sync scenario results to Firestore.
   ///
-  /// Only runs for authenticated (non-guest) users. Fire-and-forget —
-  /// failures are logged but do not affect the UI.
-  Future<void> _syncToFirestore(Scenario scenario, ScoreData score) async {
+  /// After a successful evaluation:
+  /// 1. Update streak via GamificationService
+  /// 2. Award XP (AppConfig.xpPerScenario = 50)
+  /// 3. Check badge eligibility
+  /// 4. Extract grammar corrections into SRS
+  /// 5. Save mistake records
+  /// 6. Save scenario results
+  ///
+  /// All writes are fire-and-forget — failures don't affect the UI.
+  /// Only runs for authenticated (non-guest) users.
+  Future<void> _triggerGamification(Scenario scenario, ScoreData score) async {
     final user = ref.read(currentUserProvider);
     if (user == null || user.isAnonymous) return;
 
     try {
       final fs = ref.read(firestoreServiceProvider);
+      final gamification = ref.read(gamificationServiceProvider);
+      final srs = ref.read(srsServiceProvider);
       final uid = user.uid;
 
-      // Read current progress from Firestore.
-      final progress = await fs.getProgress(uid);
-      final existingXp = progress?['totalXp'] as int? ?? 0;
-      final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
+      // 1. Update streak.
+      final streakData = await gamification.updateStreak(uid);
 
-      // Save updated progress.
-      await fs.saveProgress(
+      // 2. Award XP.
+      await gamification.awardXp(uid, AppConfig.xpPerScenario);
+
+      // 3. Read updated progress for badge check and scenario save.
+      final results = await Future.wait<Object?>([
+        fs.getTotalXp(uid),
+        fs.getScenariosCompleted(uid),
+        fs.getScenarios(uid),
+      ]);
+
+      final totalXp = results[0] as int;
+      final scenariosCompleted = results[1] as int;
+      final scenarios = results[2] as List<Map<String, dynamic>>;
+
+      // 4. Check badges.
+      final newlyEarnedBadges = await gamification.checkBadges(
         uid,
-        totalXp: existingXp + AppConfig.xpPerScenario,
-        scenariosCompleted: existingCompleted + 1,
-        lastScenarioAt: DateTime.now(),
+        totalXp: totalXp,
+        currentStreak: streakData.currentStreak,
+        scenariosCompleted: scenariosCompleted,
+        lastScore: score,
       );
 
-      // Read existing scenario result to get attempt count.
-      final scenarios = await fs.getScenarios(uid);
+      // Store newly earned badges in state for FeedbackScreen to display.
+      final currentState = state.value;
+      if (currentState != null) {
+        state = AsyncData(currentState.copyWith(
+          newlyEarnedBadges: newlyEarnedBadges,
+        ));
+      }
+
+      // Also set the provider so FeedbackScreen can read it.
+      ref.read(newlyEarnedBadgesProvider.notifier).state = newlyEarnedBadges;
+
+      // 5. Extract grammar corrections into SRS (fire-and-forget).
+      srs.addItemsFromScore(uid, score);
+
+      // 6. Save mistake records from grammar corrections (fire-and-forget).
+      for (final correction in score.grammarCorrections) {
+        final mistake = MistakeRecord(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          text: correction.original,
+          category: 'grammar',
+          correctedText: correction.corrected,
+          explanation: correction.explanation,
+          scenarioId: scenario.id,
+          recordedAt: DateTime.now(),
+        );
+        fs.saveMistake(uid, mistake);
+      }
+
+      // 7. Save scenario results (fire-and-forget).
       final existingScenario = scenarios.firstWhere(
         (s) => s['id'] == scenario.id,
         orElse: () => {},
@@ -312,7 +365,6 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
       final existingScores =
           (existingScenario['scores'] as List<dynamic>?) ?? [];
 
-      // Build new score entry.
       final newScoreEntry = {
         'overall': score.overallScore,
         'fluency': score.fluencyScore,
@@ -321,19 +373,18 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
         'timestamp': DateTime.now().toIso8601String(),
       };
 
-      // Calculate new best score.
-      final bestScore = score.overallScore.toDouble();
-
-      // Save scenario result.
       await fs.saveScenarioResult(
         uid,
         scenario.id,
-        bestScore: bestScore,
+        bestScore: score.overallScore.toDouble(),
         attempts: existingAttempts + 1,
-        scores: [...existingScores.map((e) => Map<String, dynamic>.from(e as Map)), newScoreEntry],
+        scores: [
+          ...existingScores.map((e) => Map<String, dynamic>.from(e as Map)),
+          newScoreEntry,
+        ],
       );
     } catch (_) {
-      // Firestore sync failed — non-critical, data will sync on next attempt.
+      // Gamification sync failed — non-critical, data will sync on next attempt.
     }
   }
 }

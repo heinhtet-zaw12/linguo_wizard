@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/models/streak_data.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../scenario_selection/models/scenario.dart';
 
@@ -109,13 +110,18 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     final prefs = await firestore.getPreferences(uid);
     final cefrLevel = prefs?['cefrLevel'] as String? ?? 'A1';
 
-    // Load progress
-    final progress = await firestore.getProgress(uid);
+    // Load progress and streak concurrently.
+    final results = await Future.wait<Object?>([
+      firestore.getProgress(uid),
+      firestore.getStreak(uid),
+    ]);
+
+    final progress = results[0] as Map<String, dynamic>?;
+    final streakData = results[1] as StreakData?;
+
     final totalXp = progress?['totalXp'] as int? ?? 0;
     final scenariosCompleted = progress?['scenariosCompleted'] as int? ?? 0;
-
-    // Calculate streak from last activity
-    final streakDays = _calculateStreak(progress);
+    final streakDays = streakData?.currentStreak ?? 0;
 
     final scenarios = await _loadBundledScenarios(cefrLevel);
 
@@ -128,16 +134,6 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
       recommendedScenarios: scenarios,
       isLoading: false,
     );
-  }
-
-  int _calculateStreak(Map<String, dynamic>? progress) {
-    if (progress == null) return 0;
-    final lastScenarioAt = progress['lastScenarioAt'];
-    if (lastScenarioAt == null) return 0;
-
-    // Simple streak: if last activity was today, show 1 day streak
-    // Full streak calculation would require a history of activity dates
-    return 1;
   }
 
   Future<List<Scenario>> _loadBundledScenarios(String cefrLevel) async {

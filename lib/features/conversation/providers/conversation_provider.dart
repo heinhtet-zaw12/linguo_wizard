@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/models/badge.dart';
 import '../models/message.dart';
 import '../../scenario_selection/models/scenario.dart';
 import '../../feedback/models/score_data.dart';
@@ -20,6 +21,7 @@ class ConversationState {
   final Scenario? scenario;
   final int turnCount;
   final ScoreData? scoreData;
+  final List<Badge> newlyEarnedBadges;
   final String? errorMessage;
 
   const ConversationState({
@@ -33,6 +35,7 @@ class ConversationState {
     this.scenario,
     this.turnCount = 0,
     this.scoreData,
+    this.newlyEarnedBadges = const [],
     this.errorMessage,
   });
 
@@ -47,6 +50,7 @@ class ConversationState {
     Scenario? scenario,
     int? turnCount,
     ScoreData? scoreData,
+    List<Badge>? newlyEarnedBadges,
     String? errorMessage,
     bool clearError = false,
   }) {
@@ -62,6 +66,7 @@ class ConversationState {
       scenario: scenario ?? this.scenario,
       turnCount: turnCount ?? this.turnCount,
       scoreData: scoreData ?? this.scoreData,
+      newlyEarnedBadges: newlyEarnedBadges ?? this.newlyEarnedBadges,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }

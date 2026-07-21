@@ -9,8 +9,11 @@ import '../auth/screens/signup_screen.dart';
 import '../conversation/screens/conversation_screen.dart';
 import '../feedback/screens/feedback_screen.dart';
 import '../home/screens/home_screen.dart';
+import '../leaderboard/screens/leaderboard_screen.dart';
 import '../onboarding/screens/onboarding_screen.dart';
+import '../progress/screens/progress_screen.dart';
 import '../scenario_selection/screens/scenario_selection_screen.dart';
+import '../srs/screens/pre_scenario_review_screen.dart';
 import 'scaffold_with_nav_bar.dart';
 
 /// GoRouter configuration for the app.
@@ -91,11 +94,8 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/progress',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: Scaffold(
-                  body: Center(child: Text('Progress')),
-                ),
-              ),
+              pageBuilder: (context, state) =>
+                  const NoTransitionPage(child: ProgressScreen()),
             ),
           ],
         ),
@@ -122,6 +122,17 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/feedback',
       builder: (context, state) => const FeedbackScreen(),
+    ),
+    GoRoute(
+      path: '/leaderboard',
+      builder: (context, state) => const LeaderboardScreen(),
+    ),
+    GoRoute(
+      path: '/pre-scenario-review',
+      builder: (context, state) {
+        final scenarioId = state.extra as String? ?? '';
+        return PreScenarioReviewScreen(scenarioId: scenarioId);
+      },
     ),
   ],
 );

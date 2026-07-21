@@ -5,19 +5,60 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../badge/widgets/badge_popup.dart';
 import '../models/score_data.dart';
 import '../viewmodels/feedback_viewmodel.dart';
 
 /// Post-conversation feedback screen showing scores, grammar corrections, and XP.
 ///
 /// Receives ScoreData via [currentScoreProvider] and displays a comprehensive
-/// breakdown of the conversation performance.
-class FeedbackScreen extends ConsumerWidget {
+/// breakdown of the conversation performance. Shows [BadgePopup] overlay
+/// when newly earned badges exist.
+class FeedbackScreen extends ConsumerStatefulWidget {
   const FeedbackScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FeedbackScreen> createState() => _FeedbackScreenState();
+}
+
+class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
+  bool _showBadgePopup = false;
+  int _currentBadgeIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForBadges();
+    });
+  }
+
+  void _checkForBadges() {
+    final badges = ref.read(newlyEarnedBadgesProvider);
+    if (badges.isNotEmpty) {
+      setState(() {
+        _showBadgePopup = true;
+        _currentBadgeIndex = 0;
+      });
+    }
+  }
+
+  void _dismissBadgePopup() {
+    final badges = ref.read(newlyEarnedBadgesProvider);
+    setState(() {
+      _currentBadgeIndex++;
+      if (_currentBadgeIndex >= badges.length) {
+        _showBadgePopup = false;
+        // Clear badges after all are shown.
+        ref.read(newlyEarnedBadgesProvider.notifier).state = const [];
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final scoreData = ref.watch(currentScoreProvider);
+    final badges = ref.watch(newlyEarnedBadgesProvider);
 
     // If no score data, show loading or error state.
     if (scoreData == null) {
@@ -27,91 +68,104 @@ class FeedbackScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // ─── Score Circle ───
-              const SizedBox(height: 24),
-              _ScoreCircle(score: scoreData.overallScore),
-
-              const SizedBox(height: 16),
-
-              // ─── Score Breakdown Row ───
-              _ScoreBreakdown(
-                fluency: scoreData.fluencyScore,
-                grammar: scoreData.grammarScore,
-                vocabulary: scoreData.vocabularyScore,
+      body: Stack(
+        children: [
+          // ─── Main Content ───
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.bgTop, AppColors.bgBottom],
               ),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  // ─── Score Circle ───
+                  const SizedBox(height: 24),
+                  _ScoreCircle(score: scoreData.overallScore),
 
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // ─── XP Badge ───
-              _XpBadge(xp: scoreData.xpEarned),
+                  // ─── Score Breakdown Row ───
+                  _ScoreBreakdown(
+                    fluency: scoreData.fluencyScore,
+                    grammar: scoreData.grammarScore,
+                    vocabulary: scoreData.vocabularyScore,
+                  ),
 
-              const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-              // ─── Grammar Corrections List ───
-              Expanded(
-                child: _GrammarCorrections(
-                  corrections: scoreData.grammarCorrections,
-                ),
-              ),
+                  // ─── XP Badge ───
+                  _XpBadge(xp: scoreData.xpEarned),
 
-              // ─── Done Button ───
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Belt-and-suspenders: sync XP to Firestore if authenticated.
-                      final user = ref.read(currentUserProvider);
-                      if (user != null && !user.isAnonymous) {
-                        final fs = ref.read(firestoreServiceProvider);
-                        fs.getProgress(user.uid).then((progress) {
-                          final existingXp = progress?['totalXp'] as int? ?? 0;
-                          final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
-                          fs.saveProgress(
-                            user.uid,
-                            totalXp: existingXp + scoreData.xpEarned,
-                            scenariosCompleted: existingCompleted,
-                            lastScenarioAt: DateTime.now(),
-                          );
-                        });
-                      }
-                      context.go('/home');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPink,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      elevation: 4,
-                      shadowColor: AppColors.shadowPink,
+                  const SizedBox(height: 16),
+
+                  // ─── Grammar Corrections List ───
+                  Expanded(
+                    child: _GrammarCorrections(
+                      corrections: scoreData.grammarCorrections,
                     ),
-                    child: Text(
-                      'Done',
-                      style: GoogleFonts.quicksand(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                  ),
+
+                  // ─── Done Button ───
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Belt-and-suspenders: sync XP to Firestore if authenticated.
+                          final user = ref.read(currentUserProvider);
+                          if (user != null && !user.isAnonymous) {
+                            final fs = ref.read(firestoreServiceProvider);
+                            fs.getProgress(user.uid).then((progress) {
+                              final existingXp = progress?['totalXp'] as int? ?? 0;
+                              final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
+                              fs.saveProgress(
+                                user.uid,
+                                totalXp: existingXp + scoreData.xpEarned,
+                                scenariosCompleted: existingCompleted,
+                                lastScenarioAt: DateTime.now(),
+                              );
+                            });
+                          }
+                          context.go('/home');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryPink,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          elevation: 4,
+                          shadowColor: AppColors.shadowPink,
+                        ),
+                        child: Text(
+                          'Done',
+                          style: GoogleFonts.quicksand(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+
+          // ─── Badge Popup Overlay ───
+          if (_showBadgePopup && badges.isNotEmpty && _currentBadgeIndex < badges.length)
+            BadgePopup(
+              badgeName: badges[_currentBadgeIndex].definition?.name ?? 'Badge',
+              badgeDescription: badges[_currentBadgeIndex].definition?.description ?? '',
+              onDismissed: _dismissBadgePopup,
+            ),
+        ],
       ),
     );
   }
@@ -336,7 +390,7 @@ class _GrammarCorrections extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Original (struck through) → Corrected
+              // Original (struck through) -> Corrected
               RichText(
                 text: TextSpan(
                   style: GoogleFonts.quicksand(
