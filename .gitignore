@@ -19,6 +19,11 @@ migrate_working_dir/
 *.keystore
 *.jks
 
+# Firebase config (contains secrets — regenerate via `flutterfire configure`)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/core/config/firebase_options.dart
+
 # IntelliJ related
 *.iml
 *.ipr
