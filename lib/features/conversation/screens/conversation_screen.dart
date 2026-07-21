@@ -104,8 +104,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             if (state.scoreData != null && !state.isEvaluating && !_hasNavigatedToFeedback) {
               _hasNavigatedToFeedback = true;
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                // Set the score data in the feedback provider before navigating.
+                // Set the score data and newly earned badges before navigating.
                 ref.read(currentScoreProvider.notifier).state = state.scoreData;
+                ref.read(newlyEarnedBadgesProvider.notifier).state = state.newlyEarnedBadges;
                 context.go('/feedback');
               });
             }
