@@ -1,18 +1,1 @@
-{
-  "firestore": {
-    "database": "(default)",
-    "location": "nam5",
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
-  "auth": {
-    "providers": {
-      "anonymous": true,
-      "emailPassword": true,
-      "googleSignIn": {
-        "oAuthBrandDisplayName": "Linguo Wizard",
-        "supportEmail": "an210dry@gmail.com"
-      }
-    }
-  }
-}
+{"firestore":{"database":"(default)","location":"nam5","rules":"firestore.rules","indexes":"firestore.indexes.json"},"auth":{"providers":{"anonymous":true,"emailPassword":true,"googleSignIn":{"oAuthBrandDisplayName":"Linguo Wizard","supportEmail":"an210dry@gmail.com"}}},"flutter":{"platforms":{"android":{"default":{"projectId":"linguo-wizard","appId":"1:554852030445:android:bb1f9e2e361c89f96379e4","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"linguo-wizard","appId":"1:554852030445:ios:07d306489f15bb716379e4","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/core/config/firebase_options.dart":{"projectId":"linguo-wizard","configurations":{"android":"1:554852030445:android:bb1f9e2e361c89f96379e4","ios":"1:554852030445:ios:07d306489f15bb716379e4","windows":"1:554852030445:web:88b0c3c54b93e8986379e4"}}}}}}
