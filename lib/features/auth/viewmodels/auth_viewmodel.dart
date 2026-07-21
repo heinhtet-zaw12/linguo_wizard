@@ -163,6 +163,26 @@ class AuthViewModel extends Notifier<AuthState> {
     }
   }
 
+  /// Sign out from Firebase and clear local session state.
+  Future<void> signOut() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.signOut();
+
+      // Clear onboarding flag so auth guard redirects to login.
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('onboarding_completed');
+
+      state = const AuthState();
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to sign out. Please try again.',
+      );
+    }
+  }
+
   void clearError() {
     state = state.copyWith(clearError: true);
   }

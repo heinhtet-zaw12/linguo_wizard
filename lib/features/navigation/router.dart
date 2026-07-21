@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +11,7 @@ import '../home/screens/home_screen.dart';
 import '../leaderboard/screens/leaderboard_screen.dart';
 import '../onboarding/screens/onboarding_screen.dart';
 import '../progress/screens/progress_screen.dart';
+import '../profile/screens/profile_screen.dart';
 import '../scenario_selection/screens/scenario_selection_screen.dart';
 import '../srs/screens/pre_scenario_review_screen.dart';
 import 'scaffold_with_nav_bar.dart';
@@ -103,11 +103,8 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/profile',
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: Scaffold(
-                  body: Center(child: Text('Profile')),
-                ),
-              ),
+              pageBuilder: (context, state) =>
+                  const NoTransitionPage(child: ProfileScreen()),
             ),
           ],
         ),
