@@ -168,6 +168,12 @@ None - no external service configuration required.
 - FirestoreService ready to persist streak, XP, badges, SRS, and mistake data per user
 - ConversationViewModel can now call GamificationService.awardXp() after scenario completion
 
+## Self-Check: PASSED
+
+- All 11 files verified to exist on disk
+- All 4 commits verified in git history
+- AppConfig.xpPerScenario confirmed as 50
+
 ---
 *Phase: 04-gamification-retention*
 *Completed: 2026-07-21*
