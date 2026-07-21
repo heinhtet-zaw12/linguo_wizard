@@ -145,6 +145,7 @@ Each task was committed atomically:
 
 1. **Task 1: Create Progress and Leaderboard UI screens** - `0a97916` (feat)
 2. **Task 2: Create Pre-Scenario Review, Badge Popup, and wire into ViewModels** - `96cfc82` (feat)
+3. **Fix: Pass newly earned badges to FeedbackScreen** - `6392b76` (fix)
 
 ## Files Created/Modified
 - `lib/features/progress/viewmodels/progress_viewmodel.dart` - ProgressViewModel with level, XP, streak, badges, mistake stats
