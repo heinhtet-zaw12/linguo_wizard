@@ -54,7 +54,7 @@ class AppConfig {
   static const String rateLimitPrefix = 'rate_limit_';
 
   /// XP earned per completed scenario (flat rate).
-  static const int xpPerScenario = 10;
+  static const int xpPerScenario = 50;
 
   /// Evaluation prompt template for Gemini structured JSON evaluation.
   /// Placeholders: {goal}, {transcript}
