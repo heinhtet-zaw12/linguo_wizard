@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../feedback/viewmodels/feedback_viewmodel.dart';
@@ -105,7 +106,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 // Set the score data in the feedback provider before navigating.
                 ref.read(currentScoreProvider.notifier).state = state.scoreData;
-                Navigator.pushReplacementNamed(context, '/feedback');
+                context.go('/feedback');
               });
             }
 
@@ -127,7 +128,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                       TextButton(
                         onPressed: () {
                           vm.clearRateLimitError();
-                          Navigator.of(context).pop();
+                          context.pop();
                         },
                         child: Text(
                           'OK',
@@ -158,7 +159,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                       TextButton(
                         onPressed: () {
                           vm.clearError();
-                          Navigator.of(context).pop();
+                          context.pop();
                         },
                         child: Text(
                           'OK',
@@ -206,7 +207,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back_ios, size: 20),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             color: AppColors.textDark,
           ),
           const SizedBox(width: 8),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -49,7 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (state.errorMessage != null) {
       _showError(state.errorMessage!);
     } else {
-      Navigator.pushReplacementNamed(context, '/home');
+      context.go('/home');
     }
   }
 
@@ -61,7 +62,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (state.errorMessage != null) {
       _showError(state.errorMessage!);
     } else {
-      Navigator.pushReplacementNamed(context, '/home');
+      context.go('/home');
     }
   }
 
@@ -73,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (state.errorMessage != null) {
       _showError(state.errorMessage!);
     } else {
-      Navigator.pushReplacementNamed(context, '/home');
+      context.go('/home');
     }
   }
 
@@ -204,8 +205,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/forgot-password'),
+                        onPressed: () => context.push('/forgot-password'),
                         child: Text(
                           'Forgot Password?',
                           style: GoogleFonts.quicksand(
@@ -328,8 +328,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              Navigator.pushReplacementNamed(context, '/signup'),
+                          onTap: () => context.go('/signup'),
                           child: Text(
                             'Sign Up',
                             style: GoogleFonts.quicksand(

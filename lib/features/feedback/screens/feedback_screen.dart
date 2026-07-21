@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/auth_provider.dart';
@@ -86,7 +87,7 @@ class FeedbackScreen extends ConsumerWidget {
                           );
                         });
                       }
-                      Navigator.pushReplacementNamed(context, '/scenarios');
+                      context.go('/home');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPink,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -52,7 +53,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     if (state.errorMessage != null) {
       _showError(state.errorMessage!);
     } else {
-      Navigator.pushReplacementNamed(context, '/home');
+      context.go('/home');
     }
   }
 
@@ -64,7 +65,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     if (state.errorMessage != null) {
       _showError(state.errorMessage!);
     } else {
-      Navigator.pushReplacementNamed(context, '/home');
+      context.go('/home');
     }
   }
 
@@ -298,8 +299,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              Navigator.pushReplacementNamed(context, '/login'),
+                          onTap: () => context.go('/login'),
                           child: Text(
                             'Sign In',
                             style: GoogleFonts.quicksand(

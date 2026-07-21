@@ -1,10 +1,9 @@
 import 'dart:math' as math;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
-import '../onboarding/viewmodels/onboarding_viewmodel.dart';
 
 /// Animated splash screen — 3D Claymorphism style.
 ///
@@ -128,24 +127,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Future<void> _navigateAfterSplash() async {
     if (!mounted) return;
 
-    final user = FirebaseAuth.instance.currentUser;
-    final onboardingDone = await OnboardingViewModel.hasCompletedOnboarding();
-
-    if (!mounted) return;
-
-    String targetRoute;
-    if (user == null) {
-      // Not authenticated — go to login
-      targetRoute = '/login';
-    } else if (onboardingDone) {
-      // Authenticated/guest with onboarding done — go to home
-      targetRoute = '/home';
-    } else {
-      // Authenticated/guest without onboarding — go to onboarding
-      targetRoute = '/onboarding';
-    }
-
-    Navigator.pushReplacementNamed(context, targetRoute);
+    // Navigate to home — GoRouter's redirect handles auth/onboarding routing.
+    context.go('/home');
   }
 
   @override

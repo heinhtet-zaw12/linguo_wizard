@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -81,7 +82,7 @@ class _GuestBannerState extends State<GuestBanner> {
             children: [
               GestureDetector(
                 onTap: () =>
-                    Navigator.pushReplacementNamed(context, '/signup'),
+                    context.go('/signup'),
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
