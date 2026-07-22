@@ -5,6 +5,7 @@ import '../../../core/models/mistake_record.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/service_providers.dart';
 import '../../../core/services/ai_service.dart';
+import '../../../core/services/conversation_storage_service.dart';
 import '../../../core/services/evaluation_service.dart';
 import '../../../core/services/rate_limiter.dart';
 import '../../../core/services/stt_service.dart';
@@ -26,6 +27,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   late final AiService _aiService;
   late final EvaluationService _evaluationService;
   final RateLimiterService _rateLimiter = RateLimiterService();
+  final ConversationStorageService _conversationStorage = ConversationStorageService();
 
   /// Initialize services, AI persona, and seed the opening message.
   @override
@@ -200,6 +202,53 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     await _ttsService.speak(aiResponseText);
   }
 
+  // ─── Audio Playback Control ───
+
+  /// Play (or resume) a specific AI voice message.
+  ///
+  /// Stops any currently playing TTS, sets the active message ID,
+  /// and speaks the [transcript] aloud. On completion, clears
+  /// [playingMessageId] so the UI returns to play mode.
+  Future<void> playMessage(String messageId, String transcript) async {
+    await _ttsService.stop();
+
+    final current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(playingMessageId: messageId));
+
+    _ttsService.setCompletionHandler(() {
+      try {
+        final s = state.value;
+        if (s != null) {
+          state = AsyncData(s.copyWith(clearPlayingMessageId: true));
+        }
+      } catch (_) {}
+      // Restore the original conversation completion handler.
+      _ttsService.setCompletionHandler(() {
+        try {
+          final s = state.value;
+          if (s != null && s.loopState == ConversationLoopState.speaking) {
+            state = AsyncData(s.copyWith(
+              loopState: ConversationLoopState.idle,
+              isAiSpeaking: false,
+            ));
+          }
+        } catch (_) {}
+      });
+    });
+
+    await _ttsService.speak(transcript);
+  }
+
+  /// Stop active playback and reset to idle.
+  Future<void> stopPlayback() async {
+    await _ttsService.stop();
+    final current = state.value;
+    if (current != null) {
+      state = AsyncData(current.copyWith(clearPlayingMessageId: true));
+    }
+  }
+
   // ─── Navigation helpers ───
 
   /// Hint text shown below the mic button.
@@ -276,6 +325,120 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     final current = state.value;
     if (current == null) return;
     state = AsyncData(current.copyWith(clearError: true));
+  }
+
+  // ─── Conversation Persistence ───
+
+  /// Save the current conversation state for later resumption.
+  ///
+  /// Guests use SharedPreferences; authenticated users use Firestore.
+  /// The opening AI message is excluded to avoid re-playing it on resume.
+  Future<void> saveConversation() async {
+    final current = state.value;
+    if (current == null || current.scenario == null) return;
+
+    // Don't save if there's nothing meaningful (only the opening message).
+    if (current.messages.length <= 1) return;
+
+    final user = ref.read(currentUserProvider);
+    final isAuth = user != null && !user.isAnonymous;
+
+    if (isAuth) {
+      await _conversationStorage.saveConversationUser(
+        uid: user.uid,
+        scenario: current.scenario!,
+        messages: current.messages,
+        turnCount: current.turnCount,
+      );
+    } else {
+      await _conversationStorage.saveConversationGuest(
+        scenario: current.scenario!,
+        messages: current.messages,
+        turnCount: current.turnCount,
+      );
+    }
+  }
+
+  /// Load a previously saved conversation for the current scenario.
+  ///
+  /// Returns the saved [ConversationSnapshot] or null if none exists.
+  Future<ConversationSnapshot?> loadSavedConversation(Scenario scenario) async {
+    final user = ref.read(currentUserProvider);
+    final isAuth = user != null && !user.isAnonymous;
+
+    if (isAuth) {
+      return _conversationStorage.loadConversationUser(
+        uid: user.uid,
+        scenarioId: scenario.id,
+      );
+    } else {
+      return _conversationStorage.loadConversationGuest(scenario.id);
+    }
+  }
+
+  /// Check if a saved conversation exists for this scenario.
+  Future<bool> hasSavedConversation(Scenario scenario) async {
+    final user = ref.read(currentUserProvider);
+    final isAuth = user != null && !user.isAnonymous;
+
+    if (isAuth) {
+      return _conversationStorage.hasConversationUser(
+        uid: user.uid,
+        scenarioId: scenario.id,
+      );
+    } else {
+      return _conversationStorage.hasConversationGuest(scenario.id);
+    }
+  }
+
+  /// Clear (delete) the saved conversation for the current scenario.
+  Future<void> deleteSavedConversation() async {
+    final current = state.value;
+    final scenario = current?.scenario;
+    if (scenario == null) return;
+
+    final user = ref.read(currentUserProvider);
+    final isAuth = user != null && !user.isAnonymous;
+
+    if (isAuth) {
+      await _conversationStorage.deleteConversationUser(
+        uid: user.uid,
+        scenarioId: scenario.id,
+      );
+    } else {
+      await _conversationStorage.deleteConversationGuest(scenario.id);
+    }
+  }
+
+  /// Restore a saved conversation into state.
+  void restoreConversation(ConversationSnapshot snapshot) {
+    final current = state.value;
+    if (current == null) return;
+
+    final messages = ConversationStorageService.messagesFromSnapshot(snapshot);
+    state = AsyncData(current.copyWith(
+      messages: messages,
+      turnCount: snapshot.turnCount,
+    ));
+  }
+
+  /// Start a completely fresh conversation (clear state + delete saved).
+  Future<void> startFreshConversation() async {
+    final current = state.value;
+    final scenario = current?.scenario;
+    if (scenario == null) return;
+
+    await deleteSavedConversation();
+
+    final openingMessage = Message.create(
+      sender: MessageSender.ai,
+      transcript: scenario.openingMessage,
+    );
+
+    state = AsyncData(ConversationState(
+      scenario: scenario,
+      messages: [openingMessage],
+    ));
   }
 
   // ─── Gamification & Firestore sync ───

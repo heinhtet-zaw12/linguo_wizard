@@ -28,6 +28,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   final ScrollController _scrollController = ScrollController();
   Scenario? _scenario;
   bool _hasNavigatedToFeedback = false;
+  bool _hasCheckedSaved = false;
 
   @override
   void initState() {
@@ -40,6 +41,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     super.didChangeDependencies();
     // Lazily read the scenario on first dependency pass (after initState).
     _scenario ??= ref.read(selectedScenarioProvider);
+    _checkForSavedConversation();
   }
 
   @override
@@ -48,12 +50,175 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     super.dispose();
   }
 
+  // ─── Persistence helpers ───
+
+  Future<void> _checkForSavedConversation() async {
+    if (_hasCheckedSaved) return;
+    final scenario = _scenario;
+    if (scenario == null) return;
+
+    final vm = ref.read(conversationProvider(scenario).notifier);
+    final hasSaved = await vm.hasSavedConversation(scenario);
+    if (!hasSaved || !mounted) return;
+
+    _hasCheckedSaved = true;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Saved Conversation Found',
+          style: const TextStyle(fontFamily: 'Quicksand'),
+        ),
+        content: Text(
+          'You have a saved conversation from earlier. '
+          'Would you like to resume where you left off?',
+          style: const TextStyle(fontFamily: 'Quicksand'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              ctx.pop();
+              _startFresh();
+            },
+            child: Text(
+              'Start Fresh',
+              style: TextStyle(
+                fontFamily: 'Quicksand',
+                color: AppColors.textMuted,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              ctx.pop();
+              final snapshot = await vm.loadSavedConversation(scenario);
+              if (snapshot != null && mounted) {
+                vm.restoreConversation(snapshot);
+              }
+            },
+            child: Text(
+              'Resume',
+              style: TextStyle(
+                fontFamily: 'Quicksand',
+                color: AppColors.primaryPink,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _startFresh() async {
+    final scenario = _scenario;
+    if (scenario == null) return;
+    final vm = ref.read(conversationProvider(scenario).notifier);
+    await vm.startFreshConversation();
+  }
+
+  Future<bool> _onWillPop() async {
+    final scenario = _scenario;
+    if (scenario == null) return true;
+
+    final vm = ref.read(conversationProvider(scenario).notifier);
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Save Progress?',
+          style: const TextStyle(fontFamily: 'Quicksand'),
+        ),
+        content: Text(
+          'Do you want to save this conversation so you can continue later?',
+          style: const TextStyle(fontFamily: 'Quicksand'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => ctx.pop('discard'),
+            child: Text(
+              'Discard',
+              style: TextStyle(
+                fontFamily: 'Quicksand',
+                color: AppColors.textMuted,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => ctx.pop('save'),
+            child: Text(
+              'Save & Exit',
+              style: TextStyle(
+                fontFamily: 'Quicksand',
+                color: AppColors.primaryPink,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (result == 'save') {
+      await vm.saveConversation();
+    } else if (result == 'discard') {
+      await vm.deleteSavedConversation();
+    }
+
+    return true;
+  }
+
   // ─── User action forwarding ───
 
   void _onMicPressed() {
     final scenario = _scenario;
     if (scenario == null) return;
     ref.read(conversationProvider(scenario).notifier).onMicPressed();
+  }
+
+  void _onNewChat() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'New Conversation',
+          style: const TextStyle(fontFamily: 'Quicksand'),
+        ),
+        content: Text(
+          'Start a fresh conversation? Current progress will be lost.',
+          style: const TextStyle(fontFamily: 'Quicksand'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => ctx.pop(),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontFamily: 'Quicksand',
+                color: AppColors.textMuted,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              ctx.pop();
+              _startFresh();
+            },
+            child: Text(
+              'New Chat',
+              style: TextStyle(
+                fontFamily: 'Quicksand',
+                color: AppColors.primaryPink,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // ─── Helpers ───
@@ -86,7 +251,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     final asyncState = ref.watch(conversationProvider(scenario));
     final vm = ref.read(conversationProvider(scenario).notifier);
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        final shouldPop = await _onWillPop();
+        if (shouldPop && mounted) {
+          context.pop();
+        }
+      },
+      child: Scaffold(
       backgroundColor: AppColors.bgTop,
       body: SafeArea(
         child: asyncState.when(
@@ -176,7 +350,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             return Column(
               children: [
                 _buildTopBar(scenario),
-                _buildMessageList(state),
+                _buildMessageList(state, vm),
                 if (state.loopState == ConversationLoopState.recording &&
                     state.currentPartialTranscript.isNotEmpty)
                   _buildPartialTranscript(state.currentPartialTranscript),
@@ -185,6 +359,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             );
           },
         ),
+      ),
       ),
     );
   }
@@ -211,7 +386,6 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             onPressed: () => context.pop(),
             color: AppColors.textDark,
           ),
-          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,12 +413,18 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               ],
             ),
           ),
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline, size: 22),
+            tooltip: 'New Chat',
+            onPressed: _onNewChat,
+            color: AppColors.primaryPink,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMessageList(ConversationState state) {
+  Widget _buildMessageList(ConversationState state, ConversationViewModel vm) {
     return Expanded(
       child: ListView.builder(
         controller: _scrollController,
@@ -257,9 +437,22 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   message.sender == MessageSender.ai &&
                   index == state.messages.length - 1;
 
+          final isPlaybackActive =
+              state.playingMessageId == message.id;
+
           return VoiceMessageBubble(
             message: message,
-            isPlaying: isSpeaking,
+            isPlaying: isSpeaking || isPlaybackActive,
+            isPlaybackActive: isPlaybackActive,
+            onPlayPause: message.sender == MessageSender.ai
+                ? () {
+                    if (isPlaybackActive) {
+                      vm.stopPlayback();
+                    } else {
+                      vm.playMessage(message.id, message.transcript);
+                    }
+                  }
+                : null,
           );
         },
       ),

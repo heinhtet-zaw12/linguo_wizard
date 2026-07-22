@@ -23,6 +23,7 @@ class ConversationState {
   final ScoreData? scoreData;
   final List<Badge> newlyEarnedBadges;
   final String? errorMessage;
+  final String? playingMessageId;
 
   const ConversationState({
     this.messages = const [],
@@ -37,6 +38,7 @@ class ConversationState {
     this.scoreData,
     this.newlyEarnedBadges = const [],
     this.errorMessage,
+    this.playingMessageId,
   });
 
   ConversationState copyWith({
@@ -52,7 +54,9 @@ class ConversationState {
     ScoreData? scoreData,
     List<Badge>? newlyEarnedBadges,
     String? errorMessage,
+    String? playingMessageId,
     bool clearError = false,
+    bool clearPlayingMessageId = false,
   }) {
     return ConversationState(
       messages: messages ?? this.messages,
@@ -68,6 +72,9 @@ class ConversationState {
       scoreData: scoreData ?? this.scoreData,
       newlyEarnedBadges: newlyEarnedBadges ?? this.newlyEarnedBadges,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      playingMessageId: clearPlayingMessageId
+          ? null
+          : (playingMessageId ?? this.playingMessageId),
     );
   }
 }

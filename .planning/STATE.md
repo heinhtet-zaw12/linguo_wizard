@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: context exhaustion at 75% (2026-07-21)
-last_updated: "2026-07-21T05:21:26.076Z"
+stopped_at: context exhaustion at 75% (2026-07-22)
+last_updated: "2026-07-22T15:48:31.117Z"
 progress:
   total_phases: 5
   completed_phases: 4
@@ -99,12 +99,24 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 - 2026-07-21: Phase 3 complete — Firebase Auth, Firestore, cloud sync
 - 2026-07-21: Phase 4 complete — gamification (streaks, XP, badges, SRS, leaderboard, progress)
 - 2026-07-21: Phase 4 UAT passed — 13/13 automated verification tests
+- 2026-07-22: **Enhancement session** — Conversation voice message UI overhaul + history persistence:
+  - Audio-first bubble with Play/Pause controls for AI messages
+  - Collapsible transcript ("Show Transcript"/"Hide Transcript" toggle)
+  - New `ConversationStorageService` (SharedPreferences for guests, Firestore for auth users)
+  - Save/discard dialog on exit, New Chat button to reset, Resume prompt on re-entry
+  - See `.planning/tmp/conversation-update-plan.md` for full scope
 
 ---
-*Last updated: 2026-07-21 after Phase 4 completion*
+*Last updated: 2026-07-22 after enhancement session*
 
 ## Session
 
-**Last session:** 2026-07-21T05:21:00Z
-**Stopped at:** Phase 4 complete, ready to plan Phase 5
-**Resume file:** None
+**Last session:** 2026-07-22T16:17:00.000Z
+**Stopped at:** context exhaustion (2026-07-22)
+**Resume file:** `.planning/tmp/conversation-update-plan.md`
+
+## Remaining Work
+
+The following were scoped but not implemented (flagged as Future Roadmap):
+- **Myanmar (Burmese) language UI** — localization support in conversation view
+- **Dynamic transcript translation** — inline option to translate/switch transcripts to Myanmar text
