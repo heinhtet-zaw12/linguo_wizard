@@ -42,8 +42,8 @@
 |---------|--------|
 | Sign-up/login & cloud sync | Deferred to Phase 2 |
 | Streaks, badges, leaderboard | Deferred to Phase 3 |
-| Premium gating / monetization | Deferred to Phase 4 |
-| Pronunciation scoring (phoneme-level) | Requires paid API, deferred to Phase 4 |
+| Premium gating / monetization | Not planned — app is 100% free |
+| Pronunciation scoring (phoneme-level) | Requires paid API, not planned |
 | Real-time conversation | Voice messages, not live phone-call style |
 | AI mid-conversation corrections | Post-conversation only to preserve immersion |
 | Multiple languages | English only in v1 |

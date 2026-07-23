@@ -21,13 +21,11 @@
 - Package: `flutter_tts` (Flutter native)
 - Purpose: Convert AI text responses to voice output
 - Implementation: Device-native TTS (free, no cloud dependency)
-- Upgrade path (later phases): ElevenLabs API, Google Cloud WaveNet
+- No paid upgrade planned — app is 100% free
 
-**Pronunciation Scoring (Phase 4, Premium):**
-- Provider: Azure Speech Services OR Speechace API
-- Purpose: Phoneme-level pronunciation assessment
-- Implementation: REST API integration
-- Access: Paid service, premium tier only
+**Pronunciation Scoring:**
+- Status: **Not planned** — all paid APIs avoided
+- App relies on existing evaluation pipeline (Gemini-based transcript analysis) for grammar + fluency feedback
 
 ## Data Storage
 

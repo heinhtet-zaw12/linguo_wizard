@@ -10,8 +10,8 @@ dialogues with an AI conversation partner. Users are dropped into simulated real
 - **Backend/DB**: Firebase (Auth + Firestore)
 - **AI Conversation Engine**: Gemini API (free tier) or Groq API
 - **STT**: `speech_to_text` package (device-native, free)
-- **TTS**: `flutter_tts` package (device-native, free); later upgrade path: ElevenLabs / Google Cloud WaveNet
-- **Pronunciation scoring** (Premium, later phase): Azure Speech or Speechace (paid, phoneme-level)
+- **TTS**: `flutter_tts` package (device-native, free)
+- **Pronunciation scoring**: Not planned — all paid APIs avoided to keep the app 100% free
 
 ## Design Style
 Theme: **3D Claymorphism** (soft, rounded, matte clay-style 3D character illustration + minimal pastel UI)
@@ -63,13 +63,14 @@ Theme: **3D Claymorphism** (soft, rounded, matte clay-style 3D character illustr
 - Spaced repetition (SRS): resurface previously-missed vocab/phrases in later scenarios
 - Mistake pattern dashboard (time-series)
 
-### Phase 4 — Premium / Monetization
-- Premium gating: unlimited daily conversations, advanced scenarios, ad-free
-- Pronunciation-level feedback (paid API integration)
-- "Today's twist" — Gemini-generated scenario variation for repeat-play value
+### Phase 5 — Polish & Custom Scenarios
+- Firestore-backed scenario catalog (30+ curated scenarios with categories, search, pagination)
+- AI-generated custom scenarios (unlimited, free)
+- Today's Twist — replay completed scenarios with progressive AI-generated variations
+- Daily Challenge — fresh AI-generated scenario daily with 2x XP bonus
 
 ## Engineering Notes
 - Keep AI system prompts (persona, scenario goal, redirect logic) server-side or in a config layer, not hardcoded per-screen — scenarios will grow over time.
 - Guest-mode data model should be structured so it can migrate cleanly into a Firestore user doc on sign-up (avoid two separate schemas).
-- Rate-limit AI calls per device/IP for guests and per-user for free tier; premium tier gets higher/unlimited quota.
+- Rate-limit AI calls per device/IP for guests and per-user for free tier.
 - CEFR level filter lives inside Scenario Selection screen as a chip row — no separate level-selection screen.

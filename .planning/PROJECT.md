@@ -37,8 +37,8 @@ The voice conversation loop — speak naturally to an AI character, get immersiv
 
 ### Out of Scope
 
-- **Premium gating / monetization** — deferred to Phase 5
-- **Pronunciation scoring (phoneme-level)** — requires paid API (Azure/Speechace), deferred to Phase 5
+- **Premium gating / monetization** — not planned, app is 100% free
+- **Pronunciation scoring (phoneme-level)** — requires paid API (Azure/Speechace), not planned
 - **Real-time conversation** — voice messages, not live phone-call style
 - **AI mid-conversation corrections** — feedback is post-conversation only to preserve immersion
 - **Multiple languages** — English only in v1

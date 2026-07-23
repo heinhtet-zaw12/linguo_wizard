@@ -101,9 +101,15 @@ Based on project brief in `CLAUDE.md`:
 - Spaced repetition system
 - Pattern analysis
 
-**Phase 4 - Premium:**
-- Subscription gating
-- Advanced integrations (Azure Speech, ElevenLabs TTS)
+**Phase 4 - Gamification & Retention:**
+- Streaks, XP, badges
+- Spaced repetition system
+- Pattern analysis
+
+**Phase 5 - Polish & Custom Scenarios:**
+- Firestore-backed scenario catalog
+- AI-generated custom scenarios
+- Today's Twist, Daily Challenge
 
 ---
 

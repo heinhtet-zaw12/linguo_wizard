@@ -23,7 +23,7 @@ No application logic exists to contain bugs. The default Flutter demo functions 
 - Files: `pubspec.yaml`, no `.env` files or env var handling
 - Current mitigation: None
 - Recommendations:
-  - Implement `--dart-define` for build-time API keys (Gemini, Groq, Azure Speech)
+  - Implement `--dart-define` for build-time API keys (Gemini, Groq)
   - Never commit secrets to version control
   - Consider using `flutter_dotenv` or platform-specific secure storage for runtime secrets
   - Document required env vars in developer setup guide
@@ -124,7 +124,7 @@ No application logic exists to contain bugs. The default Flutter demo functions 
 **API Quotas:**
 - Current capacity: Gemini free tier (60 requests/minute, 1500 requests/day)
 - Limit: Will exceed free tier if app gains traction
-- Scaling path: Implement aggressive caching; upgrade to paid tier with usage monitoring; add quota dashboard
+- Scaling path: Implement aggressive caching; monitor usage against limits
 
 **Conversation Length:**
 - Current capacity: Unlimited per session

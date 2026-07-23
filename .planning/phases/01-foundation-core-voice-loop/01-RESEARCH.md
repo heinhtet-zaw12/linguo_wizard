@@ -425,7 +425,7 @@ final conversationProvider = StateNotifierProvider.autoDispose<
 |---|-------|---------|---------------|
 | A1 | Gemini API free tier is sufficient for Phase 1 dev/testing | Standard Stack | May need to budget for API costs during development |
 | A2 | speech_to_text works on Web (Chrome/Edge) with HTTPS | Cross-Platform | Web STT may need fallback or be deferred |
-| A3 | Device-native TTS quality is acceptable for language learning | TTS Service | May need premium TTS (ElevenLabs) sooner than planned |
+| A3 | Device-native TTS quality is acceptable for language learning | TTS Service | May need to improve TTS quality — no paid APIs planned, app is 100% free |
 | A4 | SharedPreferences is sufficient for guest mode data in Phase 1 | Local Storage | May need Hive if data model grows complex |
 
 ## Open Questions
