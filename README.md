@@ -1,16 +1,46 @@
-# linguo_wizard
+# Linguo Wizard
 
-Flutter mobile app for practicing spoken English through simulated real-world dialogues with an AI conversation partner.
+Conversational English learning app — practice spoken English through simulated real-world dialogues with an AI conversation partner.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK
+- Firebase CLI (`npm install -g firebase-tools`)
+- Firebase account
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Setup
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/heinhtet-zaw12/linguo_wizard.git
+   cd linguo_wizard
+   ```
+
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+
+3. Generate Firebase config (required — secrets are gitignored):
+   ```bash
+   flutterfire configure
+   ```
+   This creates `lib/core/config/firebase_options.dart` with your Firebase project keys.
+
+4. Run the app:
+   ```bash
+   flutter run
+   ```
+
+## Architecture
+
+MVVM + Feature-first structure. See `CLAUDE.md` for full details.
+
+## Tech Stack
+
+- Flutter + Riverpod (state management)
+- Firebase (Auth, Firestore)
+- Gemini API (AI conversation)
+- speech_to_text / flutter_tts (voice I/O)

@@ -41,6 +41,14 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     super.didChangeDependencies();
     // Lazily read the scenario on first dependency pass (after initState).
     _scenario ??= ref.read(selectedScenarioProvider);
+
+    // Clear stale scoreData from a previous evaluation so the guard on line 278
+    // (scoreData != null → navigate to feedback) doesn't trigger on re-entry.
+    final scenario = _scenario;
+    if (scenario != null) {
+      ref.read(conversationProvider(scenario).notifier).clearScoreData();
+    }
+
     _checkForSavedConversation();
   }
 

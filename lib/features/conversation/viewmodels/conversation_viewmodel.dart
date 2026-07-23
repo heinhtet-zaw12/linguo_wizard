@@ -311,6 +311,16 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     _triggerGamification(current.scenario!, scoreData);
   }
 
+  /// Clear the score data to prevent stale evaluation state from persisting
+  /// across navigation (e.g. re-entering a conversation after viewing feedback).
+  ///
+  /// Called by [ConversationScreen] on entry to ensure a clean state.
+  void clearScoreData() {
+    final current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(clearScoreData: true));
+  }
+
   /// Clear the rate limit exceeded error state.
   ///
   /// Called when the user dismisses the rate limit dialog.

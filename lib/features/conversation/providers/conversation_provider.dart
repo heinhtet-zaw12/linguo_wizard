@@ -57,7 +57,8 @@ class ConversationState {
     String? playingMessageId,
     bool clearError = false,
     bool clearPlayingMessageId = false,
-  }) {
+    bool clearScoreData = false,
+}) {
     return ConversationState(
       messages: messages ?? this.messages,
       isRecording: isRecording ?? this.isRecording,
@@ -69,7 +70,7 @@ class ConversationState {
       loopState: loopState ?? this.loopState,
       scenario: scenario ?? this.scenario,
       turnCount: turnCount ?? this.turnCount,
-      scoreData: scoreData ?? this.scoreData,
+      scoreData: clearScoreData ? null : (scoreData ?? this.scoreData),
       newlyEarnedBadges: newlyEarnedBadges ?? this.newlyEarnedBadges,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       playingMessageId: clearPlayingMessageId
