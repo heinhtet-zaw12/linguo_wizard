@@ -1,146 +1,91 @@
-# Phase 5: Polish & Custom Scenarios - Discussion Log
+# Phase 5: Premium-and-Polish - Discussion Log
 
 > **Audit trail only.** Do not use as input to planning, research, or execution agents.
 > Decisions are captured in CONTEXT.md — this log preserves the alternatives considered.
 
-**Date:** 2026-07-23
+**Date:** 2026-07-23 (Updated)
 **Phase:** 05-premium-and-polish
-**Areas discussed:** Premium infrastructure, Phase 5 scope, Today's Twist, Daily Challenge, Scenario seeding, Phase 6 features
+**Mode:** Update existing context
 
 ---
 
-## Premium Infrastructure
+## Context Update Session
+
+**Prior state:** CONTEXT.md existed with 9 decisions (D-01 through D-09), 2 plans existed (05-01, 05-02), UI-SPEC.md locked UI design.
+
+**Action:** Updated context with custom scenario lifecycle decisions. Remaining gray areas (Daily Challenge rotation, Twist tracking, curated scenario schema) deferred to Claude's discretion.
+
+---
+
+## Custom Scenario Lifecycle
+
+### Edit after save
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Simple boolean flag | Premium is just a config flag in AppConfig / Firestore user doc | |
-| Firebase user doc field | Add 'isPremium'/'tier' field to Firestore user doc | |
-| Let Claude decide | Flexible recommendation | |
+| No editing needed | Once saved, the scenario is fixed | ✓ |
+| Yes — edit before replay | Pre-filled form to regenerate | |
+| You decide | Claude's pragmatic choice | |
 
-**User's choice:** **Clarification requested** — user clarified the app is completely free, no premium features at all.
+**User's choice:** No editing needed
 
 ---
 
-## Phase 5 Scope (After Premium Removal)
+### Delete after save
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Just the two plans | Firestore catalog + custom scenarios. That's the finish line. | |
-| Add 'Today's Twist' | AI generates a fun variation for replayability | |
-| Let's brainstorm | User has other features in mind | ✓ |
+| Yes — with confirmation | Delete with "This can't be undone" dialog | ✓ |
+| No delete | Users can only create, not remove | |
+| You decide | Claude's choice | |
 
-**User's choice:** Let's brainstorm
-**Notes:** User was enthusiastic about all 6 proposed features. Decided to split into Phase 5 + Phase 6.
+**User's choice:** Yes — with confirmation
 
 ---
 
-## Today's Twist — Trigger
+### Ordering
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Badge on card | Twist badge on completed scenario cards | ✓ |
-| Auto-offer on completion | 'Play again with a twist?' on feedback screen | |
-| Shuffle button | Explicit 'Random Twist' control | |
+| By creation date (newest first) | Most recently created at top | ✓ |
+| By last played date | Most recently practiced at top | |
+| Alphabetical order | Simple, predictable sorting | |
 
-**User's choice:** Badge on card
+**User's choice:** By creation date (newest first)
 
 ---
 
-## Today's Twist — Depth
+### Practical limit
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Subtle | Change one situational detail | |
-| Moderate | Change persona or goal | |
-| Progressive twist | Subtle on first replay, moderate on subsequent | ✓ |
+| No limit | Unlimited — consistent with free app | ✓ |
+| Soft limit (50) | Sanity cap no regular user would hit | |
 
-**User's choice:** Progressive twist
-
----
-
-## Today's Twist — Tracking
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Visible badge only | No detailed tracking | ✓ |
-| Tracked with history | Counter + past twists browsable | |
-| Hidden / surprise | No indicator at all | |
-
-**User's choice:** Visible badge only
+**User's choice:** No limit (Claude's recommendation, user said "You decide")
 
 ---
 
-## Daily Challenge — Selection
+## Area Completion
 
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Random pick | Pick a random curated scenario daily | |
-| AI-generated daily unique | Fresh AI-generated variation each day | ✓ |
-| Manual curation | You pick which scenario is featured | |
-
-**User's choice:** AI-generated daily unique
+- Custom scenario lifecycle: Discussed and captured ✓
+- Daily Challenge rotation: Deferred to Claude's discretion
+- Twist completion tracking: Deferred to Claude's discretion
+- Curated scenario schema + seed workflow: Deferred to Claude's discretion
 
 ---
 
-## Daily Challenge — Placement
+## Claude's Discretion (from this session)
 
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Top of scenario screen | Card at top of scenario selection | |
-| Home dashboard hero | Featured placement on Home screen | ✓ |
-| Both placements | Home + scenario screen | |
-
-**User's choice:** Home dashboard hero
-
----
-
-## Daily Challenge — Reward
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| 1.5x XP bonus | 50 + 25 XP | |
-| 2x XP bonus | 50 + 50 = 100 XP | ✓ |
-| XP + streak protection | Double XP + auto-streak | |
-
-**User's choice:** 2x XP bonus
+- Daily Challenge rotation: timezone handling, reset timing, global vs per-user
+- Twist tracking: where/how to store replay count for progressive depth
+- Curated scenario schema: fields beyond current model
+- Scenario seed prompt design
+- Custom scenario deletion UX interaction (long-press, swipe, or menu)
+- Custom scenario generation output schema
 
 ---
-
-## Scenario Seeding (Plan 05-01)
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Hand-crafted by me | Full manual control | |
-| AI-generated + reviewed | Gemini generates, you review | ✓ |
-| AI drafts, hand-curated | Hybrid approach | |
-
-**User's choice:** AI-generated + reviewed
-
----
-
-## Phase 6 Features
-
-| Feature | Decision |
-|---------|----------|
-| Vocabulary Book | Dropped — replaced by AI Explain button |
-| Conversation History | Dropped — scope decision |
-| Scenario Collections | Included in Phase 6 |
-| Myanmar UI | Included in Phase 6 |
-| AI Explain button | Included in Phase 6 (tightly scoped: inline text-only on bubbles) |
-
----
-
-## Claude's Discretion
-
-- Today's Twist Gemini prompt design (how to generate the variation)
-- Daily Challenge rotation logic and timezone handling
-- Scenario seed prompt design for Gemini generation
-- UI details for the Twist badge, Challenge hero card, and Create Scenario button
-- Category tab design and ordering (Travel, Work, Social, Academic, Daily Life)
-- Search bar debounce and minimum character behavior
 
 ## Deferred Ideas
 
-- Conversation History & Review — dropped after reconsideration
-- Vocabulary Book — dropped after reconsideration
-- Pronunciation scoring (phoneme-level) — requires paid API, not pursued
+*(No new deferred ideas — Phase 5 scope unchanged)*
