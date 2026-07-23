@@ -121,7 +121,7 @@ Plans:
 
 **Requirements:** CONV-01, CONV-03, CONV-04, CONV-05
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans executed
 
 Plans:
 **Wave 1**
@@ -136,7 +136,7 @@ Plans:
 **Wave 3** *(blocked on Wave 1 + Wave 2 plans)*
 
 - [x] 05-03-PLAN.md — Today's Twist: Twist badge on completed cards, progressive AI variations, no counter/history
-- [ ] 05-04-PLAN.md — Daily Challenge: UTC-based fresh AI challenge daily, Home hero card with countdown, 2x XP (100 total)
+- [x] 05-04-PLAN.md — Daily Challenge: UTC-based fresh AI challenge daily, Home hero card with countdown, 2x XP (100 total)
 
 ---
 
