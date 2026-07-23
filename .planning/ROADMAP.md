@@ -109,19 +109,46 @@ Plans:
 
 ---
 
-## Phase 5: Premium & Polish
+## Phase 5: Polish & Custom Scenarios 🔄
 
-**Goal:** Monetization, pronunciation scoring, production polish
+**Goal:** Production-scale scenario catalog, AI-generated custom scenarios, Today's Twist, Daily Challenge
 **Success Criteria:**
 
-1. Premium gating: unlimited conversations, advanced scenarios, ad-free
-2. Pronunciation-level feedback (Azure Speech / Speechace)
-3. "Today's twist" — Gemini-generated scenario variation
-4. Cross-platform polish (iOS, Android, Web)
-5. All edge cases handled (network errors, mic permissions, etc.)
+1. 30+ curated scenarios in Firestore catalog with category tabs, search, and infinite scroll pagination
+2. Users can create unlimited custom scenarios via Gemini generation
+3. Today's Twist — replay completed scenarios with progressive AI-generated variations
+4. Daily Challenge — fresh AI-generated scenario daily with 2x XP bonus on Home dashboard
 
-**Requirements:** PLAT-03
+**Requirements:** CONV-01, CONV-03, CONV-04, CONV-05
+
+**Plans:** 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 05-01-PLAN.md — Firestore scenario catalog: 30+ curated scenarios, categories, search, pagination, local cache
+- [ ] 05-02-PLAN.md — Custom scenarios: Gemini generation, preview/edit flow, unlimited for all users
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 05-03-PLAN.md — Today's Twist: progressive twist depth, badge-on-card trigger
+- [ ] 05-04-PLAN.md — Daily Challenge: AI-generated daily scenario, Home hero card, 2x XP
 
 ---
 
-*Last updated: 2026-07-18 after Phase 2 completion*
+## Phase 6: Content & Localization
+
+**Goal:** Scenario collections/learning paths, Myanmar (Burmese) UI, in-conversation AI explainer
+**Success Criteria:**
+
+1. Scenario Collections — grouped learning paths (Travel Pack, Work Pack, etc.)
+2. Myanmar (Burmese) UI localization — full app UI translated
+3. AI "Explain" button — inline text-only explanation + translation on AI message bubbles
+
+**Requires:** Phase 5 complete
+
+Plans: TBD
+
+---
+
+*Last updated: 2026-07-23*
