@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/firestore_service.dart';
 import '../services/gamification_service.dart';
+import '../services/scenario_service.dart';
 import '../services/srs_service.dart';
 import 'auth_provider.dart';
 
@@ -18,3 +19,9 @@ final gamificationServiceProvider = Provider<GamificationService>((ref) {
 final srsServiceProvider = Provider<SrsService>((ref) {
   return SrsService(ref.read(firestoreServiceProvider));
 });
+
+/// Injectable provider for [FirestoreScenarioService].
+///
+/// Stateless service for fetching and caching curated scenarios from Firestore.
+final scenarioServiceProvider =
+    Provider<FirestoreScenarioService>((ref) => FirestoreScenarioService());
