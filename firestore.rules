@@ -25,6 +25,10 @@ service cloud.firestore {
       match /mistakes/{docId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+      // Custom scenarios subcollection — owner-only read/write.
+      match /custom_scenarios/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
     // Public scenarios collection — unauthenticated reads allowed.
     // Writes restricted to admin users only (admin flag on auth token).
