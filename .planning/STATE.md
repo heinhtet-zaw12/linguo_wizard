@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: context exhaustion at 75% (2026-07-23)
-last_updated: "2026-07-23T11:49:29.715Z"
+status: In Progress
+stopped_at: ""
+last_updated: "2026-07-23T15:27:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 10
-  percent: 67
+  total_plans: 15
+  completed_plans: 11
+  percent: 69
 ---
 
 # Project State
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-14)
 
 **Core value:** The voice conversation loop — speak naturally to an AI character, get immersive practice, and receive actionable feedback afterward.
-**Current focus:** Phase 05 — premium-&-polish
+**Current focus:** Phase 05 — premium-and-polish
 
 ## Progress
 
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 | Phase 2 | **Complete** | 100% |
 | Phase 3 | **Complete** | 100% |
 | Phase 4 | **Complete** | 100% |
-| Phase 5 | Ready to plan | 0% |
+| Phase 5 | In Progress | 17% |
 
 ## Phase 1 — Complete
 
@@ -106,14 +106,21 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
   - Save/discard dialog on exit, New Chat button to reset, Resume prompt on re-entry
   - See `.planning/tmp/conversation-update-plan.md` for full scope
 
+## Phase 5 — In Progress
+
+- [x] **Plan 01: Firestore Scenario Catalog** — Scenario model extended with tags/difficulty/isFeatured/completionCount; FirestoreScenarioService with SharedPreferences cache; Firestore rules for public /scenarios collection; Scenario selection screen redesigned with categories, search, pagination; 34 curated scenarios seeded; old bundled JSONs removed
+- [ ] Plan 02: Custom Scenario Creation (planned)
+- [ ] Plan 03: Today's Twist (planned)
+- [ ] Plan 04: Daily Challenge (planned)
+
 ---
-*Last updated: 2026-07-22 after enhancement session*
+*Last updated: 2026-07-23 after Plan 01 execution*
 
 ## Session
 
-**Last session:** 2026-07-23T11:49:29.711Z
-**Stopped at:** context exhaustion at 75% (2026-07-23)
-**Resume file:** .planning/phases/05-premium-and-polish/05-CONTEXT.md
+**Last session:** 2026-07-23T15:27:00.000Z
+**Stopped at:** ""
+**Resume file:** .planning/phases/05-premium-and-polish/05-02-PLAN.md
 
 ## Remaining Work
 

@@ -126,7 +126,7 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 05-01-PLAN.md — Firestore scenario catalog: 30+ curated scenarios, categories, search, pagination, local cache
+- [x] 05-01-PLAN.md — Firestore scenario catalog: 34 curated scenarios, categories, search, pagination, local cache
 - [ ] 05-02-PLAN.md — Custom scenarios: Gemini generation, read-only preview, "My Scenarios" with delete, unlimited for all users
 
 **Wave 2** *(blocked on Wave 1 completion)*
