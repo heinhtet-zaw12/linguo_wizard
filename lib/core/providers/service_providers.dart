@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/ai_service.dart';
+import '../services/daily_challenge_service.dart';
 import '../services/firestore_service.dart';
 import '../services/gamification_service.dart';
 import '../services/scenario_service.dart';
@@ -31,3 +32,13 @@ final scenarioServiceProvider =
 ///
 /// Stateless service for persona-based conversations and scenario generation.
 final aiServiceProvider = Provider<AiService>((ref) => AiService());
+
+/// Injectable provider for [DailyChallengeService].
+///
+/// Depends on [AiService] for scenario variation generation and
+/// [FirestoreService] for Firestore seed document management.
+final dailyChallengeServiceProvider = Provider<DailyChallengeService>((ref) {
+  return DailyChallengeService(
+    ref.read(aiServiceProvider),
+  );
+});

@@ -247,4 +247,80 @@ Return this exact JSON structure (no other text):
 
     return jsonDecode(jsonStr) as Map<String, dynamic>;
   }
+
+  /// Generates a daily challenge variation from a base curated scenario.
+  ///
+  /// [baseScenario] provides the original scenario context for the variation.
+  /// Returns a JSON map with title, description, personaName, personaDescription,
+  /// goalDescription, and openingMessage.
+  Future<Map<String, dynamic>> generateDailyChallenge({
+    required Scenario baseScenario,
+  }) async {
+    final apiKey = AppConfig.geminiApiKey;
+    if (apiKey.isEmpty) throw StateError('Gemini API key missing');
+
+    final model = GenerativeModel(
+      model: AppConfig.geminiModel,
+      apiKey: apiKey,
+    );
+
+    final prompt = '''
+You are a scenario designer for an English language learning app.
+Create a daily challenge variation of a curated scenario.
+
+Base scenario:
+- Title: ${baseScenario.title}
+- Description: ${baseScenario.description}
+- Persona: ${baseScenario.personaName} — ${baseScenario.personaDescription}
+- Goal: ${baseScenario.goalDescription}
+- Opening: ${baseScenario.openingMessage}
+
+Create a fresh, engaging variation that feels like a new scenario but keeps the same
+CEFR level. The challenge should be slightly harder than the original to justify bonus XP.
+Be creative but keep it realistic for language learning.
+
+Return this exact JSON structure (no other text):
+{
+  "title": "catchy title for the challenge variation",
+  "description": "one-sentence description reflecting the challenge",
+  "personaName": "the character name (can be different from original)",
+  "personaDescription": "2-3 sentences about the character",
+  "goalDescription": "the challenge goal (one sentence)",
+  "openingMessage": "character's first line"
+}
+''';
+
+    final response = await model.generateContent(
+      [Content.text(prompt)],
+      generationConfig: GenerationConfig(
+        temperature: 0.9,
+        responseMimeType: 'application/json',
+        responseSchema: Schema(
+          SchemaType.object,
+          properties: {
+            'title': Schema(SchemaType.string),
+            'description': Schema(SchemaType.string),
+            'personaName': Schema(SchemaType.string),
+            'personaDescription': Schema(SchemaType.string),
+            'goalDescription': Schema(SchemaType.string),
+            'openingMessage': Schema(SchemaType.string),
+          },
+          requiredProperties: [
+            'title', 'description', 'personaName', 'personaDescription',
+            'goalDescription', 'openingMessage',
+          ],
+        ),
+      ),
+    ).timeout(
+      const Duration(seconds: 30),
+      onTimeout: () => throw TimeoutException('Daily Challenge generation timed out'),
+    );
+
+    final jsonStr = response.text;
+    if (jsonStr == null || jsonStr.isEmpty) {
+      throw StateError('Empty response from Gemini');
+    }
+
+    return jsonDecode(jsonStr) as Map<String, dynamic>;
+  }
 }
