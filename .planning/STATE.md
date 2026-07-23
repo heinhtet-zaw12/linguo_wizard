@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: In Progress
 stopped_at: ""
-last_updated: "2026-07-23T16:30:00.000Z"
+last_updated: "2026-07-23T18:30:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 15
-  completed_plans: 12
-  percent: 73
+  completed_plans: 13
+  percent: 87
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 | Phase 2 | **Complete** | 100% |
 | Phase 3 | **Complete** | 100% |
 | Phase 4 | **Complete** | 100% |
-| Phase 5 | In Progress | 33% |
+| Phase 5 | In Progress | 75% |
 
 ## Phase 1 — Complete
 
@@ -110,7 +110,7 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 
 - [x] **Plan 01: Firestore Scenario Catalog** — Scenario model extended with tags/difficulty/isFeatured/completionCount; FirestoreScenarioService with SharedPreferences cache; Firestore rules for public /scenarios collection; Scenario selection screen redesigned with categories, search, pagination; 34 curated scenarios seeded; old bundled JSONs removed
 - [x] **Plan 02: Custom Scenario Creation** — AiService.generateScenario with Gemini structured JSON; custom scenario CRUD in ScenarioService; CreateScenarioScreen with form, read-only preview (D-10), save; My Scenarios section with delete (D-11); Create button; Firestore rules for custom_scenarios subcollection
-- [ ] Plan 03: Today's Twist (planned)
+- [x] **Plan 03: Today's Twist** — Twist badge overlay on completed scenario cards, gold sparkle icon, AI-generated variations with progressive depth (subtle first, moderate subsequent), TwistViewModel for generation orchestration, twist replay counter in Firestore, isTwist flag in ConversationViewModel
 - [ ] Plan 04: Daily Challenge (planned)
 
 ---
