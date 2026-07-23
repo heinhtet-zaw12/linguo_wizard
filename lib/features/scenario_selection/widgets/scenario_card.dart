@@ -8,154 +8,206 @@ import '../models/scenario.dart';
 /// featured badge, difficulty dots, and persona.
 ///
 /// Optionally accepts a [trailing] widget (e.g., a popup menu button) shown
-/// in the top-right corner of the card.
+/// in the top-right of the card's header row.
+///
+/// When [showTwistBadge] is true, a gold sparkle icon overlay appears in the
+/// top-right corner of the card. Tapping it calls [onTwistTap].
 class ScenarioCard extends StatelessWidget {
   const ScenarioCard({
     super.key,
     required this.scenario,
     required this.onTap,
     this.trailing,
+    this.showTwistBadge = false,
+    this.onTwistTap,
   });
 
   final Scenario scenario;
   final VoidCallback onTap;
   final Widget? trailing;
+  final bool showTwistBadge;
+  final VoidCallback? onTwistTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.shadowPink,
-              blurRadius: 16,
-              offset: Offset(0, 6),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [
+                BoxShadow(
+                  color: AppColors.shadowPink,
+                  blurRadius: 16,
+                  offset: Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: Color(0x99FFFFFF),
+                  blurRadius: 8,
+                  offset: Offset(0, -3),
+                ),
+              ],
             ),
-            BoxShadow(
-              color: Color(0x99FFFFFF),
-              blurRadius: 8,
-              offset: Offset(0, -3),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // CEFR badge + category + featured badge
-            Row(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _CefrBadge(level: scenario.cefrLevel),
-                const SizedBox(width: 8),
+                // CEFR badge + category + featured badge
+                Row(
+                  children: [
+                    _CefrBadge(level: scenario.cefrLevel),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        scenario.category.toUpperCase(),
+                        style: GoogleFonts.quicksand(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textMuted,
+                          letterSpacing: 0.8,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (scenario.isFeatured)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentGold.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.star,
+                                size: 10, color: AppColors.accentGold),
+                            const SizedBox(width: 2),
+                            Text(
+                              'Featured',
+                              style: GoogleFonts.quicksand(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.accentGold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ?trailing,
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Title
+                Text(
+                  scenario.title,
+                  style: GoogleFonts.fredoka(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textDark,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                // Description
                 Expanded(
                   child: Text(
-                    scenario.category.toUpperCase(),
+                    scenario.description,
                     style: GoogleFonts.quicksand(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.textMuted,
-                      letterSpacing: 0.8,
+                      height: 1.4,
                     ),
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (scenario.isFeatured)
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentGold.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(6),
+                const SizedBox(height: 8),
+                // Difficulty dots + persona
+                Row(
+                  children: [
+                    // Difficulty dots
+                    ...List.generate(3, (i) {
+                      final filled =
+                          i < scenario.difficultyRating.clamp(1, 5) / 2;
+                      return Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.only(right: 3),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: filled
+                              ? AppColors.primaryPink.withValues(alpha: 0.6)
+                              : AppColors.primaryPinkLight
+                                  .withValues(alpha: 0.3),
+                        ),
+                      );
+                    }),
+                    const SizedBox(width: 8),
+                    Icon(Icons.person_outline,
+                        size: 14, color: AppColors.primaryPink),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        scenario.personaName,
+                        style: GoogleFonts.quicksand(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryPinkDark,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.star,
-                            size: 10, color: AppColors.accentGold),
-                        const SizedBox(width: 2),
-                        Text(
-                          'Featured',
-                          style: GoogleFonts.quicksand(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.accentGold,
-                          ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Twist badge overlay (top-right corner)
+          if (showTwistBadge && onTwistTap != null)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Tooltip(
+                message: 'Play again with a twist',
+                child: GestureDetector(
+                  onTap: () {
+                    // Stop the outer card's onTap from firing.
+                    onTwistTap?.call();
+                  },
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: AppColors.accentGold,
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(16),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.accentGold.withValues(alpha: 0.4),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                  ),
-                ?trailing,
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Title
-            Text(
-              scenario.title,
-              style: GoogleFonts.fredoka(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-            // Description
-            Expanded(
-              child: Text(
-                scenario.description,
-                style: GoogleFonts.quicksand(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textMuted,
-                  height: 1.4,
-                ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(height: 8),
-            // Difficulty dots + persona
-            Row(
-              children: [
-                // Difficulty dots
-                ...List.generate(3, (i) {
-                  final filled = i < scenario.difficultyRating.clamp(1, 5) / 2;
-                  return Container(
-                    width: 6,
-                    height: 6,
-                    margin: const EdgeInsets.only(right: 3),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: filled
-                          ? AppColors.primaryPink.withValues(alpha: 0.6)
-                          : AppColors.primaryPinkLight.withValues(alpha: 0.3),
+                    child: const Icon(
+                      Icons.auto_awesome,
+                      size: 16,
+                      color: Colors.white,
                     ),
-                  );
-                }),
-                const SizedBox(width: 8),
-                Icon(Icons.person_outline,
-                    size: 14, color: AppColors.primaryPink),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Text(
-                    scenario.personaName,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryPinkDark,
-                    ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ],
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

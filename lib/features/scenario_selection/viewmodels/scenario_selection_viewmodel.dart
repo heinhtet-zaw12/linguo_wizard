@@ -6,7 +6,7 @@ import '../../../core/providers/service_providers.dart';
 import '../../../core/services/scenario_service.dart';
 import '../models/scenario.dart';
 
-// State for the redesigned scenario selection screen.
+/// State for the redesigned scenario selection screen.
 class ScenarioSelectionState {
   final List<Scenario> allScenarios; // curated scenarios from cache/Firestore
   final List<Scenario> displayScenarios; // currently visible (paginated + filtered)
@@ -18,6 +18,8 @@ class ScenarioSelectionState {
   final bool isLoading;
   final bool isLoadingMore;
   final bool hasMore;
+  final Set<String> completedScenarioIds; // scenario IDs that have been completed
+  final Map<String, int> twistReplayCounts; // scenarioId -> twist replay count
 
   const ScenarioSelectionState({
     this.allScenarios = const [],
@@ -30,6 +32,8 @@ class ScenarioSelectionState {
     this.isLoading = true,
     this.isLoadingMore = false,
     this.hasMore = false,
+    this.completedScenarioIds = const {},
+    this.twistReplayCounts = const {},
   });
 
   ScenarioSelectionState copyWith({
@@ -46,6 +50,8 @@ class ScenarioSelectionState {
     bool? isLoading,
     bool? isLoadingMore,
     bool? hasMore,
+    Set<String>? completedScenarioIds,
+    Map<String, int>? twistReplayCounts,
   }) {
     return ScenarioSelectionState(
       allScenarios: allScenarios ?? this.allScenarios,
@@ -64,6 +70,8 @@ class ScenarioSelectionState {
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       hasMore: hasMore ?? this.hasMore,
+      completedScenarioIds: completedScenarioIds ?? this.completedScenarioIds,
+      twistReplayCounts: twistReplayCounts ?? this.twistReplayCounts,
     );
   }
 }
@@ -95,14 +103,37 @@ class ScenarioSelectionViewModel
     _visibleCount = _pageSize;
     final display = _computeDisplay(scenarios, null, null, '', _visibleCount);
 
-    // Load custom scenarios for authenticated users.
     final user = ref.read(currentUserProvider);
+
+    // Load custom scenarios for authenticated users.
     List<Scenario> customScenarios = [];
+    // Load completed scenario IDs and twist replay counts.
+    Set<String> completedIds = {};
+    Map<String, int> twistCounts = {};
+
     if (user != null) {
       try {
         customScenarios = await _scenarioService.getCustomScenarios(user.uid);
       } catch (_) {
         // Custom scenarios failed to load — non-critical, show empty.
+      }
+
+      // Load completed scenarios for twist badge detection.
+      try {
+        final fs = ref.read(firestoreServiceProvider);
+        final scenarioResults = await fs.getScenarios(user.uid);
+        for (final result in scenarioResults) {
+          final id = result['id'] as String? ?? '';
+          final completed = result['completed'] == true;
+          final hasBestScore = result['bestScore'] != null;
+          final hasCompletedAt = result['completedAt'] != null;
+          if (completed || hasBestScore || hasCompletedAt) {
+            completedIds.add(id);
+            twistCounts[id] = result['twistReplayCount'] as int? ?? 0;
+          }
+        }
+      } catch (_) {
+        // Completion data failed to load — twist badges simply won't show.
       }
     }
 
@@ -114,6 +145,8 @@ class ScenarioSelectionViewModel
       selectedCefrLevel: savedCefr,
       isLoading: false,
       hasMore: _visibleCount < scenarios.length,
+      completedScenarioIds: completedIds,
+      twistReplayCounts: twistCounts,
     );
   }
 
