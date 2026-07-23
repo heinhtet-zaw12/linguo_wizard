@@ -1,11 +1,9 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/models/streak_data.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/services/scenario_service.dart';
 import '../../scenario_selection/models/scenario.dart';
 
 /// State for the home dashboard.
@@ -86,7 +84,7 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     final scenariosCompleted = prefs.getInt('progress_scenarios') ?? 0;
     final streakDays = prefs.getInt('progress_streak') ?? 0;
 
-    final scenarios = await _loadBundledScenarios(cefrLevel);
+    final scenarios = await _loadRecommendedScenarios(cefrLevel);
 
     return HomeState(
       totalXp: totalXp,
@@ -123,7 +121,7 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     final scenariosCompleted = progress?['scenariosCompleted'] as int? ?? 0;
     final streakDays = streakData?.currentStreak ?? 0;
 
-    final scenarios = await _loadBundledScenarios(cefrLevel);
+    final scenarios = await _loadRecommendedScenarios(cefrLevel);
 
     return HomeState(
       totalXp: totalXp,
@@ -136,39 +134,30 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     );
   }
 
-  Future<List<Scenario>> _loadBundledScenarios(String cefrLevel) async {
-    final files = [
-      'assets/data/scenarios/cafe_ordering.json',
-      'assets/data/scenarios/job_interview.json',
-      'assets/data/scenarios/airport_navigation.json',
-    ];
+  Future<List<Scenario>> _loadRecommendedScenarios(String cefrLevel) async {
+    try {
+      final scenarioService = FirestoreScenarioService();
+      final allScenarios = await scenarioService.getScenarios();
 
-    final scenarios = <Scenario>[];
-    for (final path in files) {
-      try {
-        final jsonStr = await rootBundle.loadString(path);
-        final json = jsonDecode(jsonStr) as Map<String, dynamic>;
-        final scenario = Scenario.fromJson(json);
-        if (scenario.cefrLevel == cefrLevel) {
-          scenarios.add(scenario);
-        }
-      } catch (_) {
-        // Skip scenarios that fail to load
+      // Filter by CEFR level, then take up to 4 recommended.
+      var filtered = allScenarios
+          .where((s) => s.cefrLevel == cefrLevel)
+          .toList();
+
+      // Sort by completionCount descending (popular first).
+      filtered.sort((a, b) => b.completionCount.compareTo(a.completionCount));
+
+      // If no scenarios match the CEFR level, show popular ones.
+      if (filtered.isEmpty) {
+        filtered = allScenarios
+            .toList()
+          ..sort((a, b) => b.completionCount.compareTo(a.completionCount));
       }
-    }
 
-    // If no scenarios match the CEFR level, return all
-    if (scenarios.isEmpty) {
-      for (final path in files) {
-        try {
-          final jsonStr = await rootBundle.loadString(path);
-          final json = jsonDecode(jsonStr) as Map<String, dynamic>;
-          scenarios.add(Scenario.fromJson(json));
-        } catch (_) {}
-      }
+      return filtered.take(4).toList();
+    } catch (_) {
+      return [];
     }
-
-    return scenarios.take(4).toList();
   }
 
   void refresh() {
