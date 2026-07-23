@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../models/scenario.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../widgets/scenario_card.dart';
 
@@ -147,7 +149,7 @@ class _ScenarioSelectionScreenState
   ) {
     return Column(
       children: [
-        // Header (title + search toggle)
+        // Header (title + search toggle + create button)
         _buildHeader(context, state, notifier),
 
         // Category tabs
@@ -175,88 +177,281 @@ class _ScenarioSelectionScreenState
 
         const SizedBox(height: 8),
 
-        // Scenario grid or empty state
-        Expanded(
-          child: state.displayScenarios.isEmpty && !state.isLoading
-              ? _buildEmptyState(context, state)
-              : NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    if (notification is ScrollEndNotification &&
-                        _scrollController.position.pixels >=
-                            _scrollController.position.maxScrollExtent -
-                                300) {
-                      notifier.loadMore();
-                    }
-                    return false;
-                  },
-                  child: GridView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.78,
-                    ),
-                    itemCount: state.displayScenarios.length +
-                        (state.isLoadingMore
-                            ? 1
-                            : state.hasMore
-                                ? 1
-                                : state.displayScenarios.isNotEmpty
-                                    ? 1
-                                    : 0),
-                    itemBuilder: (context, index) {
-                      // Loading indicator at bottom
-                      if (index >= state.displayScenarios.length) {
-                        if (state.isLoadingMore) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.primaryPink,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        if (!state.hasMore &&
-                            state.displayScenarios.isNotEmpty) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Center(
-                              child: Text(
-                                "You've seen them all!",
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 12,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }
+        // Scenario grid(s) or empty state
+        Expanded(child: _buildScrollContent(context, ref, state, notifier)),
+      ],
+    );
+  }
 
-                      final scenario = state.displayScenarios[index];
-                      return ScenarioCard(
-                        scenario: scenario,
-                        onTap: () {
-                          ref.read(selectedScenarioProvider.notifier).state =
-                              scenario;
-                          context.push('/conversation/${scenario.id}');
-                        },
-                      );
+  /// Builds the scrollable content: My Scenarios section (if any),
+  /// then curated scenarios grid with infinite scroll.
+  Widget _buildScrollContent(
+    BuildContext context,
+    WidgetRef ref,
+    ScenarioSelectionState state,
+    ScenarioSelectionViewModel notifier,
+  ) {
+    final hasCustomScenarios = state.customScenarios.isNotEmpty;
+    final hasCuratedScenarios = state.displayScenarios.isNotEmpty;
+    final isSearching = state.searchQuery.isNotEmpty;
+
+    // Show empty state if nothing to display and not loading.
+    if (!hasCustomScenarios && !hasCuratedScenarios && !state.isLoading) {
+      return _buildEmptyState(context, state);
+    }
+
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification is ScrollEndNotification &&
+            _scrollController.position.pixels >=
+                _scrollController.position.maxScrollExtent - 300) {
+          notifier.loadMore();
+        }
+        return false;
+      },
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          // ─── My Scenarios section ───
+          if (hasCustomScenarios && !isSearching) ...[
+            SliverToBoxAdapter(
+              child: _buildMyScenariosHeader(),
+            ),
+            SliverGrid(
+              gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.78,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final scenario = state.customScenarios[index];
+                  return _buildCustomScenarioCard(
+                      context, ref, scenario, notifier);
+                },
+                childCount: state.customScenarios.length,
+              ),
+            ),
+            // Divider
+            if (hasCuratedScenarios)
+              SliverToBoxAdapter(
+                child: _buildCuratedDivider(),
+              ),
+          ],
+
+          // ─── Curated scenarios grid ───
+          if (hasCuratedScenarios)
+            SliverGrid(
+              gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.78,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final scenario = state.displayScenarios[index];
+                  return ScenarioCard(
+                    scenario: scenario,
+                    onTap: () {
+                      ref
+                          .read(selectedScenarioProvider.notifier)
+                          .state = scenario;
+                      context.push('/conversation/${scenario.id}');
                     },
+                  );
+                },
+                childCount: state.displayScenarios.length,
+              ),
+            ),
+
+          // ─── Footer ───
+          SliverToBoxAdapter(
+            child: _buildGridFooter(state),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGridFooter(ScenarioSelectionState state) {
+    if (state.isLoadingMore) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.primaryPink,
+            ),
+          ),
+        ),
+      );
+    }
+    if (!state.hasMore && state.displayScenarios.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Text(
+            "You've seen them all!",
+            style: GoogleFonts.quicksand(
+              fontSize: 12,
+              color: AppColors.textMuted,
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox(height: 80);
+  }
+
+  /// Builds a custom scenario card with a delete menu.
+  Widget _buildCustomScenarioCard(
+    BuildContext context,
+    WidgetRef ref,
+    Scenario scenario,
+    ScenarioSelectionViewModel notifier,
+  ) {
+    return ScenarioCard(
+      scenario: scenario,
+      onTap: () {
+        ref.read(selectedScenarioProvider.notifier).state = scenario;
+        context.push('/conversation/${scenario.id}');
+      },
+      trailing: PopupMenuButton<String>(
+        icon: Icon(Icons.more_vert,
+            size: 16, color: AppColors.textMuted),
+        padding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        onSelected: (value) {
+          if (value == 'delete') {
+            _showDeleteDialog(context, scenario, notifier);
+          }
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              children: [
+                Icon(Icons.delete_outline,
+                    size: 18, color: AppColors.accentCoral),
+                const SizedBox(width: 8),
+                Text(
+                  'Delete Scenario',
+                  style: GoogleFonts.quicksand(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.accentCoral,
                   ),
                 ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteDialog(
+    BuildContext context,
+    Scenario scenario,
+    ScenarioSelectionViewModel notifier,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Delete scenario?',
+          style: GoogleFonts.fredoka(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textDark,
+          ),
         ),
-      ],
+        content: Text(
+          'This can\'t be undone.',
+          style: GoogleFonts.quicksand(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textMuted,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.quicksand(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDark,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              notifier.deleteCustomScenario(scenario.id);
+            },
+            child: Text(
+              'Delete',
+              style: GoogleFonts.quicksand(
+                fontWeight: FontWeight.w600,
+                color: AppColors.accentCoral,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMyScenariosHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+      child: Text(
+        'My Scenarios',
+        style: GoogleFonts.fredoka(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textDark,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCuratedDivider() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+      child: Row(
+        children: [
+          const Expanded(
+            child: Divider(color: AppColors.primaryPinkLight),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              'Curated Scenarios',
+              style: GoogleFonts.quicksand(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textMuted,
+              ),
+            ),
+          ),
+          const Expanded(
+            child: Divider(color: AppColors.primaryPinkLight),
+          ),
+        ],
+      ),
     );
   }
 
@@ -327,6 +522,21 @@ class _ScenarioSelectionScreenState
               ],
             ),
           ),
+          // Create Scenario button
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline, size: 28),
+            tooltip: 'Create Custom Scenario',
+            onPressed: () {
+              final isGuest = ref.read(isGuestProvider);
+              if (isGuest) {
+                _showGuestPrompt(context);
+              } else {
+                context.push('/create-scenario');
+              }
+            },
+            color: AppColors.primaryPink,
+          ),
+          // Search toggle
           IconButton(
             icon: const Icon(Icons.search, color: AppColors.textDark),
             onPressed: () {
@@ -334,6 +544,57 @@ class _ScenarioSelectionScreenState
                 _isSearchOpen = true;
               });
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showGuestPrompt(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Sign up to create scenarios',
+          style: GoogleFonts.fredoka(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textDark,
+          ),
+        ),
+        content: Text(
+          'Create an account to save and use your own custom scenarios.',
+          style: GoogleFonts.quicksand(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textMuted,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Not now',
+              style: GoogleFonts.quicksand(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDark,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              context.push('/login');
+            },
+            child: Text(
+              'Sign up',
+              style: GoogleFonts.quicksand(
+                fontWeight: FontWeight.w600,
+                color: AppColors.primaryPink,
+              ),
+            ),
           ),
         ],
       ),

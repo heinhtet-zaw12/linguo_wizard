@@ -6,15 +6,20 @@ import '../models/scenario.dart';
 
 /// A card displaying a scenario's title, description, CEFR badge, category,
 /// featured badge, difficulty dots, and persona.
+///
+/// Optionally accepts a [trailing] widget (e.g., a popup menu button) shown
+/// in the top-right corner of the card.
 class ScenarioCard extends StatelessWidget {
   const ScenarioCard({
     super.key,
     required this.scenario,
     required this.onTap,
+    this.trailing,
   });
 
   final Scenario scenario;
   final VoidCallback onTap;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +88,7 @@ class ScenarioCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                ?trailing,
               ],
             ),
             const SizedBox(height: 12),

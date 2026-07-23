@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../viewmodels/create_scenario_viewmodel.dart';
+import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../widgets/scenario_preview_card.dart';
 
 /// Screen for creating custom scenarios via AI generation.
@@ -323,16 +324,14 @@ class _CreateScenarioScreenState
             ),
           ),
 
-        // ─── Try It button ───
-        SizedBox(
+          SizedBox(
           width: double.infinity,
           height: 52,
           child: ElevatedButton.icon(
-            onPressed: () {
-              // Save then navigate to conversation
-              notifier.save();
-              // On save success, the state transitions to saved.
-              // We navigate to conversation when the user taps button on saved state.
+            onPressed: () async {
+              await notifier.save();
+              // On save success, state transitions to saved.
+              // If still in preview (save failed), show error.
             },
             icon: const Icon(Icons.play_arrow_rounded, size: 22),
             label: Text(
@@ -469,9 +468,12 @@ class _CreateScenarioScreenState
           child: ElevatedButton.icon(
             onPressed: () {
               // Navigate to conversation with saved scenario
-              final scenario =
-                  ref.read(createScenarioProvider).generatedScenario;
+              final state = ref.read(createScenarioProvider);
+              final scenario = state.generatedScenario;
               if (scenario != null) {
+                ref
+                    .read(selectedScenarioProvider.notifier)
+                    .state = scenario;
                 context.push('/conversation/${scenario.id}');
               }
             },

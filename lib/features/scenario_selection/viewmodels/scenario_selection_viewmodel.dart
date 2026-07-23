@@ -1,14 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/service_providers.dart';
 import '../../../core/services/scenario_service.dart';
 import '../models/scenario.dart';
 
 // State for the redesigned scenario selection screen.
 class ScenarioSelectionState {
-  final List<Scenario> allScenarios; // complete list from cache/Firestore
+  final List<Scenario> allScenarios; // curated scenarios from cache/Firestore
   final List<Scenario> displayScenarios; // currently visible (paginated + filtered)
+  final List<Scenario> customScenarios; // user-created scenarios (authenticated only)
+  final bool isLoadingCustomScenarios;
   final String? selectedCefrLevel;
   final String? selectedCategory;
   final String searchQuery;
@@ -19,6 +22,8 @@ class ScenarioSelectionState {
   const ScenarioSelectionState({
     this.allScenarios = const [],
     this.displayScenarios = const [],
+    this.customScenarios = const [],
+    this.isLoadingCustomScenarios = false,
     this.selectedCefrLevel,
     this.selectedCategory,
     this.searchQuery = '',
@@ -30,6 +35,8 @@ class ScenarioSelectionState {
   ScenarioSelectionState copyWith({
     List<Scenario>? allScenarios,
     List<Scenario>? displayScenarios,
+    List<Scenario>? customScenarios,
+    bool? isLoadingCustomScenarios,
     String? selectedCefrLevel,
     bool clearCefrLevel = false,
     String? selectedCategory,
@@ -43,6 +50,9 @@ class ScenarioSelectionState {
     return ScenarioSelectionState(
       allScenarios: allScenarios ?? this.allScenarios,
       displayScenarios: displayScenarios ?? this.displayScenarios,
+      customScenarios: customScenarios ?? this.customScenarios,
+      isLoadingCustomScenarios:
+          isLoadingCustomScenarios ?? this.isLoadingCustomScenarios,
       selectedCefrLevel: clearCefrLevel
           ? null
           : (selectedCefrLevel ?? this.selectedCefrLevel),
@@ -85,9 +95,22 @@ class ScenarioSelectionViewModel
     _visibleCount = _pageSize;
     final display = _computeDisplay(scenarios, null, null, '', _visibleCount);
 
+    // Load custom scenarios for authenticated users.
+    final user = ref.read(currentUserProvider);
+    List<Scenario> customScenarios = [];
+    if (user != null) {
+      try {
+        customScenarios = await _scenarioService.getCustomScenarios(user.uid);
+      } catch (_) {
+        // Custom scenarios failed to load — non-critical, show empty.
+      }
+    }
+
     return ScenarioSelectionState(
       allScenarios: scenarios,
       displayScenarios: display,
+      customScenarios: customScenarios,
+      isLoadingCustomScenarios: false,
       selectedCefrLevel: savedCefr,
       isLoading: false,
       hasMore: _visibleCount < scenarios.length,
@@ -240,6 +263,29 @@ class ScenarioSelectionViewModel
     String query,
   ) {
     return _computeDisplay(all, cefr, category, query, all.length).length;
+  }
+
+  /// Delete a custom scenario for the current user.
+  Future<void> deleteCustomScenario(String scenarioId) async {
+    final current = state.value;
+    if (current == null) return;
+
+    final user = ref.read(currentUserProvider);
+    if (user == null) return;
+
+    // Optimistic removal.
+    final updatedCustom = current.customScenarios
+        .where((s) => s.id != scenarioId)
+        .toList();
+    state = AsyncData(current.copyWith(customScenarios: updatedCustom));
+
+    try {
+      await _scenarioService.deleteCustomScenario(user.uid, scenarioId);
+    } catch (_) {
+      // Revert on failure.
+      final original = await _scenarioService.getCustomScenarios(user.uid);
+      state = AsyncData(current.copyWith(customScenarios: original));
+    }
   }
 }
 
