@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
 import '../models/scenario.dart';
 
-/// A card displaying a scenario's title, description, CEFR badge, and category.
+/// A card displaying a scenario's title, description, CEFR badge, category,
+/// featured badge, difficulty dots, and persona.
 class ScenarioCard extends StatelessWidget {
   const ScenarioCard({
     super.key,
@@ -40,20 +41,48 @@ class ScenarioCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // CEFR badge + category
+            // CEFR badge + category + featured badge
             Row(
               children: [
                 _CefrBadge(level: scenario.cefrLevel),
                 const SizedBox(width: 8),
-                Text(
-                  scenario.category.toUpperCase(),
-                  style: GoogleFonts.quicksand(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textMuted,
-                    letterSpacing: 0.8,
+                Expanded(
+                  child: Text(
+                    scenario.category.toUpperCase(),
+                    style: GoogleFonts.quicksand(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textMuted,
+                      letterSpacing: 0.8,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                if (scenario.isFeatured)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentGold.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.star,
+                            size: 10, color: AppColors.accentGold),
+                        const SizedBox(width: 2),
+                        Text(
+                          'Featured',
+                          style: GoogleFonts.quicksand(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.accentGold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 12),
@@ -84,17 +113,37 @@ class ScenarioCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            // Persona hint
+            // Difficulty dots + persona
             Row(
               children: [
-                Icon(Icons.person_outline, size: 14, color: AppColors.primaryPink),
+                // Difficulty dots
+                ...List.generate(3, (i) {
+                  final filled = i < scenario.difficultyRating.clamp(1, 5) / 2;
+                  return Container(
+                    width: 6,
+                    height: 6,
+                    margin: const EdgeInsets.only(right: 3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: filled
+                          ? AppColors.primaryPink.withValues(alpha: 0.6)
+                          : AppColors.primaryPinkLight.withValues(alpha: 0.3),
+                    ),
+                  );
+                }),
+                const SizedBox(width: 8),
+                Icon(Icons.person_outline,
+                    size: 14, color: AppColors.primaryPink),
                 const SizedBox(width: 4),
-                Text(
-                  scenario.personaName,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryPinkDark,
+                Flexible(
+                  child: Text(
+                    scenario.personaName,
+                    style: GoogleFonts.quicksand(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryPinkDark,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
