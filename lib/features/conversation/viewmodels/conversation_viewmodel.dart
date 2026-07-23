@@ -255,6 +255,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   String get micHint {
     final current = state.value;
     if (current == null) return '';
+    if (current.isEvaluating) return 'Evaluating your conversation…';
     switch (current.loopState) {
       case ConversationLoopState.idle:
         return 'Tap to speak';

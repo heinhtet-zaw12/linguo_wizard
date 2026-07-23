@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -68,6 +69,11 @@ class EvaluationService {
               'vocabularyScore',
             ],
           ),
+        ),
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => throw TimeoutException(
+          'Gemini evaluation timed out after 30s',
         ),
       );
 
