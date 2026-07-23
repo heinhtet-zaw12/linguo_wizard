@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../services/ai_service.dart';
 import '../services/firestore_service.dart';
 import '../services/gamification_service.dart';
 import '../services/scenario_service.dart';
@@ -25,3 +26,8 @@ final srsServiceProvider = Provider<SrsService>((ref) {
 /// Stateless service for fetching and caching curated scenarios from Firestore.
 final scenarioServiceProvider =
     Provider<FirestoreScenarioService>((ref) => FirestoreScenarioService());
+
+/// Injectable provider for [AiService].
+///
+/// Stateless service for persona-based conversations and scenario generation.
+final aiServiceProvider = Provider<AiService>((ref) => AiService());
