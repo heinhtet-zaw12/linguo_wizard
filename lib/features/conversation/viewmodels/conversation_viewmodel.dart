@@ -254,6 +254,9 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   /// Whether this conversation is a twist variation of a completed scenario.
   bool get isTwist => state.value?.scenario?.id.startsWith('twist_') ?? false;
 
+  /// Whether this conversation is a Daily Challenge.
+  bool get isChallenge => state.value?.scenario?.category == 'daily-challenge';
+
   /// Hint text shown below the mic button.
   String get micHint {
     final current = state.value;
@@ -477,13 +480,20 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
       final fs = ref.read(firestoreServiceProvider);
       final gamification = ref.read(gamificationServiceProvider);
       final srs = ref.read(srsServiceProvider);
+      final dcService = ref.read(dailyChallengeServiceProvider);
       final uid = user.uid;
 
       // 1. Update streak.
       final streakData = await gamification.updateStreak(uid);
 
-      // 2. Award XP.
+      // 2. Award XP (base).
       await gamification.awardXp(uid, AppConfig.xpPerScenario);
+
+      // 2b. Daily Challenge bonus XP (50 bonus = 100 total per D-08).
+      if (isChallenge) {
+        await gamification.awardXp(uid, 50);
+        await dcService.markChallengeCompleted(uid);
+      }
 
       // 3. Read updated progress for badge check and scenario save.
       final results = await Future.wait<Object?>([

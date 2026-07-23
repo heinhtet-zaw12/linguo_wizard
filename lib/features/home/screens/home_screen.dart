@@ -8,6 +8,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../widgets/streak_ring.dart';
 import '../widgets/goal_ring.dart';
+import '../widgets/daily_challenge_card.dart';
 import '../widgets/scenario_cards.dart';
 import '../widgets/guest_banner.dart';
 
@@ -118,6 +119,10 @@ class HomeScreen extends ConsumerWidget {
             // ─── Goal Ring ───
             GoalRing(currentXp: state.totalXp),
             const SizedBox(height: 20),
+
+            // ─── Daily Challenge Hero Card ───
+            const DailyChallengeCard(),
+            const SizedBox(height: 24),
 
             // ─── Recommended Scenarios ───
             Row(

@@ -17,6 +17,9 @@ class HomeState {
   final List<Scenario> recommendedScenarios;
   final bool isLoading;
   final String? error;
+  final Scenario? dailyChallenge;
+  final bool challengeCompletedToday;
+  final bool alreadyLoadedChallenge;
 
   const HomeState({
     this.totalXp = 0,
@@ -27,6 +30,9 @@ class HomeState {
     this.recommendedScenarios = const [],
     this.isLoading = true,
     this.error,
+    this.dailyChallenge,
+    this.challengeCompletedToday = false,
+    this.alreadyLoadedChallenge = false,
   });
 
   HomeState copyWith({
@@ -39,6 +45,9 @@ class HomeState {
     bool? isLoading,
     String? error,
     bool clearError = false,
+    Scenario? dailyChallenge,
+    bool? challengeCompletedToday,
+    bool? alreadyLoadedChallenge,
   }) {
     return HomeState(
       totalXp: totalXp ?? this.totalXp,
@@ -50,6 +59,11 @@ class HomeState {
           recommendedScenarios ?? this.recommendedScenarios,
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : (error ?? this.error),
+      dailyChallenge: dailyChallenge ?? this.dailyChallenge,
+      challengeCompletedToday:
+          challengeCompletedToday ?? this.challengeCompletedToday,
+      alreadyLoadedChallenge:
+          alreadyLoadedChallenge ?? this.alreadyLoadedChallenge,
     );
   }
 }
@@ -65,13 +79,29 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     final isGuest = ref.read(isGuestProvider);
 
     try {
+      HomeState baseState;
       if (isGuest) {
-        return await _loadGuestData();
+        baseState = await _loadGuestData();
       } else if (user != null) {
-        return await _loadAuthenticatedData(user.uid);
+        baseState = await _loadAuthenticatedData(user.uid);
       } else {
-        return const HomeState(isLoading: false, displayName: 'Guest');
+        baseState = const HomeState(isLoading: false, displayName: 'Guest');
       }
+
+      // Load daily challenge for authenticated users.
+      Scenario? challenge;
+      bool challengeDone = false;
+      if (user != null) {
+        final dcService = ref.read(dailyChallengeServiceProvider);
+        challenge = await dcService.getOrCreateDailyChallenge(uid: user.uid);
+        challengeDone = await dcService.hasCompletedTodayChallenge(user.uid);
+      }
+
+      return baseState.copyWith(
+        dailyChallenge: challenge,
+        challengeCompletedToday: challengeDone,
+        alreadyLoadedChallenge: true,
+      );
     } catch (e) {
       return HomeState(isLoading: false, error: e.toString());
     }
