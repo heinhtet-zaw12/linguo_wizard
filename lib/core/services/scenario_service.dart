@@ -134,4 +134,45 @@ class FirestoreScenarioService {
         await _db.collection(_collection).doc(last.id).get();
     return doc;
   }
+
+  // ─── Custom scenarios (user-created) ───
+
+  /// Save a custom scenario for a user.
+  Future<void> saveCustomScenario({
+    required String uid,
+    required Scenario scenario,
+  }) async {
+    await _db
+        .collection('users')
+        .doc(uid)
+        .collection('custom_scenarios')
+        .doc(scenario.id)
+        .set({
+      ...scenario.toJson(),
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Load all custom scenarios for a user, newest first.
+  Future<List<Scenario>> getCustomScenarios(String uid) async {
+    final snapshot = await _db
+        .collection('users')
+        .doc(uid)
+        .collection('custom_scenarios')
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snapshot.docs
+        .map((doc) => Scenario.fromJson(doc.data()))
+        .toList();
+  }
+
+  /// Delete a custom scenario.
+  Future<void> deleteCustomScenario(String uid, String scenarioId) async {
+    await _db
+        .collection('users')
+        .doc(uid)
+        .collection('custom_scenarios')
+        .doc(scenarioId)
+        .delete();
+  }
 }
