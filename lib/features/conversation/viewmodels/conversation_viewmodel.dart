@@ -251,6 +251,9 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
 
   // ─── Navigation helpers ───
 
+  /// Whether this conversation is a twist variation of a completed scenario.
+  bool get isTwist => state.value?.scenario?.id.startsWith('twist_') ?? false;
+
   /// Hint text shown below the mic button.
   String get micHint {
     final current = state.value;

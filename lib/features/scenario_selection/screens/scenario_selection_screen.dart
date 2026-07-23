@@ -9,6 +9,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../models/scenario.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
+import '../viewmodels/twist_viewmodel.dart';
 import '../widgets/scenario_card.dart';
 
 /// Redesigned scenario selection screen with category tabs, search bar,
@@ -84,6 +85,18 @@ class _ScenarioSelectionScreenState
   Widget build(BuildContext context) {
     final asyncState = ref.watch(scenarioSelectionProvider);
     final notifier = ref.read(scenarioSelectionProvider.notifier);
+
+    // Watch twist provider for navigation to conversation.
+    ref.listen(twistProvider, (prev, next) {
+      next.whenOrNull(data: (twistScenario) {
+        if (twistScenario != null) {
+          ref.read(selectedScenarioProvider.notifier).state = twistScenario;
+          context.push('/conversation/${twistScenario.id}');
+          // Reset twist state so the next tap triggers a fresh generation.
+          ref.read(twistProvider.notifier).reset();
+        }
+      });
+    });
 
     return Scaffold(
       body: Container(
@@ -261,6 +274,17 @@ class _ScenarioSelectionScreenState
                           .read(selectedScenarioProvider.notifier)
                           .state = scenario;
                       context.push('/conversation/${scenario.id}');
+                    },
+                    showTwistBadge:
+                        state.completedScenarioIds.contains(scenario.id),
+                    onTwistTap: () {
+                      final user = ref.read(currentUserProvider);
+                      ref
+                          .read(twistProvider.notifier)
+                          .generateAndLaunchTwist(
+                            originalScenario: scenario,
+                            uid: user?.uid,
+                          );
                     },
                   );
                 },
