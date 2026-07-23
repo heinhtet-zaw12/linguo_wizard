@@ -416,7 +416,7 @@ Return this exact JSON structure (no other text):
 | A4 | The `responseSchema` in `google_generative_ai` 0.4.6 works with `gemini-3.1-flash-lite` | Standard Stack | Low — the existing EvaluationService already uses this pattern successfully with the same model config. |
 | A5 | No new Firestore read costs from public scenario catalog will exceed free tier | Standard Stack | Low — with 24h cache TTL, each user does ~1 read per day for curated scenarios. At 10K users that's ~300K reads/month, well within Firestore free tier (50K/day = 1.5M/month). |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **What is the exact Gemini model string used in production?**
    - What we know: `AppConfig.geminiModel` is `'gemini-3.1-flash-lite'` as of the last code snapshot.
