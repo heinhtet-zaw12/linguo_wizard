@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/models/streak_data.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/providers/service_providers.dart';
 import '../../../core/services/scenario_service.dart';
 import '../../scenario_selection/models/scenario.dart';
 
@@ -168,3 +169,20 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
 
 final homeProvider =
     AsyncNotifierProvider<HomeViewModel, HomeState>(HomeViewModel.new);
+
+/// Provider that loads today's daily challenge scenario from Firestore
+/// (or triggers generation if this is the first user of the UTC day).
+final dailyChallengeProvider = FutureProvider<Scenario?>((ref) async {
+  final user = ref.watch(currentUserProvider);
+  if (user == null) return null;
+  final service = ref.watch(dailyChallengeServiceProvider);
+  return service.getOrCreateDailyChallenge(uid: user.uid);
+});
+
+/// Provider that checks whether the current user has completed today's challenge.
+final challengeCompletedProvider = FutureProvider<bool>((ref) async {
+  final user = ref.watch(currentUserProvider);
+  if (user == null) return false;
+  final service = ref.watch(dailyChallengeServiceProvider);
+  return service.hasCompletedTodayChallenge(user.uid);
+});
