@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: In Progress
 stopped_at: ""
-last_updated: "2026-07-23T15:27:00.000Z"
+last_updated: "2026-07-23T16:30:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 15
-  completed_plans: 11
-  percent: 69
+  completed_plans: 12
+  percent: 73
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 | Phase 2 | **Complete** | 100% |
 | Phase 3 | **Complete** | 100% |
 | Phase 4 | **Complete** | 100% |
-| Phase 5 | In Progress | 17% |
+| Phase 5 | In Progress | 33% |
 
 ## Phase 1 — Complete
 
@@ -109,7 +109,7 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 ## Phase 5 — In Progress
 
 - [x] **Plan 01: Firestore Scenario Catalog** — Scenario model extended with tags/difficulty/isFeatured/completionCount; FirestoreScenarioService with SharedPreferences cache; Firestore rules for public /scenarios collection; Scenario selection screen redesigned with categories, search, pagination; 34 curated scenarios seeded; old bundled JSONs removed
-- [ ] Plan 02: Custom Scenario Creation (planned)
+- [x] **Plan 02: Custom Scenario Creation** — AiService.generateScenario with Gemini structured JSON; custom scenario CRUD in ScenarioService; CreateScenarioScreen with form, read-only preview (D-10), save; My Scenarios section with delete (D-11); Create button; Firestore rules for custom_scenarios subcollection
 - [ ] Plan 03: Today's Twist (planned)
 - [ ] Plan 04: Daily Challenge (planned)
 
@@ -118,9 +118,9 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 
 ## Session
 
-**Last session:** 2026-07-23T15:27:00.000Z
+**Last session:** 2026-07-23T16:30:00.000Z
 **Stopped at:** ""
-**Resume file:** .planning/phases/05-premium-and-polish/05-02-PLAN.md
+**Resume file:** .planning/phases/05-premium-and-polish/05-03-PLAN.md
 
 ## Remaining Work
 
