@@ -12,6 +12,7 @@ import '../leaderboard/screens/leaderboard_screen.dart';
 import '../onboarding/screens/onboarding_screen.dart';
 import '../progress/screens/progress_screen.dart';
 import '../profile/screens/profile_screen.dart';
+import '../scenario_selection/screens/create_scenario_screen.dart';
 import '../scenario_selection/screens/scenario_selection_screen.dart';
 import '../srs/screens/pre_scenario_review_screen.dart';
 import 'scaffold_with_nav_bar.dart';
@@ -123,6 +124,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/leaderboard',
       builder: (context, state) => const LeaderboardScreen(),
+    ),
+    GoRoute(
+      path: '/create-scenario',
+      builder: (context, state) => const CreateScenarioScreen(),
     ),
     GoRoute(
       path: '/pre-scenario-review',
