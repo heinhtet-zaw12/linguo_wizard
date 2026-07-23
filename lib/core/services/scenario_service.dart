@@ -175,4 +175,31 @@ class FirestoreScenarioService {
         .doc(scenarioId)
         .delete();
   }
+
+  // ─── Twist replay tracking ───
+
+  /// Read the twist replay count for a scenario (defaults to 0).
+  Future<int> getTwistReplayCount(String uid, String scenarioId) async {
+    final doc = await _db
+        .collection('users')
+        .doc(uid)
+        .collection('scenarios')
+        .doc(scenarioId)
+        .get();
+    if (!doc.exists) return 0;
+    return doc.data()?['twistReplayCount'] as int? ?? 0;
+  }
+
+  /// Increment twist replay count by 1 and record the timestamp.
+  Future<void> incrementTwistReplay(String uid, String scenarioId) async {
+    await _db
+        .collection('users')
+        .doc(uid)
+        .collection('scenarios')
+        .doc(scenarioId)
+        .set({
+      'twistReplayCount': FieldValue.increment(1),
+      'twistLastPlayedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
 }

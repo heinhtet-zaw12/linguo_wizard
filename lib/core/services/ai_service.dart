@@ -166,4 +166,85 @@ Return this exact JSON structure (no other text):
       default: return 3;
     }
   }
+
+  /// Generates a twist variation of an existing scenario.
+  ///
+  /// [scenario]: The original scenario to vary.
+  /// [replayCount]: How many times the user has already played a twist
+  ///   of this scenario. 0 = subtle change, 1+ = moderate change.
+  /// Returns a partial map with only the twist-modified fields.
+  Future<Map<String, dynamic>> generateTwistVariation({
+    required Scenario scenario,
+    required int replayCount,
+  }) async {
+    final apiKey = AppConfig.geminiApiKey;
+    if (apiKey.isEmpty) throw StateError('Gemini API key missing');
+
+    final model = GenerativeModel(
+      model: AppConfig.geminiModel,
+      apiKey: apiKey,
+    );
+
+    final depth = replayCount == 0 ? 'subtle' : 'moderate';
+    final depthDescription = replayCount == 0
+        ? 'Make a small situational change (e.g., different time of day, slightly different request, different setting). Keep the same character and goal.'
+        : 'Make a significant change (different character, different goal, or a complication). The original scenario\'s theme should still be recognizable.';
+
+    final prompt = '''
+You are a scenario variation designer for an English language learning app.
+Create a twist on an existing conversation scenario.
+
+Original scenario:
+- Title: ${scenario.title}
+- Description: ${scenario.description}
+- Persona: ${scenario.personaName} — ${scenario.personaDescription}
+- Goal: ${scenario.goalDescription}
+- Opening: ${scenario.openingMessage}
+
+Twist depth: $depth ($depthDescription)
+
+Return this exact JSON structure (no other text):
+{
+  "title": "updated title reflecting the twist",
+  "description": "updated one-sentence description",
+  "personaName": "same or slightly changed character name",
+  "personaDescription": "same character with added twist details",
+  "goalDescription": "same goal with added challenge from the twist",
+  "openingMessage": "a modified opening line that reflects the twist"
+}
+''';
+
+    final response = await model.generateContent(
+      [Content.text(prompt)],
+      generationConfig: GenerationConfig(
+        temperature: 0.9,
+        responseMimeType: 'application/json',
+        responseSchema: Schema(
+          SchemaType.object,
+          properties: {
+            'title': Schema(SchemaType.string),
+            'description': Schema(SchemaType.string),
+            'personaName': Schema(SchemaType.string),
+            'personaDescription': Schema(SchemaType.string),
+            'goalDescription': Schema(SchemaType.string),
+            'openingMessage': Schema(SchemaType.string),
+          },
+          requiredProperties: [
+            'title', 'description', 'personaName', 'personaDescription',
+            'goalDescription', 'openingMessage',
+          ],
+        ),
+      ),
+    ).timeout(
+      const Duration(seconds: 30),
+      onTimeout: () => throw TimeoutException('Twist generation timed out'),
+    );
+
+    final jsonStr = response.text;
+    if (jsonStr == null || jsonStr.isEmpty) {
+      throw StateError('Empty response from Gemini');
+    }
+
+    return jsonDecode(jsonStr) as Map<String, dynamic>;
+  }
 }
