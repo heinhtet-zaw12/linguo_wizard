@@ -50,23 +50,20 @@ Exceptions: none — existing codebase already consistent with this scale.
 
 ## Typography
 
-| Role | Size | Weight | Line Height | Font Family |
-|------|------|--------|-------------|-------------|
-| Display | 28px | 600 (semibold) | 1.2 | Fredoka |
-| Heading | 20px | 600 (semibold) | 1.2 | Fredoka |
-| Subheading | 16px | 600 (semibold) | 1.3 | Fredoka |
-| Body | 14px | 500 (medium) | 1.5 | Quicksand |
-| Label | 12px | 600 (semibold) | 1.4 | Quicksand |
-| Caption | 11px | 600 (semibold) | 1.3 | Fredoka |
-| Card title | 18px | 600 (semibold) | 1.2 | Fredoka |
-| Card body | 13px | 500 (medium) | 1.4 | Quicksand |
+| Role | Size | Weight | Line Height | Font Family | Absorbed Former Roles |
+|------|------|--------|-------------|-------------|----------------------|
+| Display | 28px | 600 (semibold) | 1.2 | Fredoka | — |
+| Heading | 20px | 600 (semibold) | 1.2 | Fredoka | Subheading (16px), Card title (18px) |
+| Body | 14px | 500 (medium) | 1.5 | Quicksand | Card body (13px) |
+| Label | 12px | 600 (semibold) | 1.4 | Quicksand | Caption (11px) |
 
 **Notes:**
 - Fredoka is used for all headings, titles, badges, and CTA text (playful, rounded aesthetic).
 - Quicksand is used for body text, descriptions, subtitles, and UI labels (readable, neutral).
+- Semantic role mapping: text previously styled as Subheading, Card title, or secondary heading uses `Heading 20px Fredoka 600`. Card body descriptions, subtitles, and secondary paragraphs use `Body 14px Quicksand 500`. Text previously styled as Caption or small secondary info uses `Label 12px Quicksand 600`.
 - Letter-spacing 0.8px on uppercase label text (e.g., category labels on cards).
 
-**Source:** Extracted from scenario_card.dart, home_screen.dart, scenario_selection_screen.dart, all existing widgets.
+**Source:** Extracted from scenario_card.dart, home_screen.dart, scenario_selection_screen.dart, all existing widgets. Merged to 4 roles per checker constraint (Dimension 4).
 
 ---
 
@@ -104,6 +101,7 @@ Exceptions: none — existing codebase already consistent with this scale.
 |---------|------|
 | Primary CTA (scenario creation) | "Create Scenario" |
 | Primary CTA (Daily Challenge) | "Start Challenge" |
+| Primary CTA (scenario generation) | "Generate Scenario" |
 | Empty state — no scenarios match filter | **Heading:** No scenarios found. **Body:** Try adjusting your filters or search term. |
 | Empty state — no scenarios loaded | **Heading:** Couldn't load scenarios. **Body:** Pull down to retry or check your connection. |
 | Empty state — no custom scenarios | **Heading:** No custom scenarios yet. **Body:** Create your own conversation by tapping the + button. |
@@ -188,7 +186,7 @@ Exceptions: none — existing codebase already consistent with this scale.
    - Field 3: "What's your goal?" — multiline TextField, hint text "e.g., order a flat white and ask about the menu"
    - All fields: white rounded container, primaryPink focus border, Fredoka 16px input text
 3. **Generate button** — full-width primary button at bottom:
-   - primaryPink background, white "Generate" text
+   - primaryPink background, white "Generate Scenario" text
    - On tap: calls AiService.generateScenario(), shows loading state
    - Loading state: "Generating your scenario..." with CircularProgressIndicator
 4. **Preview card** — after generation completes, replace form with preview:
@@ -234,6 +232,8 @@ Exceptions: none — existing codebase already consistent with this scale.
 4. **Coral (#E8836B)** is the ONLY destructive color — never use red
 5. **Pull-to-refresh** on all scrollable data screens (scenario selection, home dashboard)
 6. **Loading states:** Always use CircularProgressIndicator with primaryPink color, centered
+7. **Primary visual focal point — Scenario Selection screen:** the 2-column scenario card grid. This is the dominant visual element users see first: rows of rounded white cards in a balanced masonry-like layout, each with a claymorphism shadow and an illustrative icon. The grid occupies roughly 70% of the viewport above the fold (after tabs, chips, and search bar).
+8. **Secondary visual focal point — Scenario Selection screen:** the Create Scenario FAB (primaryPink circle, white `add` icon). Positioned bottom-right, it draws the eye as the only prominent floating element against the grid. Its pink color stands out from the white card field below.
 
 ---
 
