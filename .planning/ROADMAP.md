@@ -80,7 +80,7 @@ Plans:
 
 ---
 
-## Phase 4: Gamification & Retention
+## Phase 4: Gamification & Retention ✅
 
 **Goal:** Add engagement mechanics and learning intelligence
 **Success Criteria:**
@@ -127,12 +127,16 @@ Plans:
 **Wave 1**
 
 - [ ] 05-01-PLAN.md — Firestore scenario catalog: 30+ curated scenarios, categories, search, pagination, local cache
-- [ ] 05-02-PLAN.md — Custom scenarios: Gemini generation, preview/edit flow, unlimited for all users
+- [ ] 05-02-PLAN.md — Custom scenarios: Gemini generation, read-only preview, "My Scenarios" with delete, unlimited for all users
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 05-03-PLAN.md — Today's Twist: progressive twist depth, badge-on-card trigger
-- [ ] 05-04-PLAN.md — Daily Challenge: AI-generated daily scenario, Home hero card, 2x XP
+[No plans this wave — 05-03 and 05-04 depend on both 05-01 AND 05-02]
+
+**Wave 3** *(blocked on Wave 1 + Wave 2 plans)*
+
+- [ ] 05-03-PLAN.md — Today's Twist: Twist badge on completed cards, progressive AI variations, no counter/history
+- [ ] 05-04-PLAN.md — Daily Challenge: UTC-based fresh AI challenge daily, Home hero card with countdown, 2x XP (100 total)
 
 ---
 
