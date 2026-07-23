@@ -121,7 +121,7 @@ Plans:
 
 **Requirements:** CONV-01, CONV-03, CONV-04, CONV-05
 
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 Plans:
 **Wave 1**
