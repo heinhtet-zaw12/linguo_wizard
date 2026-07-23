@@ -44,9 +44,13 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
     // Clear stale scoreData from a previous evaluation so the guard on line 278
     // (scoreData != null → navigate to feedback) doesn't trigger on re-entry.
+    // Deferred via post-frame callback because Riverpod forbids modifying
+    // providers during the widget tree build lifecycle (didChangeDependencies).
     final scenario = _scenario;
     if (scenario != null) {
-      ref.read(conversationProvider(scenario).notifier).clearScoreData();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(conversationProvider(scenario).notifier).clearScoreData();
+      });
     }
 
     _checkForSavedConversation();
