@@ -49,5 +49,18 @@
 	<string>Linguo Wizard uses speech recognition to convert your spoken English into text for conversation practice.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Linguo Wizard needs microphone access to listen to your spoken English during conversation practice.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.554852030445-188d4p338fl6t5scu5ndngtt8ve9kft5</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>554852030445-188d4p338fl6t5scu5ndngtt8ve9kft5.apps.googleusercontent.com</string>
 </dict>
 </plist>
