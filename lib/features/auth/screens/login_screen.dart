@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/app_button.dart';
 import '../viewmodels/auth_viewmodel.dart';
 
 /// Login screen with email/password, Google sign-in, and guest access.
@@ -83,14 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authProvider);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -165,7 +161,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ],
 
                     // ─── Email Field ───
-                    _ClayField(
+                    AppTextField(
                       controller: _emailController,
                       label: 'Email',
                       keyboardType: TextInputType.emailAddress,
@@ -178,7 +174,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 16),
 
                     // ─── Password Field ───
-                    _ClayField(
+                    AppTextField(
                       controller: _passwordController,
                       label: 'Password',
                       obscureText: _obscurePassword,
@@ -219,38 +215,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 16),
 
                     // ─── Sign In Button ───
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: authState.isLoading ? null : _onSignIn,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryPink,
-                          disabledBackgroundColor: AppColors.primaryPinkLight,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          elevation: 4,
-                          shadowColor: AppColors.shadowPink,
-                        ),
-                        child: authState.isLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                'Sign In',
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                      ),
+                    AppButton(
+                      label: 'Sign In',
+                      isLoading: authState.isLoading,
+                      onPressed: _onSignIn,
                     ),
                     const SizedBox(height: 20),
 
@@ -275,44 +243,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 20),
 
                     // ─── Google Sign-In ───
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: authState.isLoading ? null : _onGoogleSignIn,
-                        icon: const Icon(Icons.g_mobiledata_rounded, size: 24),
-                        label: Text(
-                          'Sign in with Google',
-                          style: GoogleFonts.quicksand(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textDark,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          side: const BorderSide(
-                            color: AppColors.primaryPinkLight,
-                            width: 1.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                        ),
-                      ),
+                    AppButton(
+                      label: 'Sign in with Google',
+                      variant: AppButtonVariant.secondary,
+                      icon: Icons.g_mobiledata_rounded,
+                      isLoading: authState.isLoading,
+                      onPressed: _onGoogleSignIn,
                     ),
                     const SizedBox(height: 16),
 
                     // ─── Guest Sign-In ───
-                    TextButton(
-                      onPressed: authState.isLoading ? null : _onGuestSignIn,
-                      child: Text(
-                        'Continue as Guest',
-                        style: GoogleFonts.quicksand(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
+                    AppButton(
+                      label: 'Continue as Guest',
+                      variant: AppButtonVariant.ghost,
+                      isLoading: authState.isLoading,
+                      onPressed: _onGuestSignIn,
                     ),
                     const SizedBox(height: 8),
 
@@ -344,70 +289,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A claymorphism-styled text field.
-class _ClayField extends StatelessWidget {
-  const _ClayField({
-    required this.controller,
-    required this.label,
-    this.keyboardType,
-    this.obscureText = false,
-    this.suffixIcon,
-    this.validator,
-  });
-
-  final TextEditingController controller;
-  final String label;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final Widget? suffixIcon;
-  final String? Function(String?)? validator;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        obscureText: obscureText,
-        validator: validator,
-        style: GoogleFonts.quicksand(
-          fontSize: 14,
-          color: AppColors.textDark,
-        ),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: GoogleFonts.quicksand(
-            fontSize: 14,
-            color: AppColors.textMuted,
-          ),
-          suffixIcon: suffixIcon,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
           ),
         ),
       ),
