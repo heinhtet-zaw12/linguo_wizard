@@ -84,12 +84,12 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(
           'Saved Conversation Found',
-          AppTextStyles.bodyMedium(),
+          style: AppTextStyles.bodyMedium(),
         ),
         content: Text(
           'You have a saved conversation from earlier. '
           'Would you like to resume where you left off?',
-          AppTextStyles.bodyMedium(),
+          style: AppTextStyles.bodyMedium(),
         ),
         actions: [
           TextButton(
@@ -138,11 +138,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(
           'Save Progress?',
-          AppTextStyles.bodyMedium(),
+          style: AppTextStyles.bodyMedium(),
         ),
         content: Text(
           'Do you want to save this conversation so you can continue later?',
-          AppTextStyles.bodyMedium(),
+          style: AppTextStyles.bodyMedium(),
         ),
         actions: [
           TextButton(
@@ -186,11 +186,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(
           'New Conversation',
-          AppTextStyles.bodyMedium(),
+          style: AppTextStyles.bodyMedium(),
         ),
         content: Text(
           'Start a fresh conversation? Current progress will be lost.',
-          AppTextStyles.bodyMedium(),
+          style: AppTextStyles.bodyMedium(),
         ),
         actions: [
           TextButton(
