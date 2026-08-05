@@ -28,9 +28,9 @@ class AppTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surfaceSecondary,
+        color: AppColors.surfaceGlass,
         borderRadius: AppRadius.md,
-        border: Border.all(color: AppColors.borderSubtle, width: 1.5),
+        border: Border.all(color: AppColors.borderSubtle, width: 1),
       ),
       child: TextFormField(
         controller: controller,
@@ -53,15 +53,15 @@ class AppTextField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: AppRadius.md,
-            borderSide: BorderSide(color: AppColors.borderFocus, width: 1.5),
+            borderSide: BorderSide(color: AppColors.accentCyan, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: AppRadius.md,
-            borderSide: BorderSide(color: AppColors.accentDanger, width: 1.5),
+            borderSide: BorderSide(color: AppColors.danger, width: 1.5),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: AppRadius.md,
-            borderSide: BorderSide(color: AppColors.accentDanger, width: 1.5),
+            borderSide: BorderSide(color: AppColors.danger, width: 1.5),
           ),
           filled: true,
           fillColor: Colors.transparent,

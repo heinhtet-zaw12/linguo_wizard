@@ -38,25 +38,24 @@ class AppSpacing {
 class AppRadius {
   AppRadius._();
 
-  static const BorderRadius sm = BorderRadius.all(Radius.circular(8));
-  static const BorderRadius md = BorderRadius.all(Radius.circular(12));
-  static const BorderRadius lg = BorderRadius.all(Radius.circular(16));
-  static const BorderRadius xl = BorderRadius.all(Radius.circular(24));
-  static const BorderRadius full = BorderRadius.all(Radius.circular(9999));
+  static const BorderRadius sm = BorderRadius.all(Radius.circular(12));
+  static const BorderRadius md = BorderRadius.all(Radius.circular(16));
+  static const BorderRadius lg = BorderRadius.all(Radius.circular(24));
+  static const BorderRadius pill = BorderRadius.all(Radius.circular(9999));
 
   // Mixed radii (for message bubbles with tail effect)
   static const BorderRadius bubbleUser = BorderRadius.only(
-    topLeft: Radius.circular(16),
-    topRight: Radius.circular(16),
-    bottomLeft: Radius.circular(16),
+    topLeft: Radius.circular(24),
+    topRight: Radius.circular(24),
+    bottomLeft: Radius.circular(24),
     bottomRight: Radius.circular(4),
   );
 
   static const BorderRadius bubbleAi = BorderRadius.only(
-    topLeft: Radius.circular(16),
-    topRight: Radius.circular(16),
+    topLeft: Radius.circular(24),
+    topRight: Radius.circular(24),
     bottomLeft: Radius.circular(4),
-    bottomRight: Radius.circular(16),
+    bottomRight: Radius.circular(24),
   );
 }
 

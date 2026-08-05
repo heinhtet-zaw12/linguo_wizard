@@ -7,115 +7,63 @@ import 'app_text_styles.dart';
 export 'app_colors.dart';
 
 /// Application theme configuration.
-/// Provides both light and dark Material 3 themes.
+/// Dark-only — single ThemeData for the futuristic dark theme.
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get light {
-    final colors = const LightColors();
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: colors.accentPrimary,
-      brightness: Brightness.light,
-      primary: colors.accentPrimary,
-      onPrimary: colors.textOnAccent,
-      surface: colors.surfacePrimary,
-      onSurface: colors.textPrimary,
-    );
-
-    return ThemeData(
-      brightness: Brightness.light,
-      useMaterial3: true,
-      scaffoldBackgroundColor: colors.backgroundStart,
-      colorScheme: colorScheme,
-      textTheme: _buildTextTheme(Brightness.light),
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        titleTextStyle: AppTextStyles.headingMedium(
-          color: colors.textPrimary,
-        ),
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: colors.surfaceGlass,
-        elevation: 0,
-        indicatorColor: colors.accentPrimary,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return AppTextStyles.labelMedium(color: colors.textOnAccent);
-          }
-          return AppTextStyles.labelMedium(color: colors.textTertiary);
-        }),
-      ),
-    );
-  }
-
   static ThemeData get dark {
-    final colors = const DarkColors();
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: colors.accentPrimary,
-      brightness: Brightness.dark,
-      primary: colors.accentPrimary,
-      onPrimary: colors.textOnAccent,
-      surface: colors.surfacePrimary,
-      onSurface: colors.textPrimary,
+    final colorScheme = ColorScheme.dark(
+      primary: AppColors.accentStart,
+      secondary: AppColors.accentMid,
+      surface: AppColors.surface1,
+      error: AppColors.danger,
+      onPrimary: AppColors.textOnAccent,
+      onSurface: AppColors.textPrimary,
     );
 
     return ThemeData(
       brightness: Brightness.dark,
       useMaterial3: true,
-      scaffoldBackgroundColor: colors.backgroundStart,
+      scaffoldBackgroundColor: AppColors.surfaceBase,
       colorScheme: colorScheme,
-      textTheme: _buildTextTheme(Brightness.dark),
+      fontFamily: 'Inter',
+      textTheme: _buildTextTheme(),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         titleTextStyle: AppTextStyles.headingMedium(
-          color: colors.textPrimary,
+          color: AppColors.textPrimary,
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: colors.surfaceGlass,
+        backgroundColor: AppColors.surfaceGlass,
         elevation: 0,
-        indicatorColor: colors.accentPrimary,
+        indicatorColor: AppColors.accentStart,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppTextStyles.labelMedium(color: colors.textOnAccent);
+            return AppTextStyles.labelMedium(color: AppColors.textOnAccent);
           }
-          return AppTextStyles.labelMedium(color: colors.textTertiary);
+          return AppTextStyles.labelMedium(color: AppColors.textTertiary);
         }),
       ),
     );
   }
 
   /// Build a TextTheme using GoogleFonts.
-  static TextTheme _buildTextTheme(Brightness brightness) {
-    final colors =
-        brightness == Brightness.light ? const LightColors() : const DarkColors();
-
+  static TextTheme _buildTextTheme() {
     return TextTheme(
-      displayLarge: AppTextStyles.displayLarge(color: colors.textPrimary),
-      displayMedium: AppTextStyles.displayMedium(color: colors.textPrimary),
-      headlineLarge: AppTextStyles.headingLarge(color: colors.textPrimary),
-      headlineMedium: AppTextStyles.headingMedium(color: colors.textPrimary),
-      headlineSmall: AppTextStyles.headingSmall(color: colors.textPrimary),
-      bodyLarge: AppTextStyles.bodyLarge(color: colors.textSecondary),
-      bodyMedium: AppTextStyles.bodyMedium(color: colors.textSecondary),
-      bodySmall: AppTextStyles.bodySmall(color: colors.textTertiary),
-      labelLarge: AppTextStyles.labelLarge(color: colors.textPrimary),
-      labelMedium: AppTextStyles.labelMedium(color: colors.textSecondary),
-      labelSmall: AppTextStyles.labelSmall(color: colors.textTertiary),
+      displayLarge: AppTextStyles.displayLarge(color: AppColors.textPrimary),
+      displayMedium: AppTextStyles.displayMedium(color: AppColors.textPrimary),
+      headlineLarge: AppTextStyles.headingLarge(color: AppColors.textPrimary),
+      headlineMedium: AppTextStyles.headingMedium(color: AppColors.textPrimary),
+      headlineSmall: AppTextStyles.headingSmall(color: AppColors.textPrimary),
+      bodyLarge: AppTextStyles.bodyLarge(color: AppColors.textSecondary),
+      bodyMedium: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+      bodySmall: AppTextStyles.bodySmall(color: AppColors.textTertiary),
+      labelLarge: AppTextStyles.labelLarge(color: AppColors.textPrimary),
+      labelMedium: AppTextStyles.labelMedium(color: AppColors.textSecondary),
+      labelSmall: AppTextStyles.labelSmall(color: AppColors.textTertiary),
     );
-  }
-
-  /// Update the AppColorProvider based on brightness.
-  /// Call this when theme changes (e.g., dark mode toggle).
-  static void updateColorProvider(Brightness brightness) {
-    if (brightness == Brightness.dark) {
-      AppColorProvider.update(const DarkColors());
-    } else {
-      AppColorProvider.update(const LightColors());
-    }
   }
 }

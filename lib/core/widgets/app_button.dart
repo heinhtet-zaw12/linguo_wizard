@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
+import '../theme/app_gradients.dart';
+import '../theme/app_shadows.dart';
 import '../theme/app_text_styles.dart';
 
 /// Unified button component with multiple variants.
 enum AppButtonVariant { primary, secondary, ghost }
 
-class AppButton extends StatelessWidget {
+class AppButton extends StatefulWidget {
   const AppButton({
     super.key,
     required this.label,
@@ -14,8 +16,6 @@ class AppButton extends StatelessWidget {
     this.variant = AppButtonVariant.primary,
     this.icon,
     this.isLoading = false,
-    this.isExpanded = true,
-    this.padding,
   });
 
   final String label;
@@ -23,78 +23,76 @@ class AppButton extends StatelessWidget {
   final AppButtonVariant variant;
   final IconData? icon;
   final bool isLoading;
-  final bool isExpanded;
-  final EdgeInsetsGeometry? padding;
+
+  @override
+  State<AppButton> createState() => _AppButtonState();
+}
+
+class _AppButtonState extends State<AppButton> {
+  double _scale = 1.0;
+
+  void _onTapDown(TapDownDetails _) => setState(() => _scale = 0.97);
+  void _onTapUp(TapUpDetails _) => setState(() => _scale = 1.0);
+  void _onTapCancel() => setState(() => _scale = 1.0);
 
   @override
   Widget build(BuildContext context) {
-    final button = switch (variant) {
+    final button = switch (widget.variant) {
       AppButtonVariant.primary => _buildPrimary(),
       AppButtonVariant.secondary => _buildSecondary(),
       AppButtonVariant.ghost => _buildGhost(),
     };
 
-    if (isExpanded) {
-      return SizedBox(width: double.infinity, child: button);
-    }
-    return button;
+    return GestureDetector(
+      onTapDown: widget.onPressed != null ? _onTapDown : null,
+      onTapUp: widget.onPressed != null ? _onTapUp : null,
+      onTapCancel: widget.onPressed != null ? _onTapCancel : null,
+      onTap: widget.onPressed,
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOut,
+        child: button,
+      ),
+    );
   }
 
   Widget _buildPrimary() {
     return Container(
+      width: double.infinity,
+      height: AppSizing.buttonHeight,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.accentPrimary,
-            AppColors.accentPrimaryDark,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: AppRadius.xl,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.accentPrimary.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        gradient: AppGradients.accent,
+        borderRadius: AppRadius.md,
+        boxShadow: AppShadows.glowBlue,
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isLoading ? null : onPressed,
-          borderRadius: AppRadius.xl,
-          child: Padding(
-            padding: padding ?? const EdgeInsets.symmetric(vertical: 16),
-            child: Center(child: _buildChild(AppColors.textOnAccent)),
-          ),
-        ),
-      ),
+      child: Center(child: _buildChild(AppColors.textOnAccent)),
     );
   }
 
   Widget _buildSecondary() {
-    return OutlinedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: OutlinedButton.styleFrom(
-        padding: padding ?? const EdgeInsets.symmetric(vertical: 14),
-        side: BorderSide(color: AppColors.borderSubtle, width: 1.5),
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
+    return Container(
+      width: double.infinity,
+      height: AppSizing.buttonHeight,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGlass,
+        borderRadius: AppRadius.md,
+        border: Border.all(color: AppColors.accentCyan, width: 1),
       ),
-      child: _buildChild(AppColors.textPrimary),
+      child: Center(child: _buildChild(AppColors.accentCyan)),
     );
   }
 
   Widget _buildGhost() {
-    return TextButton(
-      onPressed: isLoading ? null : onPressed,
-      child: _buildChild(AppColors.accentPrimary),
+    return SizedBox(
+      width: double.infinity,
+      height: AppSizing.buttonHeight,
+      child: Center(child: _buildChild(AppColors.accentCyan)),
     );
   }
 
   Widget _buildChild(Color color) {
-    if (isLoading) {
+    if (widget.isLoading) {
       return const SizedBox(
         width: 20,
         height: 20,
@@ -104,17 +102,17 @@ class AppButton extends StatelessWidget {
 
     final textStyle = AppTextStyles.labelLarge(color: color);
 
-    if (icon != null) {
+    if (widget.icon != null) {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: AppSizing.iconLg, color: color),
+          Icon(widget.icon, size: AppSizing.iconLg, color: color),
           const SizedBox(width: AppSpacing.s2),
-          Text(label, style: textStyle),
+          Text(widget.label, style: textStyle),
         ],
       );
     }
 
-    return Text(label, style: textStyle);
+    return Text(widget.label, style: textStyle);
   }
 }

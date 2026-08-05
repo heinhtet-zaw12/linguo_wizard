@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/config/app_config.dart';
 import 'core/config/firebase_options.dart';
-import 'core/providers/theme_provider.dart';
 import 'core/theme/app_theme.dart';
 import 'features/navigation/router.dart';
 
@@ -19,24 +18,16 @@ Future<void> main() async {
   runApp(const ProviderScope(child: LinguoWizardApp()));
 }
 
-class LinguoWizardApp extends ConsumerWidget {
+class LinguoWizardApp extends StatelessWidget {
   const LinguoWizardApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-
-    // Keep AppColorProvider in sync for non-Material widgets (GradientBackground, etc.)
-    AppTheme.updateColorProvider(
-      themeMode == ThemeMode.dark ? Brightness.dark : Brightness.light,
-    );
-
+  Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Linguo Wizard',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: themeMode,
+      theme: AppTheme.dark,
+      themeMode: ThemeMode.dark,
       routerConfig: appRouter,
     );
   }

@@ -18,14 +18,14 @@ class AppTextStyles {
   static TextStyle displayLarge({Color? color}) => _mono.copyWith(
         fontSize: 32,
         fontWeight: FontWeight.w700,
-        height: 1.25, // 40px line height
+        height: 1.25,
         color: color ?? AppColors.textPrimary,
       );
 
   static TextStyle displayMedium({Color? color}) => _heading.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.w700,
-        height: 1.33, // 32px
+        height: 1.33,
         color: color ?? AppColors.textPrimary,
       );
 
@@ -34,21 +34,21 @@ class AppTextStyles {
   static TextStyle headingLarge({Color? color}) => _heading.copyWith(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        height: 1.4, // 28px
+        height: 1.4,
         color: color ?? AppColors.textPrimary,
       );
 
   static TextStyle headingMedium({Color? color}) => _heading.copyWith(
         fontSize: 17,
         fontWeight: FontWeight.w600,
-        height: 1.41, // 24px
+        height: 1.41,
         color: color ?? AppColors.textPrimary,
       );
 
   static TextStyle headingSmall({Color? color}) => _heading.copyWith(
         fontSize: 15,
         fontWeight: FontWeight.w600,
-        height: 1.47, // 22px
+        height: 1.47,
         color: color ?? AppColors.textPrimary,
       );
 
@@ -57,21 +57,21 @@ class AppTextStyles {
   static TextStyle bodyLarge({Color? color}) => _body.copyWith(
         fontSize: 16,
         fontWeight: FontWeight.w400,
-        height: 1.5, // 24px
+        height: 1.5,
         color: color ?? AppColors.textSecondary,
       );
 
   static TextStyle bodyMedium({Color? color}) => _body.copyWith(
         fontSize: 14,
         fontWeight: FontWeight.w400,
-        height: 1.43, // 20px
+        height: 1.43,
         color: color ?? AppColors.textSecondary,
       );
 
   static TextStyle bodySmall({Color? color}) => _body.copyWith(
         fontSize: 13,
         fontWeight: FontWeight.w400,
-        height: 1.38, // 18px
+        height: 1.38,
         color: color ?? AppColors.textTertiary,
       );
 
@@ -80,21 +80,21 @@ class AppTextStyles {
   static TextStyle labelLarge({Color? color}) => _body.copyWith(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        height: 1.43, // 20px
+        height: 1.43,
         color: color ?? AppColors.textPrimary,
       );
 
   static TextStyle labelMedium({Color? color}) => _body.copyWith(
         fontSize: 12,
         fontWeight: FontWeight.w500,
-        height: 1.33, // 16px
+        height: 1.33,
         color: color ?? AppColors.textSecondary,
       );
 
   static TextStyle labelSmall({Color? color}) => _body.copyWith(
         fontSize: 11,
         fontWeight: FontWeight.w600,
-        height: 1.27, // 14px
+        height: 1.27,
         color: color ?? AppColors.textTertiary,
       );
 }

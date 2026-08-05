@@ -1,20 +1,21 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
+import '../theme/app_gradients.dart';
+import '../theme/app_shadows.dart';
 import '../theme/app_text_styles.dart';
 
 /// Glass-pill selection chip with selected/unselected states.
-class AppChip extends StatelessWidget {
-  const AppChip({
+class GlassChip extends StatelessWidget {
+  const GlassChip({
     super.key,
     required this.label,
-    required this.isSelected,
+    required this.selected,
     this.onTap,
   });
 
   final String label;
-  final bool isSelected;
+  final bool selected;
   final VoidCallback? onTap;
 
   @override
@@ -27,41 +28,24 @@ class AppChip extends StatelessWidget {
         height: AppSizing.chipHeight,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s3),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.accentPrimary
-              : AppColors.surfaceGlass,
-          borderRadius: AppRadius.full,
+          gradient: selected ? AppGradients.accent : null,
+          color: selected ? null : AppColors.surfaceGlass,
+          borderRadius: AppRadius.pill,
           border: Border.all(
-            color: isSelected
-                ? AppColors.accentPrimary
+            color: selected
+                ? AppColors.accentStart
                 : AppColors.borderSubtle,
             width: 1,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.accentPrimary.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
+          boxShadow: selected ? AppShadows.glowCyan : null,
         ),
-        child: ClipRRect(
-          borderRadius: AppRadius.full,
-          child: BackdropFilter(
-            filter: isSelected
-                ? ImageFilter.blur()
-                : ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Center(
-              child: Text(
-                label,
-                style: AppTextStyles.labelMedium(
-                  color: isSelected
-                      ? AppColors.textOnAccent
-                      : AppColors.textSecondary,
-                ),
-              ),
+        child: Center(
+          child: Text(
+            label,
+            style: AppTextStyles.labelMedium(
+              color: selected
+                  ? AppColors.textOnAccent
+                  : AppColors.textSecondary,
             ),
           ),
         ),
