@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
 import '../viewmodels/leaderboard_viewmodel.dart';
 import '../../../core/theme/app_text_styles.dart';
 
@@ -22,18 +23,11 @@ class LeaderboardScreen extends ConsumerWidget {
           'Leaderboard',
           style: AppTextStyles.headingLarge(color: AppColors.textDark),
         ),
-        backgroundColor: AppColors.bgTop,
+        backgroundColor: AppColors.backgroundStart,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.textDark),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: asyncEntries.when(
           loading: () => const Center(
             child: CircularProgressIndicator(color: AppColors.primaryPink),

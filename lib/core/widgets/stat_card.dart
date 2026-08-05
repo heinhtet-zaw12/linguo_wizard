@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
 import '../theme/app_shadows.dart';
@@ -12,16 +13,18 @@ class StatCard extends StatelessWidget {
     required this.iconColor,
     required this.value,
     required this.label,
+    this.animate = true,
   });
 
   final IconData icon;
   final Color iconColor;
   final String value;
   final String label;
+  final bool animate;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    final card = Expanded(
       child: Container(
         padding: AppSpacing.all4,
         decoration: BoxDecoration(
@@ -40,5 +43,11 @@ class StatCard extends StatelessWidget {
         ),
       ),
     );
+
+    if (!animate) return card;
+    return card
+        .animate()
+        .fadeIn(duration: 400.ms, curve: Curves.easeOut)
+        .slideY(begin: 0.15, duration: 400.ms, curve: Curves.easeOut);
   }
 }

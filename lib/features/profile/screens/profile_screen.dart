@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/stat_card.dart';
@@ -107,8 +108,8 @@ class ProfileScreen extends ConsumerWidget {
             _buildAccountInfo(state),
             const SizedBox(height: 24),
 
-            // ─── Settings Placeholder ───
-            _buildSettingsSection(),
+            // ─── Settings ───
+            _buildSettingsSection(context, ref),
             const SizedBox(height: 24),
 
             // ─── Logout Button ───
@@ -220,7 +221,9 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSettingsSection() {
+  Widget _buildSettingsSection(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+
     return AppCard(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -230,13 +233,57 @@ class ProfileScreen extends ConsumerWidget {
             'Settings',
             style: AppTextStyles.headingSmall(color: AppColors.textDark),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Account settings coming soon',
-            style: AppTextStyles.labelMedium(color: AppColors.textMuted),
-          ),
+          const SizedBox(height: 12),
+          // ─── Dark Mode Toggle ───
+          _buildThemeTile(ref, themeMode),
         ],
       ),
+    );
+  }
+
+  Widget _buildThemeTile(WidgetRef ref, ThemeMode currentMode) {
+    return Row(
+      children: [
+        Icon(
+          Icons.dark_mode_outlined,
+          size: 22,
+          color: AppColors.textMuted,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            'Dark Mode',
+            style: AppTextStyles.bodyMedium(color: AppColors.textDark),
+          ),
+        ),
+        SegmentedButton<ThemeMode>(
+          segments: const [
+            ButtonSegment(
+              value: ThemeMode.system,
+              label: Text('Auto', style: TextStyle(fontSize: 12)),
+              icon: Icon(Icons.brightness_auto, size: 16),
+            ),
+            ButtonSegment(
+              value: ThemeMode.light,
+              label: Text('Light', style: TextStyle(fontSize: 12)),
+              icon: Icon(Icons.light_mode, size: 16),
+            ),
+            ButtonSegment(
+              value: ThemeMode.dark,
+              label: Text('Dark', style: TextStyle(fontSize: 12)),
+              icon: Icon(Icons.dark_mode, size: 16),
+            ),
+          ],
+          selected: {currentMode},
+          onSelectionChanged: (selected) {
+            ref.read(themeModeProvider.notifier).setMode(selected.first);
+          },
+          style: ButtonStyle(
+            visualDensity: VisualDensity.compact,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+        ),
+      ],
     );
   }
 

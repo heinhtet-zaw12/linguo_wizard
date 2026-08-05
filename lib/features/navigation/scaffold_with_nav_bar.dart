@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/providers/auth_provider.dart';
+import '../../core/widgets/app_nav_bar.dart';
 
 /// Shell scaffold with bottom navigation bar.
 ///
@@ -12,6 +13,33 @@ class ScaffoldWithNavBar extends ConsumerWidget {
   const ScaffoldWithNavBar({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
+
+  static const _allDestinations = [
+    AppNavDestination(
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home,
+      label: 'Home',
+      index: 0,
+    ),
+    AppNavDestination(
+      icon: Icons.explore_outlined,
+      selectedIcon: Icons.explore,
+      label: 'Scenarios',
+      index: 1,
+    ),
+    AppNavDestination(
+      icon: Icons.bar_chart_outlined,
+      selectedIcon: Icons.bar_chart,
+      label: 'Progress',
+      index: 2,
+    ),
+    AppNavDestination(
+      icon: Icons.person_outlined,
+      selectedIcon: Icons.person,
+      label: 'Profile',
+      index: 3,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,9 +60,12 @@ class ScaffoldWithNavBar extends ConsumerWidget {
       });
     }
 
+    final destinations = _allDestinations.sublist(0, destinationCount);
+
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: AppNavBar(
+        destinations: destinations,
         selectedIndex: safeIndex,
         onDestinationSelected: (index) {
           navigationShell.goBranch(
@@ -42,30 +73,6 @@ class ScaffoldWithNavBar extends ConsumerWidget {
             initialLocation: index == navigationShell.currentIndex,
           );
         },
-        destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
-            label: 'Scenarios',
-          ),
-          if (!isGuest) ...[
-            const NavigationDestination(
-              icon: Icon(Icons.bar_chart_outlined),
-              selectedIcon: Icon(Icons.bar_chart),
-              label: 'Progress',
-            ),
-            const NavigationDestination(
-              icon: Icon(Icons.person_outlined),
-              selectedIcon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-        ],
       ),
     );
   }

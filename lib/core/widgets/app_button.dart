@@ -41,18 +41,36 @@ class AppButton extends StatelessWidget {
   }
 
   Widget _buildPrimary() {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.accentPrimary,
-        disabledBackgroundColor: AppColors.accentPrimaryLight,
-        foregroundColor: AppColors.textOnAccent,
-        padding: padding ?? const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
-        elevation: 2,
-        shadowColor: AppColors.shadowColor,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.accentPrimary,
+            AppColors.accentPrimaryDark,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: AppRadius.xl,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accentPrimary.withValues(alpha: 0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      child: _buildChild(AppColors.textOnAccent),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isLoading ? null : onPressed,
+          borderRadius: AppRadius.xl,
+          child: Padding(
+            padding: padding ?? const EdgeInsets.symmetric(vertical: 16),
+            child: Center(child: _buildChild(AppColors.textOnAccent)),
+          ),
+        ),
+      ),
     );
   }
 
