@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../models/message.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// A voice message bubble — audio-first with collapsible transcript.
 ///
@@ -138,12 +139,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       constraints: const BoxConstraints(maxWidth: 300),
       child: Text(
         widget.message.transcript,
-        style: const TextStyle(
-          fontFamily: 'Quicksand',
-          fontSize: 13,
-          color: AppColors.textMuted,
-          height: 1.3,
-        ),
+        style: AppTextStyles.labelMedium(color: AppColors.textMuted),
       ),
     );
   }
@@ -153,11 +149,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       onTap: () => setState(() => _showTranscript = !_showTranscript),
       child: Text(
         _showTranscript ? 'Hide Transcript' : 'Show Transcript',
-        style: TextStyle(
-          fontFamily: 'Quicksand',
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: AppColors.primaryPink.withValues(alpha: 0.8),
+        style: AppTextStyles.bodyMedium(color: AppColors.primaryPink).copyWith(
           decoration: TextDecoration.underline,
           decorationColor: AppColors.primaryPink.withValues(alpha: 0.4),
         ),

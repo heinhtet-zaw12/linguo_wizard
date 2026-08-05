@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/models/srs_item.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../viewmodels/srs_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Pre-scenario review screen showing due SRS items before conversation starts.
 ///
@@ -62,7 +62,7 @@ class _PreScenarioReviewScreenState
             error: (e, _) => Center(
               child: Text(
                 'Failed to load review items',
-                style: GoogleFonts.quicksand(color: AppColors.textMuted),
+                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
               ),
             ),
             data: (state) => _buildContent(context, state),
@@ -95,20 +95,12 @@ class _PreScenarioReviewScreenState
             children: [
               Text(
                 'Practice these words',
-                style: GoogleFonts.fredoka(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDark,
-                ),
+                style: AppTextStyles.headingLarge(color: AppColors.textDark),
               ),
               const SizedBox(height: 4),
               Text(
                 '${state.dueItems.length} items due for review',
-                style: GoogleFonts.quicksand(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textMuted,
-                ),
+                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
               ),
             ],
           ),
@@ -152,11 +144,7 @@ class _PreScenarioReviewScreenState
                 },
                 child: Text(
                   'Skip Review',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.labelLarge(color: AppColors.textMuted),
                 ),
               ),
             ],
@@ -179,19 +167,12 @@ class _PreScenarioReviewScreenState
           const SizedBox(height: 12),
           Text(
             "You're all caught up!",
-            style: GoogleFonts.quicksand(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-            ),
+            style: AppTextStyles.bodyLarge(color: AppColors.textDark),
           ),
           const SizedBox(height: 4),
           Text(
             'No items to review.',
-            style: GoogleFonts.quicksand(
-              fontSize: 13,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelMedium(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -249,11 +230,7 @@ class _SrsItemCard extends StatelessWidget {
             ),
             child: Text(
               item.category,
-              style: GoogleFonts.quicksand(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: _categoryColor(),
-              ),
+              style: AppTextStyles.labelSmall(),
             ),
           ),
           const SizedBox(width: 12),
@@ -261,11 +238,7 @@ class _SrsItemCard extends StatelessWidget {
           Expanded(
             child: Text(
               item.text,
-              style: GoogleFonts.quicksand(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.labelLarge(color: AppColors.textDark),
             ),
           ),
           // "I know this" button

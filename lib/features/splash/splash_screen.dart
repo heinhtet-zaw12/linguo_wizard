@@ -2,8 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Animated splash screen — 3D Claymorphism style.
 ///
@@ -331,12 +331,7 @@ class _AppName extends StatelessWidget {
             opacity: opacity.value,
             child: Text(
               'Linguo Wizard',
-              style: GoogleFonts.fredoka(
-                fontSize: 34,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-                letterSpacing: 0.5,
-              ),
+              style: AppTextStyles.displayMedium(color: AppColors.textDark),
             ),
           ),
         );
@@ -361,12 +356,7 @@ class _Tagline extends StatelessWidget {
             opacity: opacity.value,
             child: Text(
               'Speak naturally. Learn magically.',
-              style: GoogleFonts.quicksand(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textMuted,
-                letterSpacing: 0.4,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ),
         );

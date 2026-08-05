@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/cefr_badge.dart';
 import '../../../core/widgets/info_row.dart';
 import '../models/scenario.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// A read-only preview card for a generated custom scenario.
 ///
@@ -33,12 +33,7 @@ class ScenarioPreviewCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 scenario.category.toUpperCase(),
-                style: GoogleFonts.quicksand(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textMuted,
-                  letterSpacing: 0.8,
-                ),
+                style: AppTextStyles.labelSmall(color: AppColors.textMuted),
               ),
             ],
           ),
@@ -46,11 +41,7 @@ class ScenarioPreviewCard extends StatelessWidget {
           // Title
           Text(
             scenario.title,
-            style: GoogleFonts.fredoka(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-            ),
+            style: AppTextStyles.headingLarge(color: AppColors.textDark),
           ),
           const SizedBox(height: 12),
           // Persona
@@ -81,11 +72,7 @@ class ScenarioPreviewCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     scenario.goalDescription,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textDark,
-                    ),
+                    style: AppTextStyles.labelMedium(color: AppColors.textDark),
                   ),
                 ),
               ],
@@ -112,11 +99,7 @@ class ScenarioPreviewCard extends StatelessWidget {
                   ),
                   child: Text(
                     tag,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryPinkDark,
-                    ),
+                    style: AppTextStyles.labelSmall(color: AppColors.primaryPinkDark),
                   ),
                 );
               }).toList(),

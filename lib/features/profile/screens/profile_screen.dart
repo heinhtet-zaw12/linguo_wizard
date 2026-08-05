@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
@@ -10,6 +9,7 @@ import '../../../core/widgets/info_row.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_button.dart';
 import '../viewmodels/profile_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Profile tab screen displaying user info and account actions.
 class ProfileScreen extends ConsumerWidget {
@@ -32,17 +32,14 @@ class ProfileScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Failed to load profile',
-                    style: GoogleFonts.quicksand(color: AppColors.textMuted),
+                    style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => ref.invalidate(profileViewModelProvider),
                     child: Text(
                       'Retry',
-                      style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryPinkDark,
-                      ),
+                      style: AppTextStyles.labelLarge(color: AppColors.primaryPinkDark),
                     ),
                   ),
                 ],
@@ -71,10 +68,7 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               Text(
                 state.error!,
-                style: GoogleFonts.quicksand(
-                  fontSize: 14,
-                  color: AppColors.textMuted,
-                ),
+                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -97,11 +91,7 @@ class ProfileScreen extends ConsumerWidget {
             // ─── Header ───
             Text(
               'Profile',
-              style: GoogleFonts.fredoka(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.displayMedium(color: AppColors.textDark),
             ),
             const SizedBox(height: 24),
 
@@ -167,20 +157,13 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             state.displayName,
-            style: GoogleFonts.fredoka(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-            ),
+            style: AppTextStyles.headingLarge(color: AppColors.textDark),
           ),
           if (state.email.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
               state.email,
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ],
         ],
@@ -192,11 +175,7 @@ class ProfileScreen extends ConsumerWidget {
     return Center(
       child: Text(
         initials,
-        style: GoogleFonts.fredoka(
-          fontSize: 32,
-          fontWeight: FontWeight.w600,
-          color: AppColors.primaryPinkDark,
-        ),
+        style: AppTextStyles.displayMedium(color: AppColors.primaryPinkDark),
       ),
     );
   }
@@ -249,19 +228,12 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           Text(
             'Settings',
-            style: GoogleFonts.fredoka(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-            ),
+            style: AppTextStyles.headingSmall(color: AppColors.textDark),
           ),
           const SizedBox(height: 8),
           Text(
             'Account settings coming soon',
-            style: GoogleFonts.quicksand(
-              fontSize: 13,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelMedium(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -279,28 +251,25 @@ class ProfileScreen extends ConsumerWidget {
           builder: (ctx) => AlertDialog(
             title: Text(
               'Sign Out',
-              style: GoogleFonts.fredoka(fontWeight: FontWeight.w600),
+              style: AppTextStyles.headingSmall(),
             ),
             content: Text(
               'Are you sure you want to sign out?',
-              style: GoogleFonts.quicksand(),
+              style: AppTextStyles.bodyMedium(),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
                 child: Text(
                   'Cancel',
-                  style: GoogleFonts.quicksand(color: AppColors.textMuted),
+                  style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx, true),
                 child: Text(
                   'Sign Out',
-                  style: GoogleFonts.quicksand(
-                    color: Colors.red,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTextStyles.labelLarge(color: Colors.red),
                 ),
               ),
             ],

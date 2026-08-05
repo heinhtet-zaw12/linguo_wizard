@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
@@ -10,6 +9,7 @@ import '../../../core/widgets/app_chip.dart';
 import '../viewmodels/create_scenario_viewmodel.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../widgets/scenario_preview_card.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Screen for creating custom scenarios via AI generation.
 ///
@@ -95,19 +95,11 @@ class _CreateScenarioScreenState
               children: [
                 Text(
                   'Create a Scenario',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.displayMedium(color: AppColors.textDark),
                 ),
                 Text(
                   'Describe who you want to talk to',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -148,7 +140,7 @@ class _CreateScenarioScreenState
           decoration: _inputDecoration(
             hint: 'e.g., a barista, a taxi driver',
           ),
-          style: GoogleFonts.fredoka(fontSize: 16, color: AppColors.textDark),
+          style: AppTextStyles.headingSmall(color: AppColors.textDark),
           onChanged: notifier.setPersona,
         ),
         const SizedBox(height: 16),
@@ -163,7 +155,7 @@ class _CreateScenarioScreenState
           decoration: _inputDecoration(
             hint: 'e.g., at a busy coffee shop in London',
           ),
-          style: GoogleFonts.fredoka(fontSize: 16, color: AppColors.textDark),
+          style: AppTextStyles.headingSmall(color: AppColors.textDark),
           onChanged: notifier.setContext,
         ),
         const SizedBox(height: 16),
@@ -178,7 +170,7 @@ class _CreateScenarioScreenState
           decoration: _inputDecoration(
             hint: 'e.g., order a flat white and ask about the menu',
           ),
-          style: GoogleFonts.fredoka(fontSize: 16, color: AppColors.textDark),
+          style: AppTextStyles.headingSmall(color: AppColors.textDark),
           onChanged: notifier.setGoal,
         ),
         const SizedBox(height: 20),
@@ -225,11 +217,7 @@ class _CreateScenarioScreenState
                   Expanded(
                     child: Text(
                       state.errorMessage!,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.accentCoral,
-                      ),
+                      style: AppTextStyles.labelMedium(color: AppColors.accentCoral),
                     ),
                   ),
                 ],
@@ -256,11 +244,7 @@ class _CreateScenarioScreenState
       children: [
         Text(
           'Your Scenario is Ready!',
-          style: GoogleFonts.fredoka(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
+          style: AppTextStyles.headingLarge(color: AppColors.textDark),
         ),
         const SizedBox(height: 16),
 
@@ -289,11 +273,7 @@ class _CreateScenarioScreenState
                   Expanded(
                     child: Text(
                       state.errorMessage!,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.accentCoral,
-                      ),
+                      style: AppTextStyles.labelMedium(color: AppColors.accentCoral),
                     ),
                   ),
                 ],
@@ -355,10 +335,7 @@ class _CreateScenarioScreenState
             ),
             child: Text(
               'Discard',
-              style: GoogleFonts.fredoka(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTextStyles.headingSmall(),
             ),
           ),
         ),
@@ -387,22 +364,13 @@ class _CreateScenarioScreenState
         const SizedBox(height: 24),
         Text(
           'Success!',
-          style: GoogleFonts.fredoka(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
+          style: AppTextStyles.headingLarge(color: AppColors.textDark),
         ),
         const SizedBox(height: 12),
         Text(
           'Your custom scenario has been saved.\nFind it under "My Scenarios" on the\nmain screen.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.quicksand(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textMuted,
-            height: 1.5,
-          ),
+          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
         ),
         const SizedBox(height: 32),
         AppButton(
@@ -443,20 +411,12 @@ class _CreateScenarioScreenState
             const SizedBox(height: 24),
             Text(
               'Generating your scenario...',
-              style: GoogleFonts.fredoka(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.headingMedium(color: AppColors.textDark),
             ),
             const SizedBox(height: 8),
             Text(
               'This may take a few seconds',
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ],
         ),
@@ -483,29 +443,18 @@ class _CreateScenarioScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Discard scenario?',
-          style: GoogleFonts.fredoka(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
+          style: AppTextStyles.headingLarge(color: AppColors.textDark),
         ),
         content: Text(
           'Your generated scenario won\'t be saved.',
-          style: GoogleFonts.quicksand(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textMuted,
-          ),
+          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               'Keep editing',
-              style: GoogleFonts.quicksand(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.labelLarge(color: AppColors.textDark),
             ),
           ),
           TextButton(
@@ -516,10 +465,7 @@ class _CreateScenarioScreenState
             },
             child: Text(
               'Discard',
-              style: GoogleFonts.quicksand(
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentCoral,
-              ),
+              style: AppTextStyles.labelLarge(color: AppColors.accentCoral),
             ),
           ),
         ],
@@ -532,21 +478,14 @@ class _CreateScenarioScreenState
   Widget _buildFieldLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.fredoka(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textDark,
-      ),
+      style: AppTextStyles.headingSmall(color: AppColors.textDark),
     );
   }
 
   InputDecoration _inputDecoration({required String hint}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.quicksand(
-        color: AppColors.textMuted.withValues(alpha: 0.6),
-        fontSize: 14,
-      ),
+      hintStyle: AppTextStyles.bodyMedium(color: AppColors.textMuted.withValues(alpha: 0.6)),
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/cefr_badge.dart';
 import '../models/scenario.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// A card displaying a scenario's title, description, CEFR badge, category,
 /// featured badge, difficulty dots, and persona.
@@ -49,12 +49,7 @@ class ScenarioCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         scenario.category.toUpperCase(),
-                        style: GoogleFonts.quicksand(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textMuted,
-                          letterSpacing: 0.8,
-                        ),
+                        style: AppTextStyles.labelSmall(color: AppColors.textMuted),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -74,11 +69,7 @@ class ScenarioCard extends StatelessWidget {
                             const SizedBox(width: 2),
                             Text(
                               'Featured',
-                              style: GoogleFonts.quicksand(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.accentGold,
-                              ),
+                              style: AppTextStyles.labelLarge(color: AppColors.accentGold),
                             ),
                           ],
                         ),
@@ -90,11 +81,7 @@ class ScenarioCard extends StatelessWidget {
                 // Title
                 Text(
                   scenario.title,
-                  style: GoogleFonts.fredoka(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.headingMedium(color: AppColors.textDark),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -103,12 +90,7 @@ class ScenarioCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     scenario.description,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textMuted,
-                      height: 1.4,
-                    ),
+                    style: AppTextStyles.labelMedium(color: AppColors.textMuted),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -141,11 +123,7 @@ class ScenarioCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         scenario.personaName,
-                        style: GoogleFonts.quicksand(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryPinkDark,
-                        ),
+                        style: AppTextStyles.labelSmall(color: AppColors.primaryPinkDark),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

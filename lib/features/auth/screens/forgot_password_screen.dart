@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_button.dart';
 import '../viewmodels/auth_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Forgot password screen — sends a password reset email.
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
@@ -100,21 +100,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     // ─── Title ───
                     Text(
                       'Reset Password',
-                      style: GoogleFonts.fredoka(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textDark,
-                      ),
+                      style: AppTextStyles.displayMedium(color: AppColors.textDark),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Enter your email and we\'ll send you a reset link',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textMuted,
-                      ),
+                      style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                     ),
                     const SizedBox(height: 32),
 
@@ -140,11 +132,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                             Expanded(
                               child: Text(
                                 'Reset link sent to your email. Check your inbox.',
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textDark,
-                                ),
+                                style: AppTextStyles.labelLarge(color: AppColors.textDark),
                               ),
                             ),
                           ],
@@ -179,11 +167,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                       onPressed: () => context.pop(),
                       child: Text(
                         'Back to Sign In',
-                        style: GoogleFonts.quicksand(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryPinkDark,
-                        ),
+                        style: AppTextStyles.labelLarge(color: AppColors.primaryPinkDark),
                       ),
                     ),
                   ],

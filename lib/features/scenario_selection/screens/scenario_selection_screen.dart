@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
@@ -14,6 +13,7 @@ import '../models/scenario.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../viewmodels/twist_viewmodel.dart';
 import '../widgets/scenario_card.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Redesigned scenario selection screen with category tabs, search bar,
 /// CEFR chips, and infinite scroll pagination.
@@ -120,10 +120,7 @@ class _ScenarioSelectionScreenState
                     Text(
                       "Couldn't load scenarios. Check your connection and try again.",
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.quicksand(
-                        fontSize: 14,
-                        color: AppColors.textMuted,
-                      ),
+                      style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                     ),
                     const SizedBox(height: 16),
                     AppButton(
@@ -167,11 +164,7 @@ class _ScenarioSelectionScreenState
               alignment: Alignment.centerLeft,
               child: Text(
                 "Showing ${state.displayScenarios.length} results for '${state.searchQuery}'",
-                style: GoogleFonts.quicksand(
-                  fontSize: 12,
-                  color: AppColors.textMuted,
-                  fontStyle: FontStyle.italic,
-                ),
+                style: AppTextStyles.labelSmall(color: AppColors.textMuted),
               ),
             ),
           ),
@@ -311,10 +304,7 @@ class _ScenarioSelectionScreenState
         child: Center(
           child: Text(
             "You've seen them all!",
-            style: GoogleFonts.quicksand(
-              fontSize: 12,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
           ),
         ),
       );
@@ -357,11 +347,7 @@ class _ScenarioSelectionScreenState
                 const SizedBox(width: 8),
                 Text(
                   'Delete Scenario',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.accentCoral,
-                  ),
+                  style: AppTextStyles.labelMedium(color: AppColors.accentCoral),
                 ),
               ],
             ),
@@ -383,29 +369,18 @@ class _ScenarioSelectionScreenState
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Delete scenario?',
-          style: GoogleFonts.fredoka(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
+          style: AppTextStyles.headingLarge(color: AppColors.textDark),
         ),
         content: Text(
           'This can\'t be undone.',
-          style: GoogleFonts.quicksand(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textMuted,
-          ),
+          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Cancel',
-              style: GoogleFonts.quicksand(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.labelLarge(color: AppColors.textDark),
             ),
           ),
           TextButton(
@@ -415,10 +390,7 @@ class _ScenarioSelectionScreenState
             },
             child: Text(
               'Delete',
-              style: GoogleFonts.quicksand(
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentCoral,
-              ),
+              style: AppTextStyles.labelLarge(color: AppColors.accentCoral),
             ),
           ),
         ],
@@ -431,11 +403,7 @@ class _ScenarioSelectionScreenState
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
       child: Text(
         'My Scenarios',
-        style: GoogleFonts.fredoka(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textDark,
-        ),
+        style: AppTextStyles.headingLarge(color: AppColors.textDark),
       ),
     );
   }
@@ -452,11 +420,7 @@ class _ScenarioSelectionScreenState
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               'Curated Scenarios',
-              style: GoogleFonts.quicksand(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.labelSmall(color: AppColors.textMuted),
             ),
           ),
           const Expanded(
@@ -477,20 +441,7 @@ class _ScenarioSelectionScreenState
           autofocus: true,
           decoration: InputDecoration(
             hintText: 'Search scenarios...',
-            hintStyle: GoogleFonts.quicksand(
-                color: AppColors.textMuted, fontSize: 15),
-            prefixIcon:
-                const Icon(Icons.search, color: AppColors.textMuted),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.close, color: AppColors.textMuted),
-              onPressed: () {
-                setState(() {
-                  _isSearchOpen = false;
-                  _searchController.clear();
-                });
-                notifier.setSearchQuery('');
-              },
-            ),
+            hintStyle: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             filled: true,
             fillColor: Colors.white,
             contentPadding:
@@ -500,7 +451,7 @@ class _ScenarioSelectionScreenState
               borderSide: BorderSide.none,
             ),
           ),
-          style: GoogleFonts.quicksand(fontSize: 15, color: AppColors.textDark),
+          style: AppTextStyles.bodyMedium(color: AppColors.textDark),
           onChanged: _onSearchChanged,
         ),
       );
@@ -516,20 +467,12 @@ class _ScenarioSelectionScreenState
               children: [
                 Text(
                   'Choose a Scenario',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.displayMedium(color: AppColors.textDark),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Pick a situation to practice',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -570,29 +513,18 @@ class _ScenarioSelectionScreenState
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Sign up to create scenarios',
-          style: GoogleFonts.fredoka(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
+          style: AppTextStyles.headingLarge(color: AppColors.textDark),
         ),
         content: Text(
           'Create an account to save and use your own custom scenarios.',
-          style: GoogleFonts.quicksand(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textMuted,
-          ),
+          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Not now',
-              style: GoogleFonts.quicksand(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.labelLarge(color: AppColors.textDark),
             ),
           ),
           TextButton(
@@ -602,10 +534,7 @@ class _ScenarioSelectionScreenState
             },
             child: Text(
               'Sign up',
-              style: GoogleFonts.quicksand(
-                fontWeight: FontWeight.w600,
-                color: AppColors.primaryPink,
-              ),
+              style: AppTextStyles.labelLarge(color: AppColors.primaryPink),
             ),
           ),
         ],
@@ -660,13 +589,7 @@ class _ScenarioSelectionScreenState
                 ),
                 child: Text(
                   label,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: (isSelected || isAllSelected)
-                        ? Colors.white
-                        : AppColors.textDark,
-                  ),
+                  style: AppTextStyles.labelMedium(),
                 ),
               ),
             ),
@@ -738,11 +661,7 @@ class _ScenarioSelectionScreenState
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                color: AppColors.textMuted,
-                height: 1.4,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ],
         ),

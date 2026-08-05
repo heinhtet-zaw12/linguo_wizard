@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/service_providers.dart';
 import '../../../core/theme/app_theme.dart';
@@ -12,6 +11,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../scenario_selection/models/scenario.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
 import '../viewmodels/home_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Hero card on the Home dashboard showing today's Daily Challenge.
 ///
@@ -114,11 +114,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
             children: [
               Text(
                 "Today's Challenge",
-                style: GoogleFonts.fredoka(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDark,
-                ),
+                style: AppTextStyles.headingMedium(color: AppColors.textDark),
               ),
               const SizedBox(width: 10),
               // 2x XP pill
@@ -133,11 +129,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
                 ),
                 child: Text(
                   '2x XP',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textLight,
-                  ),
+                  style: AppTextStyles.labelSmall(color: AppColors.textLight),
                 ),
               ),
             ],
@@ -147,11 +139,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
           // ─── Row 2: Challenge description ───
           Text(
             scenario.description,
-            style: GoogleFonts.quicksand(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelMedium(color: AppColors.textMuted),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -160,11 +148,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
           // ─── Row 3: Countdown timer ───
           Text(
             countdownText,
-            style: GoogleFonts.quicksand(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: isUrgent ? AppColors.accentCoral : AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelSmall(),
           ),
           const SizedBox(height: 14),
 
@@ -190,11 +174,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
         const SizedBox(width: 8),
         Text(
           'Challenge Complete! +100 XP',
-          style: GoogleFonts.quicksand(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: AppColors.accentGold,
-          ),
+          style: AppTextStyles.labelMedium(color: AppColors.accentGold),
         ),
       ],
     );

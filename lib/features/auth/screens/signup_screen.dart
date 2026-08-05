@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_button.dart';
 import '../viewmodels/auth_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Sign-up screen with name, email, password, and Google sign-up.
 class SignUpScreen extends ConsumerStatefulWidget {
@@ -90,20 +90,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     // ─── Title ───
                     Text(
                       'Create Account',
-                      style: GoogleFonts.fredoka(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textDark,
-                      ),
+                      style: AppTextStyles.displayMedium(color: AppColors.textDark),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Start your learning journey',
-                      style: GoogleFonts.quicksand(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textMuted,
-                      ),
+                      style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                     ),
                     const SizedBox(height: 32),
 
@@ -130,11 +122,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             Expanded(
                               child: Text(
                                 authState.errorMessage!,
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.accentCoral,
-                                ),
+                                style: AppTextStyles.labelMedium(color: AppColors.accentCoral),
                               ),
                             ),
                             GestureDetector(
@@ -215,11 +203,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Text(
                             'OR',
-                            style: GoogleFonts.quicksand(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textMuted,
-                            ),
+                            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
                           ),
                         ),
                         const Expanded(child: Divider(color: AppColors.primaryPinkLight)),
@@ -243,20 +227,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       children: [
                         Text(
                           'Already have an account? ',
-                          style: GoogleFonts.quicksand(
-                            fontSize: 13,
-                            color: AppColors.textMuted,
-                          ),
+                          style: AppTextStyles.labelMedium(color: AppColors.textMuted),
                         ),
                         GestureDetector(
                           onTap: () => context.go('/login'),
                           child: Text(
                             'Sign In',
-                            style: GoogleFonts.quicksand(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primaryPinkDark,
-                            ),
+                            style: AppTextStyles.labelMedium(color: AppColors.primaryPinkDark),
                           ),
                         ),
                       ],

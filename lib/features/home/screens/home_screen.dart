@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
@@ -12,6 +11,7 @@ import '../widgets/goal_ring.dart';
 import '../widgets/daily_challenge_card.dart';
 import '../widgets/scenario_cards.dart';
 import '../widgets/guest_banner.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Home dashboard screen shown after onboarding.
 ///
@@ -38,19 +38,14 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Failed to load data',
-                    style: GoogleFonts.quicksand(
-                      color: AppColors.textMuted,
-                    ),
+                    style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => ref.invalidate(homeProvider),
                     child: Text(
                       'Retry',
-                      style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryPinkDark,
-                      ),
+                      style: AppTextStyles.labelLarge(color: AppColors.primaryPinkDark),
                     ),
                   ),
                 ],
@@ -83,20 +78,12 @@ class HomeScreen extends ConsumerWidget {
             // ─── Welcome Header ───
             Text(
               'Hello, ${state.displayName ?? 'Guest'}!',
-              style: GoogleFonts.fredoka(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.displayMedium(color: AppColors.textDark),
             ),
             const SizedBox(height: 4),
             Text(
               'What shall we practice today?',
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
             const SizedBox(height: 20),
 
@@ -124,21 +111,13 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 Text(
                   'Recommended',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.headingLarge(color: AppColors.textDark),
                 ),
                 GestureDetector(
                   onTap: () => context.go('/scenarios'),
                   child: Text(
                     'Browse All',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryPinkDark,
-                    ),
+                    style: AppTextStyles.labelMedium(color: AppColors.primaryPinkDark),
                   ),
                 ),
               ],

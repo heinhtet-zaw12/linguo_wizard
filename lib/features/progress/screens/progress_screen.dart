@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/config/level_config.dart';
 import '../../../core/theme/app_theme.dart';
@@ -12,6 +11,7 @@ import '../viewmodels/progress_viewmodel.dart';
 import '../widgets/badge_grid.dart';
 import '../widgets/level_progress.dart';
 import '../widgets/mistake_summary.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Progress tab screen displaying gamification stats.
 ///
@@ -37,17 +37,14 @@ class ProgressScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Failed to load progress',
-                    style: GoogleFonts.quicksand(color: AppColors.textMuted),
+                    style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => ref.invalidate(progressViewModelProvider),
                     child: Text(
                       'Retry',
-                      style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryPinkDark,
-                      ),
+                      style: AppTextStyles.labelLarge(color: AppColors.primaryPinkDark),
                     ),
                   ),
                 ],
@@ -76,10 +73,7 @@ class ProgressScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               Text(
                 state.error!,
-                style: GoogleFonts.quicksand(
-                  fontSize: 14,
-                  color: AppColors.textMuted,
-                ),
+                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -102,11 +96,7 @@ class ProgressScreen extends ConsumerWidget {
             // ─── Header ───
             Text(
               'Your Progress',
-              style: GoogleFonts.fredoka(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.displayMedium(color: AppColors.textDark),
             ),
             const SizedBox(height: 20),
 

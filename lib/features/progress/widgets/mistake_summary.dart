@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../viewmodels/progress_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Displays a summary of mistake patterns for the last 7 days.
 ///
@@ -37,20 +37,12 @@ class MistakeSummary extends StatelessWidget {
         children: [
           Text(
             'Mistake Summary',
-            style: GoogleFonts.fredoka(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-            ),
+            style: AppTextStyles.headingMedium(color: AppColors.textDark),
           ),
           const SizedBox(height: 4),
           Text(
             'Last 7 days',
-            style: GoogleFonts.quicksand(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
           ),
           const SizedBox(height: 12),
           Row(
@@ -115,20 +107,12 @@ class _StatItem extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               value,
-              style: GoogleFonts.fredoka(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
+              style: AppTextStyles.headingMedium(),
             ),
             const SizedBox(height: 2),
             Text(
               label,
-              style: GoogleFonts.quicksand(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.labelSmall(color: AppColors.textMuted),
             ),
           ],
         ),

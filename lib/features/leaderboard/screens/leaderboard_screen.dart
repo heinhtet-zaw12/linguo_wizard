@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../viewmodels/leaderboard_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Full-screen leaderboard showing top users ranked by XP.
 ///
@@ -20,11 +20,7 @@ class LeaderboardScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'Leaderboard',
-          style: GoogleFonts.fredoka(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
+          style: AppTextStyles.headingLarge(color: AppColors.textDark),
         ),
         backgroundColor: AppColors.bgTop,
         elevation: 0,
@@ -45,7 +41,7 @@ class LeaderboardScreen extends ConsumerWidget {
           error: (e, _) => Center(
             child: Text(
               'Failed to load leaderboard',
-              style: GoogleFonts.quicksand(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ),
           data: (entries) {
@@ -62,19 +58,12 @@ class LeaderboardScreen extends ConsumerWidget {
                     const SizedBox(height: 12),
                     Text(
                       'No entries yet',
-                      style: GoogleFonts.quicksand(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textMuted,
-                      ),
+                      style: AppTextStyles.bodyLarge(color: AppColors.textMuted),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Complete scenarios to appear here!',
-                      style: GoogleFonts.quicksand(
-                        fontSize: 13,
-                        color: AppColors.textMuted,
-                      ),
+                      style: AppTextStyles.labelMedium(color: AppColors.textMuted),
                     ),
                   ],
                 ),
@@ -158,11 +147,7 @@ class _LeaderboardTile extends StatelessWidget {
                     )
                   : Text(
                       '${entry.rank}',
-                      style: GoogleFonts.fredoka(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textMuted,
-                      ),
+                      style: AppTextStyles.headingSmall(color: AppColors.textMuted),
                     ),
             ),
           ),
@@ -175,22 +160,14 @@ class _LeaderboardTile extends StatelessWidget {
               children: [
                 Text(
                   entry.displayName,
-                  style: GoogleFonts.quicksand(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.labelLarge(color: AppColors.textDark),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Level ${entry.currentLevel + 1}',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.labelSmall(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -205,11 +182,7 @@ class _LeaderboardTile extends StatelessWidget {
             ),
             child: Text(
               '${entry.totalXp} XP',
-              style: GoogleFonts.fredoka(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentGold,
-              ),
+              style: AppTextStyles.headingSmall(color: AppColors.accentGold),
             ),
           ),
         ],

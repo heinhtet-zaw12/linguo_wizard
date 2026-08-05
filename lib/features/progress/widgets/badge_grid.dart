@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' hide Badge;
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/config/badge_config.dart';
 import '../../../core/models/badge.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Displays all badge definitions in a 3-column grid.
 ///
@@ -39,20 +39,12 @@ class BadgeGrid extends StatelessWidget {
         children: [
           Text(
             'Badges',
-            style: GoogleFonts.fredoka(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-            ),
+            style: AppTextStyles.headingMedium(color: AppColors.textDark),
           ),
           const SizedBox(height: 4),
           Text(
             '${earnedIds.length} of ${badgeDefinitions.length} earned',
-            style: GoogleFonts.quicksand(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
           ),
           const SizedBox(height: 12),
           GridView.builder(
@@ -119,11 +111,7 @@ class _BadgeCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             name,
-            style: GoogleFonts.quicksand(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: isEarned ? AppColors.textDark : AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelSmall(),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Circular progress indicator showing daily XP goal progress.
 class GoalRing extends StatelessWidget {
@@ -44,11 +44,7 @@ class GoalRing extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${(progress * 100).toInt()}%',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryPinkDark,
-                  ),
+                  style: AppTextStyles.headingSmall(color: AppColors.primaryPinkDark),
                 ),
               ),
             ),
@@ -61,20 +57,12 @@ class GoalRing extends StatelessWidget {
               children: [
                 Text(
                   'Daily Goal',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.headingMedium(color: AppColors.textDark),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '$currentXp / $targetXp XP',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryPinkDark,
-                  ),
+                  style: AppTextStyles.labelMedium(color: AppColors.primaryPinkDark),
                 ),
               ],
             ),

@@ -13,6 +13,7 @@ import '../providers/conversation_provider.dart';
 import '../viewmodels/conversation_viewmodel.dart';
 import '../widgets/mic_button.dart';
 import '../widgets/voice_message_bubble.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// The main conversation screen — displays the voice message loop.
 ///
@@ -83,12 +84,12 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(
           'Saved Conversation Found',
-          style: const TextStyle(fontFamily: 'Quicksand'),
+          AppTextStyles.bodyMedium(),
         ),
         content: Text(
           'You have a saved conversation from earlier. '
           'Would you like to resume where you left off?',
-          style: const TextStyle(fontFamily: 'Quicksand'),
+          AppTextStyles.bodyMedium(),
         ),
         actions: [
           TextButton(
@@ -98,10 +99,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             },
             child: Text(
               'Start Fresh',
-              style: TextStyle(
-                fontFamily: 'Quicksand',
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ),
           TextButton(
@@ -114,11 +112,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             },
             child: Text(
               'Resume',
-              style: TextStyle(
-                fontFamily: 'Quicksand',
-                color: AppColors.primaryPink,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.primaryPink),
             ),
           ),
         ],
@@ -144,32 +138,25 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(
           'Save Progress?',
-          style: const TextStyle(fontFamily: 'Quicksand'),
+          AppTextStyles.bodyMedium(),
         ),
         content: Text(
           'Do you want to save this conversation so you can continue later?',
-          style: const TextStyle(fontFamily: 'Quicksand'),
+          AppTextStyles.bodyMedium(),
         ),
         actions: [
           TextButton(
             onPressed: () => ctx.pop('discard'),
             child: Text(
               'Discard',
-              style: TextStyle(
-                fontFamily: 'Quicksand',
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ),
           TextButton(
             onPressed: () => ctx.pop('save'),
             child: Text(
               'Save & Exit',
-              style: TextStyle(
-                fontFamily: 'Quicksand',
-                color: AppColors.primaryPink,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.primaryPink),
             ),
           ),
         ],
@@ -199,21 +186,18 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(
           'New Conversation',
-          style: const TextStyle(fontFamily: 'Quicksand'),
+          AppTextStyles.bodyMedium(),
         ),
         content: Text(
           'Start a fresh conversation? Current progress will be lost.',
-          style: const TextStyle(fontFamily: 'Quicksand'),
+          AppTextStyles.bodyMedium(),
         ),
         actions: [
           TextButton(
             onPressed: () => ctx.pop(),
             child: Text(
               'Cancel',
-              style: TextStyle(
-                fontFamily: 'Quicksand',
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
             ),
           ),
           TextButton(
@@ -223,11 +207,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             },
             child: Text(
               'New Chat',
-              style: TextStyle(
-                fontFamily: 'Quicksand',
-                color: AppColors.primaryPink,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextStyles.bodyMedium(color: AppColors.primaryPink),
             ),
           ),
         ],
@@ -280,7 +260,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         child: asyncState.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(
-            child: Text('Error: $e', style: const TextStyle(fontFamily: 'Quicksand')),
+            child: Text('Error: $e', style: AppTextStyles.bodyMedium()),
           ),
           data: (state) {
             // Scroll to bottom when new messages arrive.
@@ -307,11 +287,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   builder: (context) => AlertDialog(
                     title: Text(
                       'Daily Limit Reached',
-                      style: TextStyle(fontFamily: 'Quicksand'),
+                      style: AppTextStyles.bodyMedium(),
                     ),
                     content: Text(
                       "You've used all your practices for today. Come back tomorrow!",
-                      style: TextStyle(fontFamily: 'Quicksand'),
+                      style: AppTextStyles.bodyMedium(),
                     ),
                     actions: [
                       TextButton(
@@ -321,7 +301,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         },
                         child: Text(
                           'OK',
-                          style: TextStyle(fontFamily: 'Quicksand'),
+                          style: AppTextStyles.bodyMedium(),
                         ),
                       ),
                     ],
@@ -338,11 +318,11 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   builder: (context) => AlertDialog(
                     title: Text(
                       'Something went wrong',
-                      style: TextStyle(fontFamily: 'Quicksand'),
+                      style: AppTextStyles.bodyMedium(),
                     ),
                     content: Text(
                       state.errorMessage!,
-                      style: TextStyle(fontFamily: 'Quicksand'),
+                      style: AppTextStyles.bodyMedium(),
                     ),
                     actions: [
                       TextButton(
@@ -352,7 +332,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                         },
                         child: Text(
                           'OK',
-                          style: TextStyle(fontFamily: 'Quicksand'),
+                          style: AppTextStyles.bodyMedium(),
                         ),
                       ),
                     ],
@@ -407,21 +387,12 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               children: [
                 Text(
                   scenario.title,
-                  style: const TextStyle(
-                    fontFamily: 'Quicksand',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.bodyLarge(color: AppColors.textDark),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   scenario.goalDescription,
-                  style: const TextStyle(
-                    fontFamily: 'Quicksand',
-                    fontSize: 13,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.labelMedium(color: AppColors.textMuted),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -481,10 +452,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       child: Text(
         transcript,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'Quicksand',
-          fontSize: 14,
-          color: AppColors.textMuted.withValues(alpha: 0.7),
+        style: AppTextStyles.bodyMedium(color: AppColors.textMuted.withValues(alpha: 0.6)).copyWith(
           fontStyle: FontStyle.italic,
         ),
       ),
@@ -501,11 +469,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
                 'Turn ${state.turnCount}',
-                style: const TextStyle(
-                  fontFamily: 'Quicksand',
-                  fontSize: 12,
-                  color: AppColors.textMuted,
-                ),
+                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
               ),
             ),
           MicButton(
@@ -515,11 +479,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           const SizedBox(height: 8),
           Text(
             vm.micHint,
-            style: const TextStyle(
-              fontFamily: 'Quicksand',
-              fontSize: 12,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
           ),
           if (state.turnCount > 0 && state.loopState == ConversationLoopState.idle)
             Padding(

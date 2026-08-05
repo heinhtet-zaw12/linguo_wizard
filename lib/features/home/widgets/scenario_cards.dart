@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../scenario_selection/models/scenario.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Horizontal scrolling list of recommended scenario cards.
 class ScenarioCards extends StatelessWidget {
@@ -32,10 +32,7 @@ class ScenarioCards extends StatelessWidget {
         child: Center(
           child: Text(
             'No scenarios available. Complete onboarding first!',
-            style: GoogleFonts.quicksand(
-              fontSize: 14,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
           ),
         ),
       );
@@ -101,22 +98,14 @@ class _HomeScenarioCard extends ConsumerWidget {
               ),
               child: Text(
                 scenario.cefrLevel,
-                style: GoogleFonts.fredoka(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDark,
-                ),
+                style: AppTextStyles.headingSmall(color: AppColors.textDark),
               ),
             ),
             const SizedBox(height: 10),
             // Title
             Text(
               scenario.title,
-              style: GoogleFonts.fredoka(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: AppTextStyles.headingSmall(color: AppColors.textDark),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -129,11 +118,7 @@ class _HomeScenarioCard extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     scenario.personaName,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryPinkDark,
-                    ),
+                    style: AppTextStyles.labelSmall(color: AppColors.primaryPinkDark),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

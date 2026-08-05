@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Banner shown to guest users encouraging them to sign up.
 class GuestBanner extends StatefulWidget {
@@ -47,20 +47,12 @@ class _GuestBannerState extends State<GuestBanner> {
               children: [
                 Text(
                   'Sign up to save your progress!',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.labelLarge(color: AppColors.textDark),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Create an account to track streaks and sync across devices.',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.labelSmall(color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -81,11 +73,7 @@ class _GuestBannerState extends State<GuestBanner> {
                   ),
                   child: Text(
                     'Sign Up',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                    style: AppTextStyles.labelSmall(color: Colors.white),
                   ),
                 ),
               ),
@@ -94,11 +82,7 @@ class _GuestBannerState extends State<GuestBanner> {
                 onTap: () => setState(() => _dismissed = true),
                 child: Text(
                   'Maybe Later',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.labelLarge(color: AppColors.textMuted),
                 ),
               ),
             ],

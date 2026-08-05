@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../models/onboarding_data.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Step 2: Pick a CEFR level.
 class CefrStep extends StatelessWidget {
@@ -24,21 +24,12 @@ class CefrStep extends StatelessWidget {
         children: [
           Text(
             "What's your level?",
-            style: GoogleFonts.fredoka(
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-              height: 1.2,
-            ),
+            style: AppTextStyles.displayMedium(color: AppColors.textDark),
           ),
           const SizedBox(height: 8),
           Text(
             'We\'ll match scenarios to your skill',
-            style: GoogleFonts.quicksand(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
           ),
           const SizedBox(height: 32),
           // Level description cards
@@ -129,11 +120,7 @@ class _CefrLevelCard extends StatelessWidget {
               child: Center(
                 child: Text(
                   level,
-                  style: GoogleFonts.fredoka(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: isSelected ? Colors.white : AppColors.textDark,
-                  ),
+                  style: AppTextStyles.headingMedium(),
                 ),
               ),
             ),
@@ -141,12 +128,7 @@ class _CefrLevelCard extends StatelessWidget {
             Expanded(
               child: Text(
                 _description,
-                style: GoogleFonts.quicksand(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? Colors.white : AppColors.textDark,
-                  height: 1.3,
-                ),
+                style: AppTextStyles.bodyMedium(),
               ),
             ),
             if (isSelected)

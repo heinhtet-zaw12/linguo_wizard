@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Displays the user's current level with an animated progress bar.
 ///
@@ -58,20 +58,12 @@ class LevelProgress extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Level',
-                style: GoogleFonts.quicksand(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textMuted,
-                ),
+                style: AppTextStyles.labelMedium(color: AppColors.textMuted),
               ),
               const Spacer(),
               Text(
                 levelName,
-                style: GoogleFonts.fredoka(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDark,
-                ),
+                style: AppTextStyles.headingSmall(color: AppColors.textDark),
               ),
             ],
           ),
@@ -101,11 +93,7 @@ class LevelProgress extends StatelessWidget {
             xpRemaining > 0
                 ? '$currentXp / $nextLevelXp XP  ($xpRemaining XP to next level)'
                 : '$currentXp XP  (Max level reached!)',
-            style: GoogleFonts.quicksand(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
           ),
         ],
       ),

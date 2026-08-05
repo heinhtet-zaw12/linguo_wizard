@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../models/onboarding_data.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Step 1: Pick a target language.
 class LanguageStep extends StatelessWidget {
@@ -24,21 +24,12 @@ class LanguageStep extends StatelessWidget {
         children: [
           Text(
             'What language are\nyou learning?',
-            style: GoogleFonts.fredoka(
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textDark,
-              height: 1.2,
-            ),
+            style: AppTextStyles.displayMedium(color: AppColors.textDark),
           ),
           const SizedBox(height: 8),
           Text(
             'Choose your target language',
-            style: GoogleFonts.quicksand(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textMuted,
-            ),
+            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
           ),
           const SizedBox(height: 32),
           Expanded(
@@ -108,11 +99,7 @@ class _LanguageCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               name,
-              style: GoogleFonts.quicksand(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : AppColors.textDark,
-              ),
+              style: AppTextStyles.labelLarge(),
             ),
           ],
         ),

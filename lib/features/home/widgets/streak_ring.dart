@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Circular streak indicator showing flame icon and day count.
 class StreakRing extends StatelessWidget {
@@ -60,22 +60,14 @@ class StreakRing extends StatelessWidget {
               children: [
                 Text(
                   isActive ? '$streakDays Day Streak!' : 'Start Your Streak!',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.headingMedium(color: AppColors.textDark),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   isActive
                       ? 'Keep it going! Practice today.'
                       : 'Complete a scenario to start.',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textMuted,
-                  ),
+                  style: AppTextStyles.labelMedium(color: AppColors.textMuted),
                 ),
               ],
             ),

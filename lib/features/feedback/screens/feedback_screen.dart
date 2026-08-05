@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
@@ -10,6 +9,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../badge/widgets/badge_popup.dart';
 import '../models/score_data.dart';
 import '../viewmodels/feedback_viewmodel.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Post-conversation feedback screen showing scores, grammar corrections, and XP.
 ///
@@ -175,22 +175,14 @@ class _ScoreCircle extends StatelessWidget {
           child: Center(
             child: Text(
               '$score',
-              style: GoogleFonts.fredoka(
-                fontSize: 40,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+              style: AppTextStyles.displayMedium(color: Colors.white),
             ),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Overall Score',
-          style: GoogleFonts.quicksand(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textMuted,
-          ),
+          style: AppTextStyles.labelLarge(color: AppColors.textMuted),
         ),
       ],
     );
@@ -251,20 +243,12 @@ class _BreakdownCard extends StatelessWidget {
           children: [
             Text(
               '$score',
-              style: GoogleFonts.fredoka(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentGold,
-              ),
+              style: AppTextStyles.headingLarge(color: AppColors.accentGold),
             ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: GoogleFonts.quicksand(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.labelSmall(color: AppColors.textMuted),
             ),
           ],
         ),
@@ -301,11 +285,7 @@ class _XpBadge extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             '+$xp XP',
-            style: GoogleFonts.fredoka(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.accentGold,
-            ),
+            style: AppTextStyles.headingSmall(color: AppColors.accentGold),
           ),
         ],
       ),
@@ -333,11 +313,7 @@ class _GrammarCorrections extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'No grammar issues found',
-              style: GoogleFonts.quicksand(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
+              style: AppTextStyles.bodyLarge(color: AppColors.textMuted),
             ),
           ],
         ),
@@ -369,10 +345,7 @@ class _GrammarCorrections extends StatelessWidget {
               // Original (struck through) -> Corrected
               RichText(
                 text: TextSpan(
-                  style: GoogleFonts.quicksand(
-                    fontSize: 14,
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTextStyles.bodyMedium(color: AppColors.textDark),
                   children: [
                     TextSpan(
                       text: correction.original,
@@ -395,10 +368,7 @@ class _GrammarCorrections extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 correction.explanation,
-                style: GoogleFonts.quicksand(
-                  fontSize: 12,
-                  color: AppColors.textMuted,
-                ),
+                style: AppTextStyles.labelSmall(color: AppColors.textMuted),
               ),
             ],
           ),
