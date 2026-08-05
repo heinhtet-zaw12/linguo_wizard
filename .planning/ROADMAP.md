@@ -172,4 +172,28 @@ Plans:
 
 ---
 
-*Last updated: 2026-07-23*
+## Phase 7: UI Redesign — Futuristic Dark Theme
+
+**Goal:** Complete visual redesign — futuristic dark-only theme with blue-violet electric palette, frosted glass components, animated mesh gradient backgrounds, and micro-interactions across all 13 screens
+
+**Design Philosophy:** Futuristic dark-only — deep navy/charcoal surfaces, electric blue → violet gradients, cyan highlights, frosted glass (glassmorphism 2.0), spring physics animations, animated gradient mesh backdrop. Premium, bold, zero light mode.
+
+**Success Criteria:**
+
+1. Single dark palette — no light/dark toggle, no AppColorProvider, no ThemeModeProvider
+2. All 333 legacy color references replaced with new semantic tokens
+3. Component library — GlassCard, AppButton (3 variants), GlassChip, GradientNavBar, MeshGradientBackground, AppTextField, StatCard, CefrBadge
+4. All 13 screens redesigned with new visual language (glass cards, gradient backgrounds, proper hierarchy)
+5. Micro-interactions — spring press animations, staggered card entrances, gradient nav indicator, score counter animation
+6. Zero breaking changes — all logic, state, navigation, services, and functionality preserved
+7. `flutter analyze` passes with zero errors after each implementation step
+
+**Requires:** Phase 6 complete
+
+**Spec:** `docs/superpowers/specs/2026-08-05-ui-redesign-design.md`
+
+**Plans:** TBD
+
+---
+
+*Last updated: 2026-08-05*

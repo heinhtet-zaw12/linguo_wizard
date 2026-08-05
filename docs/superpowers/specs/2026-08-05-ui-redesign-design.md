@@ -3,7 +3,58 @@
 **Date:** 2026-08-05
 **Status:** Approved
 **Scope:** Full UI redesign — all screens, all widgets, all theme tokens
-**Constraint:** Zero business logic changes. Only design-layer files.
+**Constraint:** Zero business logic changes. Only design-layer files
+
+---
+
+## 0. Migration Notes (read before implementing)
+
+### Legacy Color Cleanup — 333 instances across 30 files
+
+The current codebase uses 10 legacy color tokens that must be replaced with the new semantic system:
+
+| Legacy Token | Replacement | Notes |
+|---|---|---|
+| `AppColors.primaryPink` | `accentStart` or `accentMid` | Primary brand color |
+| `AppColors.primaryPinkDark` | `accentStart` | Darker variant |
+| `AppColors.primaryPinkLight` | `accentEnd` | Lighter variant |
+| `AppColors.textDark` | `textPrimary` | Main text on dark bg |
+| `AppColors.textMuted` | `textSecondary` | Descriptions |
+| `AppColors.bgTop` | `surface0` | Screen background top |
+| `AppColors.bgBottom` | `surface1` | Screen background bottom |
+| `AppColors.accentGold` | `warning` | Streaks, achievements |
+| `AppColors.accentCoral` | `danger` | Errors |
+| `AppColors.shadowPink` | `elevation1` color | Shadows |
+
+**Affected files (30):** All screen files in `lib/features/*/screens/`, all widget files in `lib/features/*/widgets/`, plus `lib/features/splash/splash_screen.dart`.
+
+**Strategy:** Do this as Step 0 before touching any widget. Grep for each legacy token, replace with semantic equivalent, verify `flutter analyze` passes after each batch.
+
+### Radius Token Shift
+
+Current `AppRadius` values are shifted down from the spec:
+
+| Current | Spec | Implication |
+|---|---|---|
+| `sm = 8` | `sm = 12` | All `AppRadius.sm` usages increase |
+| `md = 12` | `md = 16` | All `AppRadius.md` usages increase |
+| `lg = 16` | `lg = 24` | All `AppRadius.lg` usages increase |
+| `xl = 24` | *(removed)* | Replace `AppRadius.xl` with `AppRadius.lg` |
+| `full = 9999` | `pill = 9999` | Rename only |
+
+**Strategy:** Update `AppRadius` token file first, then do a project-wide find-replace for renamed tokens. Expect visual changes to every card, button, and chip.
+
+### AppColorProvider Removal
+
+Current pattern: `AppColorProvider` holds static `currentColor` that screens read via `AppColors.xxx`. The spec removes `LightColors`/`DarkColors` classes and replaces with a single flat palette.
+
+**Strategy:** After updating `app_colors.dart`, delete `AppColorProvider` class entirely. Replace all `AppColors.xxx` references with direct static constants from the new palette. No provider needed for dark-only.
+
+### Glow Shadows — New Pattern
+
+Current `AppShadows` uses neutral `shadowColor` only. The spec adds colored glow tokens (`glowBlue`, `glowCyan`) which are a new pattern — colored box-shadows for CTAs and badges.
+
+**Strategy:** Add `glowBlue` and `glowCyan` as new static getters in `AppShadows`. These are additive, not breaking.
 
 ---
 
@@ -15,6 +66,8 @@
 **Animations:** Maximum micro-interactions — spring physics, animated gradient mesh, particle effects
 **Background:** Animated gradient mesh (always visible, slowly shifting)
 **Mode:** Dark-only (no light mode)
+
+> **Decision: Dark-only removes light mode.** Phase 6 implemented a full light/dark toggle with `ThemeModeProvider`, `SharedPreferences` persistence, and `AppColorProvider` sync. This spec replaces all of that with a single dark palette. The Phase 6 toggle infrastructure will be deleted, not repurposed. This is intentional — the dark-only approach simplifies the token system and gives a more focused, premium feel.
 
 ---
 
@@ -141,11 +194,8 @@ A reusable `AppGradients` utility class:
 - Entrance: slide-up + fade (300ms)
 
 ### 4.5 MeshGradientBackground (replaces GradientBackground)
-- Animated mesh gradient using `CustomPainter` with `AnimationController`
-- 30-second full cycle
-- 3-4 color blobs (accentStart, accentMid, accentCyan at 5-8% opacity) that slowly drift
-- Creates living, breathing backdrop
-- `RepaintBoundary` for performance
+- **Phase A (Step 2):** Static mesh — `Stack` of layered `Positioned` + `RadialGradient` containers. 3-4 color blobs (accentStart, accentMid, accentCyan at 5-8% opacity). No animation, no CustomPainter. Clean, fast, zero risk.
+- **Phase B (Step 10, optional):** Animated mesh — `CustomPainter` + `AnimationController` for drifting blobs (30s cycle). `RepaintBoundary` for performance. Only if static version feels flat after full app is themed.
 
 ### 4.6 MicButton
 - Size: 72px circle
@@ -175,7 +225,15 @@ A reusable `AppGradients` utility class:
 
 ---
 
-## 5. Screen Layouts
+## 5. Screen Layouts (13 screens)
+
+> **Note:** The codebase has 13 screen files, not 10. The three missing from the original spec are: `create_scenario_screen.dart`, `pre_scenario_review_screen.dart`, and `splash_screen.dart`. All are included below.
+
+### 5.0 Splash Screen
+- Animated mesh gradient fills entire screen (first impression)
+- App logo centered with scale-in animation (400ms, spring)
+- Loading indicator: gradient spinner below logo
+- Auto-navigate after 2s or on first frame render
 
 ### 5.1 Onboarding
 - Full-screen animated mesh gradient background
@@ -216,6 +274,22 @@ A reusable `AppGradients` utility class:
 - Infinite scroll with glass loading spinner
 - Staggered grid entrance animation
 
+### 5.4a Create Scenario
+- Full-screen form over mesh gradient
+- Title field: glass-filled, accentCyan focus glow
+- Description field: glass-filled multiline
+- Difficulty selector: 3 GlassChips (Easy/Medium/Hard)
+- Generate button: primary gradient + glow
+- Preview card: GlassCard showing generated scenario
+- Save button: primary gradient, disabled until preview loaded
+- Cancel: ghost button
+
+### 5.4b Pre-Scenario Review
+- Scenario info card: GlassCard with title, description, CEFR badge, difficulty
+- Tips section: glass card with bulleted hints
+- "Start Conversation" button: primary gradient + glow, large
+- Back: ghost button
+
 ### 5.5 Conversation Screen (Hero Screen)
 - Background: animated mesh gradient (slightly more vibrant)
 - Top bar: glass panel, frosted blur, scenario title + goal
@@ -255,10 +329,9 @@ A reusable `AppGradients` utility class:
 
 ## 6. Animations & Micro-Interactions
 
-### 6.1 Animated Gradient Mesh Background
-- `CustomPainter` + `AnimationController` (30s cycle)
-- 3-4 color blobs at 5-8% opacity, slowly drifting
-- `RepaintBoundary` for performance
+### 6.1 Animated Gradient Mesh Background *(deferred to Step 10 — polish)*
+- **Step 2 implementation:** Static gradient mesh using layered `RadialGradient` on a `Stack` — 3-4 color blobs at 5-8% opacity. No animation. Looks good, performs perfectly.
+- **Step 10 upgrade:** Add `CustomPainter` + `AnimationController` (30s cycle) for slowly drifting blobs. Wrap in `RepaintBoundary` for performance. Only if Step 2 static version feels flat.
 
 ### 6.2 Screen Transitions
 - Push: slide from right + fade (300ms, easeOut)
@@ -328,34 +401,41 @@ A reusable `AppGradients` utility class:
 - NEW: `app_gradients.dart` — Gradient utility widgets
 
 ### 7.3 Feature Screens (features/*/screens/)
-All 10 screens need color/layout updates:
+All 13 screen files + widgets need color/layout updates:
+- `splash_screen.dart` *(was missing from original spec)*
 - `onboarding_screen.dart` + widgets: `language_step.dart`, `cefr_step.dart`, `goal_step.dart`
 - `login_screen.dart`, `signup_screen.dart`, `forgot_password_screen.dart`
 - `home_screen.dart` + widgets: `streak_ring.dart`, `goal_ring.dart`, `daily_challenge_card.dart`, `scenario_cards.dart`, `guest_banner.dart`
-- `scenario_selection_screen.dart` + `scenario_card.dart`
+- `scenario_selection_screen.dart` + `scenario_card.dart`, `scenario_preview_card.dart`
+- `create_scenario_screen.dart` *(was missing from original spec)*
+- `pre_scenario_review_screen.dart` *(was missing from original spec)*
 - `conversation_screen.dart` + widgets: `mic_button.dart`, `voice_message_bubble.dart`
 - `feedback_screen.dart`
 - `profile_screen.dart`
 - `leaderboard_screen.dart`
-- `progress_screen.dart` + widgets
+- `progress_screen.dart` + widgets: `level_progress.dart`, `mistake_summary.dart`, `badge_grid.dart`
 - `badge_popup.dart`
 
 ### 7.4 Key Constraints
-- **Zero changes to:** viewmodels, models, providers, services, business logic, routing logic
+- **Zero changes to:** viewmodels, models, providers (except AppColorProvider deletion), services, business logic, routing logic
 - **Only changes:** theme files, widget files, screen UI files
 - **Remove:** all legacy color references (`AppColors.primaryPink`, `AppColors.textDark`, `AppColors.textMuted`, `AppColors.bgTop`, `AppColors.bgBottom`, `AppColors.accentGold`, `AppColors.accentCoral`, `AppColors.shadowPink`, `AppColors.primaryPinkDark`, `AppColors.primaryPinkLight`)
+- **Delete:** `AppColorProvider` class (no longer needed — dark-only, no dynamic switching)
+- **Delete:** `ThemeModeProvider`, `SharedPreferences` dark mode persistence (Phase 6 infrastructure, abandoned)
+- **Rename:** `AppRadius.xl` → `AppRadius.lg`, `AppRadius.full` → `AppRadius.pill`
 
 ---
 
 ## 8. Implementation Order
 
-1. **Theme foundation** — app_colors.dart, app_gradients.dart, app_theme.dart, app_text_styles.dart, app_dimensions.dart, app_shadows.dart
-2. **Core widgets** — GlassCard, AppButton, GlassChip, GradientNavBar, MeshGradientBackground, AppTextField, StatCard, CefrBadge
+0. **Legacy color migration** — Replace all 333 legacy color references across 30 files with new semantic tokens. Grep each legacy token, replace, verify `flutter analyze` after each batch. This is the largest single step and blocks everything else.
+1. **Theme foundation** — app_colors.dart (new dark palette, delete LightColors/DarkColors/AppColorProvider), app_gradients.dart (new), app_theme.dart (single dark ThemeData), app_text_styles.dart (new color defaults), app_dimensions.dart (radius shift: sm=12, md=16, lg=24, pill=9999), app_shadows.dart (add glowBlue, glowCyan)
+2. **Core widgets** — GlassCard (replaces AppCard), AppButton (3 variants), GlassChip (replaces AppChip), GradientNavBar (replaces AppNavBar), MeshGradientBackground — **static mesh only** (replaces GradientBackground), AppTextField, StatCard, CefrBadge
 3. **Auth screens** — Login, Signup, Forgot Password (simplest screens, good for validating theme)
-4. **Onboarding** — 3-step flow
+4. **Onboarding** — 3-step flow + splash screen
 5. **Home dashboard** — Most complex screen, all home widgets
-6. **Scenario selection** — Grid, chips, search, cards
+6. **Scenario selection + Create/Pre-Review** — Grid, chips, search, cards, create scenario form, pre-scenario review
 7. **Conversation** — Mic button, voice bubbles, top bar
 8. **Feedback** — Score circle, breakdown, corrections
 9. **Remaining screens** — Profile, Leaderboard, Progress, Badge popup
-10. **Polish** — Animation tuning, edge cases, dark mode consistency audit
+10. **Polish** — Animated mesh gradient (if static feels flat), animation tuning, edge cases, dark-mode consistency audit
