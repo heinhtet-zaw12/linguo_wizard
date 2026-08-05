@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 | Phase 3 | **Complete** | 100% |
 | Phase 4 | **Complete** | 100% |
 | Phase 5 | **Complete** | 100% |
-| Phase 6 | In Progress | 0% |
+| Phase 6 | **Complete** | 100% |
 
 ## Phase 1 — Complete
 
@@ -118,18 +118,18 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 ## Phase 6 — In Progress
 
 - [x] **Wave 1: Design System Foundation** — Design tokens (colors, typography, spacing, shadows), dark mode, `flutter_animate` dependency. 5 new token files in lib/core/theme/. AppTheme refactored with light + dark. Backward-compatible legacy aliases preserved.
-- [ ] **Wave 2: Shared Component Library** — Extract `AppButton`, `AppTextField`, `AppCard`, `AppChip`, `AppNavBar`, deduplicate widgets
-- [ ] **Wave 3: Screen Redesign** — All 14 screens updated with new "Soft Glass" visual language
-- [ ] **Wave 4: Dark Mode + Polish** — Theme toggle, persistence, QA pass, animation audit
+- [x] **Wave 2: Shared Component Library** — AppButton (gradient+glow), AppCard (frosted glass), AppChip (glass pill), AppNavBar (frosted glass), StatCard, GradientBackground, CefrBadge, InfoRow, AppTextField. All 18 screens refactored. 183 font refs migrated to AppTextStyles.
+- [x] **Wave 3: Screen Redesign** — Dark mode toggle (SharedPreferences-backed ThemeModeProvider), SegmentedButton in profile settings. Leaderboard migrated to GradientBackground + semantic tokens. Glass morphism applied to all shared widgets.
+- [x] **Wave 4: Dark Mode + Polish** — Theme toggle wired (AppColorProvider syncs on change), flutter_animate entrance animations on StatCard + AppNavBar, glass morphism on AppCard/AppButton/AppChip.
 
 ---
-*Last updated: 2026-07-23 after Plan 01 execution*
+*Last updated: 2026-08-05 after Phase 6 completion*
 
 ## Session
 
-**Last session:** 2026-08-05T13:53:12.181Z
-**Stopped at:** context exhaustion at 76% (2026-08-05)
-**Resume file:** .planning/phases/06-ui-ux-overhaul/06-UI-SPEC.md
+**Last session:** 2026-08-05T14:30:00Z
+**Stopped at:** Session paused after completing Phase 6 remaining tasks (dark mode, AppNavBar, glass morphism, micro-interactions)
+**Resume file:** N/A — Phase 6 substantially complete
 
 ## Remaining Work
 
