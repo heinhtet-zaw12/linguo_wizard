@@ -1,33 +1,104 @@
 {
   "version": "1.0",
-  "timestamp": "2026-08-05T13:57:30.393Z",
-  "phase": "06",
-  "phase_name": "ui-ux-overhaul",
-  "phase_dir": ".planning/phases/06-ui-ux-overhaul",
-  "plan": 2,
-  "task": 2,
-  "total_tasks": 7,
+  "timestamp": "2026-08-05T14:30:00.000Z",
+  "phase": null,
+  "phase_name": null,
+  "phase_dir": null,
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
   "status": "paused",
   "completed_tasks": [
-    {"id": 1, "name": "Design system foundation (tokens, dark mode, typography, dependencies)", "status": "done", "commit": "17c3281"},
-    {"id": 2, "name": "Shared component library (8 widgets, screen refactoring)", "status": "done", "commit": "17c3281"},
-    {"id": 3, "name": "Typography migration (183 Fredoka/Quicksand → AppTextStyles)", "status": "done", "commit": "ed479d7"}
+    {
+      "id": 1,
+      "name": "Explore project context — files, docs, current UI state",
+      "status": "done",
+      "commit": "a255398"
+    },
+    {
+      "id": 2,
+      "name": "Ask clarifying questions — design direction",
+      "status": "done",
+      "commit": "a255398"
+    },
+    {
+      "id": 3,
+      "name": "Propose design approaches with trade-offs",
+      "status": "done",
+      "commit": "a255398"
+    },
+    {
+      "id": 4,
+      "name": "Present design sections for approval (5 sections)",
+      "status": "done",
+      "commit": "a255398"
+    },
+    {
+      "id": 5,
+      "name": "Write design doc and commit",
+      "status": "done",
+      "commit": "a255398"
+    }
   ],
   "remaining_tasks": [
-    {"id": 4, "name": "Dark mode toggle + AppColorProvider wiring", "status": "not_started"},
-    {"id": 5, "name": "AppNavBar component creation", "status": "not_started"},
-    {"id": 6, "name": "Glass morphism upgrade (AppCard, AppButton, AppChip)", "status": "not_started"},
-    {"id": 7, "name": "flutter_animate micro-interactions", "status": "not_started"}
+    {
+      "id": 6,
+      "name": "User reviews design spec — await approval",
+      "status": "pending"
+    },
+    {
+      "id": 7,
+      "name": "Invoke writing-plans skill to create implementation plan",
+      "status": "pending"
+    }
   ],
   "blockers": [],
   "async_jobs": [],
-  "human_actions_pending": [],
+  "human_actions_pending": [
+    {
+      "action": "Review design spec at docs/superpowers/specs/2026-08-05-ui-redesign-design.md",
+      "context": "User approved all 5 sections verbally but should review written spec before implementation planning",
+      "blocking": false
+    }
+  ],
   "decisions": [
-    {"decision": "Use Plus Jakarta Sans (headings) + Inter (body) + JetBrains Mono (numbers)", "rationale": "Modern, clean font stack recommended by ui-ux-pro-max skill for education app", "phase": "06"},
-    {"decision": "Migrate fonts before visual upgrades", "rationale": "Typography migration is highest-impact single change, enables all subsequent visual work", "phase": "06"},
-    {"decision": "Use automated migration script for font replacement", "rationale": "183 references across 29 files — manual replacement would be error-prone and slow", "phase": "06"}
+    {
+      "decision": "Futuristic & bold dark-only theme",
+      "rationale": "User wants maximum visual impact, modern 2026 aesthetic",
+      "phase": "design"
+    },
+    {
+      "decision": "Blue-violet electric palette (indigo #6366F1, violet #8B5CF6, cyan #22D3EE)",
+      "rationale": "User selected electric blue + violet gradients with cyan highlights",
+      "phase": "design"
+    },
+    {
+      "decision": "Keep Plus Jakarta Sans + Inter + JetBrains Mono fonts",
+      "rationale": "User confirmed current fonts work great with dark themes",
+      "phase": "design"
+    },
+    {
+      "decision": "Frosted glass cards with backdrop blur (Glassmorphism 2.0)",
+      "rationale": "User chose full glassmorphism over simpler alternatives",
+      "phase": "design"
+    },
+    {
+      "decision": "Maximum micro-interactions (spring physics, animated gradient mesh, particle effects)",
+      "rationale": "User wants the app to feel alive",
+      "phase": "design"
+    },
+    {
+      "decision": "Animated gradient mesh background (always visible)",
+      "rationale": "Mesh is the signature visual element across all screens",
+      "phase": "design"
+    },
+    {
+      "decision": "Full redesign scope — all screens, all widgets, all theme tokens",
+      "rationale": "Complete overhaul, not incremental changes",
+      "phase": "design"
+    }
   ],
   "uncommitted_files": [],
-  "next_action": "Implement dark mode toggle + AppColorProvider wiring (Step 1 from design system plan). Add toggle UI in profile_screen.dart, wire AppTheme.updateColorProvider() in theme change callbacks, persist choice via SharedPreferences.",
-  "context_notes": "Phase 6 verification found 4/7 goals passed. Typography migration (Step 2) just completed — all 183 old font references replaced with AppTextStyles. Next: dark mode toggle, AppNavBar, glass morphism, micro-interactions. The design system tokens (AppColors, AppTextStyles, AppSpacing, etc.) are solid infrastructure but screens weren't fully migrated to consume them. GradientBackground still missing on 2 screens (leaderboard, splash)."
+  "next_action": "User reviews design spec at docs/superpowers/specs/2026-08-05-ui-redesign-design.md, then invoke writing-plans skill to create implementation plan",
+  "context_notes": "Brainstorming session produced comprehensive design spec for futuristic dark theme overhaul. Covers: color palette, typography, 9 component redesigns, 10 screen layouts, animation system. All 5 sections verbally approved. Previous Phase 06 is complete — this new spec supersedes it with fundamentally different aesthetic."
 }
