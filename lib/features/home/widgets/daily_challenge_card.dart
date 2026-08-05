@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/service_providers.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../scenario_selection/models/scenario.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
 import '../viewmodels/home_viewmodel.dart';
@@ -101,28 +103,9 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
     // Urgency: coral if less than 1 hour remaining.
     final isUrgent = _timeRemaining.inHours < 1 && _timeRemaining.inMinutes > 0;
 
-    return Container(
-      width: double.infinity,
+    return AppCard(
+      borderColor: AppColors.accentGold,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: const Border(
-          left: BorderSide(color: AppColors.accentGold, width: 2),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowPink,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Color(0x99FFFFFF),
-            blurRadius: 8,
-            offset: Offset(0, -3),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -219,31 +202,12 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
 
   /// Primary action button that navigates to the conversation.
   Widget _buildStartButton(Scenario scenario) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          ref.read(selectedScenarioProvider.notifier).state = scenario;
-          context.push('/conversation/${scenario.id}');
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryPink,
-          foregroundColor: AppColors.textLight,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          elevation: 0,
-        ),
-        child: Text(
-          'Start Challenge',
-          style: GoogleFonts.fredoka(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textLight,
-          ),
-        ),
-      ),
+    return AppButton(
+      label: 'Start Challenge',
+      onPressed: () {
+        ref.read(selectedScenarioProvider.notifier).state = scenario;
+        context.push('/conversation/${scenario.id}');
+      },
     );
   }
 }

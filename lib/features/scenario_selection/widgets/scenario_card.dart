@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/cefr_badge.dart';
 import '../models/scenario.dart';
 
 /// A card displaying a scenario's title, description, CEFR badge, category,
@@ -34,23 +36,7 @@ class ScenarioCard extends StatelessWidget {
       onTap: onTap,
       child: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.shadowPink,
-                  blurRadius: 16,
-                  offset: Offset(0, 6),
-                ),
-                BoxShadow(
-                  color: Color(0x99FFFFFF),
-                  blurRadius: 8,
-                  offset: Offset(0, -3),
-                ),
-              ],
-            ),
+          AppCard(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +44,7 @@ class ScenarioCard extends StatelessWidget {
                 // CEFR badge + category + featured badge
                 Row(
                   children: [
-                    _CefrBadge(level: scenario.cefrLevel),
+                    CefrBadge(level: scenario.cefrLevel),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -208,30 +194,6 @@ class ScenarioCard extends StatelessWidget {
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class _CefrBadge extends StatelessWidget {
-  const _CefrBadge({required this.level});
-  final String level;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: AppColors.accentGold.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        level,
-        style: GoogleFonts.fredoka(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textDark,
-        ),
       ),
     );
   }

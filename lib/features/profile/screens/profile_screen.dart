@@ -4,6 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/stat_card.dart';
+import '../../../core/widgets/info_row.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_button.dart';
 import '../viewmodels/profile_viewmodel.dart';
 
 /// Profile tab screen displaying user info and account actions.
@@ -15,14 +20,7 @@ class ProfileScreen extends ConsumerWidget {
     final asyncState = ref.watch(profileViewModelProvider);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
@@ -206,21 +204,21 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildStatsRow(ProfileState state) {
     return Row(
       children: [
-        _StatCard(
+        StatCard(
           icon: Icons.star_rounded,
           iconColor: AppColors.primaryPink,
           value: '${state.totalXp}',
           label: 'Total XP',
         ),
         const SizedBox(width: 12),
-        _StatCard(
+        StatCard(
           icon: Icons.local_fire_department_rounded,
           iconColor: AppColors.accentGold,
           value: '${state.currentStreak}',
           label: 'Day Streak',
         ),
         const SizedBox(width: 12),
-        _StatCard(
+        StatCard(
           icon: Icons.check_circle_outline_rounded,
           iconColor: Colors.green,
           value: '${state.scenariosCompleted}',
@@ -231,43 +229,21 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildAccountInfo(ProfileState state) {
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
         children: [
-          _InfoRow(label: 'Level', value: state.levelName),
+          InfoRow(label: 'Level', value: state.levelName),
           const Divider(height: 20),
-          _InfoRow(label: 'CEFR Level', value: state.cefrLevel),
+          InfoRow(label: 'CEFR Level', value: state.cefrLevel),
         ],
       ),
     );
   }
 
   Widget _buildSettingsSection() {
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -293,154 +269,50 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () async {
-          final confirmed = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text(
-                'Sign Out',
-                style: GoogleFonts.fredoka(fontWeight: FontWeight.w600),
-              ),
-              content: Text(
-                'Are you sure you want to sign out?',
-                style: GoogleFonts.quicksand(),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: Text(
-                    'Cancel',
-                    style: GoogleFonts.quicksand(color: AppColors.textMuted),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: Text(
-                    'Sign Out',
-                    style: GoogleFonts.quicksand(
-                      color: Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+    return AppButton(
+      label: 'Sign Out',
+      variant: AppButtonVariant.secondary,
+      icon: Icons.logout_rounded,
+      onPressed: () async {
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(
+              'Sign Out',
+              style: GoogleFonts.fredoka(fontWeight: FontWeight.w600),
             ),
-          );
-          if (confirmed == true && context.mounted) {
-            await ref.read(profileViewModelProvider.notifier).signOut();
-            if (context.mounted) {
-              context.go('/login');
-            }
+            content: Text(
+              'Are you sure you want to sign out?',
+              style: GoogleFonts.quicksand(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(
+                  'Cancel',
+                  style: GoogleFonts.quicksand(color: AppColors.textMuted),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  'Sign Out',
+                  style: GoogleFonts.quicksand(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+        if (confirmed == true && context.mounted) {
+          await ref.read(profileViewModelProvider.notifier).signOut();
+          if (context.mounted) {
+            context.go('/login');
           }
-        },
-        icon: const Icon(Icons.logout_rounded, size: 20),
-        label: Text(
-          'Sign Out',
-          style: GoogleFonts.quicksand(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.red,
-          side: const BorderSide(color: Colors.red, width: 1.5),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.value,
-    required this.label,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.7),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowPink.withValues(alpha: 0.15),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: iconColor, size: 24),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: GoogleFonts.fredoka(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: GoogleFonts.quicksand(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.quicksand(
-            fontSize: 14,
-            color: AppColors.textMuted,
-          ),
-        ),
-        Text(
-          value,
-          style: GoogleFonts.quicksand(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textDark,
-          ),
-        ),
-      ],
+        }
+      },
     );
   }
 }

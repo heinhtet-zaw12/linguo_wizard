@@ -87,7 +87,7 @@ class ScenarioSelectionViewModel
   static const int _pageSize = 20;
   int _visibleCount = _pageSize;
 
-  late final FirestoreScenarioService _scenarioService;
+  late FirestoreScenarioService _scenarioService;
 
   @override
   Future<ScenarioSelectionState> build() async {

@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/config/level_config.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/stat_card.dart';
+import '../../../core/widgets/app_button.dart';
 import '../viewmodels/progress_viewmodel.dart';
 import '../widgets/badge_grid.dart';
 import '../widgets/level_progress.dart';
@@ -22,14 +25,7 @@ class ProgressScreen extends ConsumerWidget {
     final asyncState = ref.watch(progressViewModelProvider);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
@@ -156,21 +152,21 @@ class ProgressScreen extends ConsumerWidget {
   Widget _buildStatsRow(ProgressState state) {
     return Row(
       children: [
-        _StatCard(
+        StatCard(
           icon: Icons.local_fire_department_rounded,
           iconColor: AppColors.accentGold,
           value: '${state.currentStreak}',
           label: 'Day Streak',
         ),
         const SizedBox(width: 12),
-        _StatCard(
+        StatCard(
           icon: Icons.star_rounded,
           iconColor: AppColors.primaryPink,
           value: '${state.totalXp}',
           label: 'Total XP',
         ),
         const SizedBox(width: 12),
-        _StatCard(
+        StatCard(
           icon: Icons.check_circle_outline_rounded,
           iconColor: Colors.green,
           value: '${state.scenariosCompleted}',
@@ -181,84 +177,11 @@ class ProgressScreen extends ConsumerWidget {
   }
 
   Widget _buildLeaderboardButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () => context.push('/leaderboard'),
-        icon: const Icon(Icons.leaderboard_rounded, size: 20),
-        label: Text(
-          'View Leaderboard',
-          style: GoogleFonts.quicksand(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primaryPinkDark,
-          side: const BorderSide(color: AppColors.primaryPink, width: 1.5),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.value,
-    required this.label,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.7),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowPink.withValues(alpha: 0.15),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: iconColor, size: 24),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: GoogleFonts.fredoka(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: GoogleFonts.quicksand(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textMuted,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return AppButton(
+      label: 'View Leaderboard',
+      variant: AppButtonVariant.secondary,
+      icon: Icons.leaderboard_rounded,
+      onPressed: () => context.push('/leaderboard'),
     );
   }
 }

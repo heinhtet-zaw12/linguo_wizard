@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_chip.dart';
 import '../viewmodels/create_scenario_viewmodel.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../widgets/scenario_preview_card.dart';
@@ -45,14 +48,7 @@ class _CreateScenarioScreenState
     final notifier = ref.read(createScenarioProvider.notifier);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: Stack(
             children: [
@@ -242,28 +238,9 @@ class _CreateScenarioScreenState
           ),
 
         // ─── Generate button ───
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton(
-            onPressed: notifier.generate,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryPink,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              elevation: 4,
-              shadowColor: AppColors.shadowPink,
-            ),
-            child: Text(
-              'Generate Scenario',
-              style: GoogleFonts.fredoka(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+        AppButton(
+          label: 'Generate Scenario',
+          onPressed: notifier.generate,
         ),
       ],
     );
@@ -324,33 +301,23 @@ class _CreateScenarioScreenState
             ),
           ),
 
-          SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton.icon(
-            onPressed: () async {
-              await notifier.save();
-              // On save success, state transitions to saved.
-              // If still in preview (save failed), show error.
-            },
-            icon: const Icon(Icons.play_arrow_rounded, size: 22),
-            label: Text(
-              'Try it',
-              style: GoogleFonts.fredoka(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryPink,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              elevation: 4,
-              shadowColor: AppColors.shadowPink,
-            ),
-          ),
+          AppButton(
+          label: 'Try it',
+          icon: Icons.play_arrow_rounded,
+          onPressed: () async {
+            await notifier.save();
+            // Navigate to conversation on success.
+            final currentState = ref.read(createScenarioProvider);
+            final scenario = currentState.generatedScenario;
+            if (currentState.step == CreateScenarioStep.saved &&
+                scenario != null) {
+              if (!context.mounted) return;
+              ref
+                  .read(selectedScenarioProvider.notifier)
+                  .state = scenario;
+              context.push('/conversation/${scenario.id}');
+            }
+          },
         ),
         const SizedBox(height: 12),
 
@@ -358,44 +325,20 @@ class _CreateScenarioScreenState
         Row(
           children: [
             Expanded(
-              child: OutlinedButton(
+              child: AppButton(
+                label: 'Regenerate',
+                variant: AppButtonVariant.secondary,
+                isExpanded: true,
                 onPressed: notifier.regenerate,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primaryPinkDark,
-                  side: BorderSide(color: AppColors.primaryPinkLight),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: Text(
-                  'Regenerate',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: OutlinedButton(
+              child: AppButton(
+                label: 'Back to Form',
+                variant: AppButtonVariant.secondary,
+                isExpanded: true,
                 onPressed: notifier.edit,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primaryPinkDark,
-                  side: BorderSide(color: AppColors.primaryPinkLight),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: Text(
-                  'Back to Form',
-                  style: GoogleFonts.fredoka(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
               ),
             ),
           ],
@@ -462,61 +405,26 @@ class _CreateScenarioScreenState
           ),
         ),
         const SizedBox(height: 32),
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton.icon(
-            onPressed: () {
-              // Navigate to conversation with saved scenario
-              final state = ref.read(createScenarioProvider);
-              final scenario = state.generatedScenario;
-              if (scenario != null) {
-                ref
-                    .read(selectedScenarioProvider.notifier)
-                    .state = scenario;
-                context.push('/conversation/${scenario.id}');
-              }
-            },
-            icon: const Icon(Icons.play_arrow_rounded, size: 22),
-            label: Text(
-              'Start Conversation',
-              style: GoogleFonts.fredoka(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryPink,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              elevation: 4,
-              shadowColor: AppColors.shadowPink,
-            ),
-          ),
+        AppButton(
+          label: 'Start Conversation',
+          icon: Icons.play_arrow_rounded,
+          onPressed: () {
+            // Navigate to conversation with saved scenario
+            final state = ref.read(createScenarioProvider);
+            final scenario = state.generatedScenario;
+            if (scenario != null) {
+              ref
+                  .read(selectedScenarioProvider.notifier)
+                  .state = scenario;
+              context.push('/conversation/${scenario.id}');
+            }
+          },
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: OutlinedButton(
-            onPressed: () => context.pop(),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primaryPinkDark,
-              side: BorderSide(color: AppColors.primaryPinkLight),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-            child: Text(
-              'Back to Scenarios',
-              style: GoogleFonts.fredoka(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+        AppButton(
+          label: 'Back to Scenarios',
+          variant: AppButtonVariant.secondary,
+          onPressed: () => context.pop(),
         ),
       ],
     );
@@ -667,44 +575,10 @@ class _CreateScenarioScreenState
         final label = capitalize
             ? '${item[0].toUpperCase()}${item.substring(1)}'
             : item;
-        return GestureDetector(
+        return AppChip(
+          label: label.toUpperCase(),
+          isSelected: isSelected,
           onTap: () => onSelected(item),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppColors.primaryPink
-                  : Colors.white.withValues(alpha: 0.85),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isSelected
-                    ? AppColors.primaryPink
-                    : AppColors.primaryPinkLight,
-                width: 1.5,
-              ),
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: AppColors.shadowPink,
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ]
-                  : [],
-            ),
-            child: Text(
-              label.toUpperCase(),
-              style: GoogleFonts.fredoka(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color:
-                    isSelected ? Colors.white : AppColors.textDark,
-              ),
-            ),
-          ),
         );
       }).toList(),
     );

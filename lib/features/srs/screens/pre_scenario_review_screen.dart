@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/models/srs_item.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_button.dart';
 import '../viewmodels/srs_viewmodel.dart';
 
 /// Pre-scenario review screen showing due SRS items before conversation starts.
@@ -51,14 +53,7 @@ class _PreScenarioReviewScreenState
     final asyncState = ref.watch(srsViewModelProvider);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
@@ -141,31 +136,12 @@ class _PreScenarioReviewScreenState
           child: Column(
             children: [
               // Start Scenario button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(srsViewModelProvider.notifier).skipReview();
-                    context.push('/conversation/${widget.scenarioId}');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryPink,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    elevation: 4,
-                    shadowColor: AppColors.shadowPink,
-                  ),
-                  child: Text(
-                    'Start Scenario',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+              AppButton(
+                label: 'Start Scenario',
+                onPressed: () {
+                  ref.read(srsViewModelProvider.notifier).skipReview();
+                  context.push('/conversation/${widget.scenarioId}');
+                },
               ),
               const SizedBox(height: 8),
               // Skip link

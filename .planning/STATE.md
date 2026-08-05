@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: ""
-last_updated: "2026-07-23T18:30:00.000Z"
+stopped_at: context exhaustion at 76% (2026-08-04)
+last_updated: "2026-08-04T05:21:44.590Z"
 progress:
   total_phases: 6
-  completed_phases: 4
-  total_plans: 15
-  completed_plans: 14
-  percent: 93
+  completed_phases: 5
+  total_plans: 16
+  completed_plans: 15
+  percent: 83
 ---
 
 # Project State
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-14)
 
 **Core value:** The voice conversation loop — speak naturally to an AI character, get immersive practice, and receive actionable feedback afterward.
-**Current focus:** Phase 05 — premium-and-polish
+**Current focus:** Phase 06 — ui-ux-overhaul
 
 ## Progress
 
@@ -30,7 +30,8 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 | Phase 2 | **Complete** | 100% |
 | Phase 3 | **Complete** | 100% |
 | Phase 4 | **Complete** | 100% |
-| Phase 5 | In Progress | 93% |
+| Phase 5 | **Complete** | 100% |
+| Phase 6 | In Progress | 0% |
 
 ## Phase 1 — Complete
 
@@ -106,7 +107,7 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
   - Save/discard dialog on exit, New Chat button to reset, Resume prompt on re-entry
   - See `.planning/tmp/conversation-update-plan.md` for full scope
 
-## Phase 5 — In Progress
+## Phase 5 — Complete
 
 - [x] **Plan 01: Firestore Scenario Catalog** — Scenario model extended with tags/difficulty/isFeatured/completionCount; FirestoreScenarioService with SharedPreferences cache; Firestore rules for public /scenarios collection; Scenario selection screen redesigned with categories, search, pagination; 34 curated scenarios seeded; old bundled JSONs removed
 - [x] **Plan 02: Custom Scenario Creation** — AiService.generateScenario with Gemini structured JSON; custom scenario CRUD in ScenarioService; CreateScenarioScreen with form, read-only preview (D-10), save; My Scenarios section with delete (D-11); Create button; Firestore rules for custom_scenarios subcollection
@@ -114,14 +115,21 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 - [x] **Plan 04: Daily Challenge** — DailyChallengeService with UTC rotation, DailyChallengeCard with countdown timer, Home dashboard integration, 2x XP bonus, Firestore seed documents
 - [ ] Plan 05: Premium & Polish (planned)
 
+## Phase 6 — In Progress
+
+- [x] **Wave 1: Design System Foundation** — Design tokens (colors, typography, spacing, shadows), dark mode, `flutter_animate` dependency. 5 new token files in lib/core/theme/. AppTheme refactored with light + dark. Backward-compatible legacy aliases preserved.
+- [ ] **Wave 2: Shared Component Library** — Extract `AppButton`, `AppTextField`, `AppCard`, `AppChip`, `AppNavBar`, deduplicate widgets
+- [ ] **Wave 3: Screen Redesign** — All 14 screens updated with new "Soft Glass" visual language
+- [ ] **Wave 4: Dark Mode + Polish** — Theme toggle, persistence, QA pass, animation audit
+
 ---
 *Last updated: 2026-07-23 after Plan 01 execution*
 
 ## Session
 
-**Last session:** 2026-07-23T18:00:00.000Z
-**Stopped at:** ""
-**Resume file:** .planning/phases/05-premium-and-polish/05-04-PLAN.md
+**Last session:** 2026-08-04T05:21:44.586Z
+**Stopped at:** context exhaustion at 76% (2026-08-04)
+**Resume file:** .planning/phases/06-ui-ux-overhaul/06-UI-SPEC.md
 
 ## Remaining Work
 

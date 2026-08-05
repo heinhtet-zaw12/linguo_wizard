@@ -1,7 +1,7 @@
 # Roadmap: Linguo Wizard
 
 **Mode:** horizontal-layers
-**Phases:** 5
+**Phases:** 6
 **Requirements mapped:** 15/15 ✓
 **Architecture:** MVVM (Model-View-ViewModel) + Feature-First
 
@@ -140,18 +140,35 @@ Plans:
 
 ---
 
-## Phase 6: Content & Localization
+## Phase 6: UI/UX Overhaul
 
-**Goal:** Scenario collections/learning paths, Myanmar (Burmese) UI, in-conversation AI explainer
+**Goal:** Complete visual redesign — modern "Soft Glass" design system, dark mode, shared component library, micro-interactions, and polished screens across the entire app
+
+**Design Philosophy:** Refined glassmorphism with frosted glass cards, soft gradient mesh backgrounds, fluid typography (Plus Jakarta Sans + Inter), and breathing whitespace. Elevated yet warm — matching the language learning context.
+
 **Success Criteria:**
 
-1. Scenario Collections — grouped learning paths (Travel Pack, Work Pack, etc.)
-2. Myanmar (Burmese) UI localization — full app UI translated
-3. AI "Explain" button — inline text-only explanation + translation on AI message bubbles
+1. Centralized design system — tokens for colors (light + dark), typography, spacing, shadows, radii
+2. Dark mode — full light/dark theme with system preference detection and manual toggle
+3. Shared component library — `AppButton`, `AppTextField`, `AppCard`, `AppChip`, `AppNavBar` in `lib/core/widgets/`
+4. New typography — Plus Jakarta Sans (headings) + Inter (body) + JetBrains Mono (scores/numbers)
+5. All 14 screens redesigned with new visual language (glass cards, gradient backgrounds, proper hierarchy)
+6. Micro-interactions — tap feedback, screen transitions, animated score circles, card entrance animations
+7. Zero breaking changes — all logic, state, navigation, services, and functionality preserved
 
 **Requires:** Phase 5 complete
 
-Plans: TBD
+**Plans:** 2/2 plans complete
+
+Plans:
+
+- [x] 06-01-PLAN.md
+- [x] 06-02-PLAN.md
+
+**Wave 1** — Design System Foundation (tokens, dark mode, typography, dependencies)
+**Wave 2** — Shared Component Library (extract + upgrade duplicated widgets)
+**Wave 3** — Screen Redesign (feature by feature, all 14 screens)
+**Wave 4** — Dark Mode Toggle + Polish (persistence, QA, animation audit)
 
 ---
 

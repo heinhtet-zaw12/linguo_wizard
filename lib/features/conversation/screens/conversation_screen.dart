@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../feedback/viewmodels/feedback_viewmodel.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
 import '../models/message.dart';
@@ -273,8 +275,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
         }
       },
       child: Scaffold(
-      backgroundColor: AppColors.bgTop,
-      body: SafeArea(
+      body: GradientBackground(
+        child: SafeArea(
         child: asyncState.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(
@@ -521,35 +523,10 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           if (state.turnCount > 0 && state.loopState == ConversationLoopState.idle)
             Padding(
               padding: const EdgeInsets.only(top: 16),
-              child: ElevatedButton(
+              child: AppButton(
+                label: 'End Conversation',
+                isLoading: state.isEvaluating,
                 onPressed: state.isEvaluating ? null : () => vm.endConversation(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPink,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: AppColors.primaryPink.withValues(alpha: 0.5),
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  elevation: 2,
-                ),
-                child: state.isEvaluating
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text(
-                        'End Conversation',
-                        style: TextStyle(
-                          fontFamily: 'Quicksand',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
               ),
             ),
         ],

@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/app_button.dart';
 import '../viewmodels/auth_viewmodel.dart';
 
 /// Forgot password screen — sends a password reset email.
@@ -61,14 +64,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -158,84 +154,23 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     ],
 
                     // ─── Email Field ───
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.shadowPink.withValues(alpha: 0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return 'Email is required';
-                          if (!v.contains('@')) return 'Enter a valid email';
-                          return null;
-                        },
-                        style: GoogleFonts.quicksand(
-                          fontSize: 14,
-                          color: AppColors.textDark,
-                        ),
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          labelStyle: GoogleFonts.quicksand(
-                            fontSize: 14,
-                            color: AppColors.textMuted,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide.none,
-                          ),
-                          filled: true,
-                          fillColor: Colors.transparent,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                        ),
-                      ),
+                    AppTextField(
+                      controller: _emailController,
+                      label: 'Email',
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Email is required';
+                        if (!v.contains('@')) return 'Enter a valid email';
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 24),
 
                     // ─── Send Reset Button ───
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: authState.isLoading ? null : _onSendReset,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryPink,
-                          disabledBackgroundColor: AppColors.primaryPinkLight,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          elevation: 4,
-                          shadowColor: AppColors.shadowPink,
-                        ),
-                        child: authState.isLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                'Send Reset Link',
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                      ),
+                    AppButton(
+                      label: 'Send Reset Link',
+                      isLoading: authState.isLoading,
+                      onPressed: _onSendReset,
                     ),
                     const SizedBox(height: 24),
 

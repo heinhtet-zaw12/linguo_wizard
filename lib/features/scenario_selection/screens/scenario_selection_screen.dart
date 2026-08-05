@@ -7,6 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_chip.dart';
+import '../../../core/widgets/app_button.dart';
 import '../models/scenario.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../viewmodels/twist_viewmodel.dart';
@@ -99,14 +102,7 @@ class _ScenarioSelectionScreenState
     });
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
@@ -130,18 +126,10 @@ class _ScenarioSelectionScreenState
                       ),
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () => notifier.build(),
-                      icon: const Icon(Icons.refresh, size: 18),
-                      label: Text('Retry',
-                          style: GoogleFonts.quicksand(
-                              fontWeight: FontWeight.w600)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryPink,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24)),
-                      ),
+                    AppButton(
+                      label: 'Retry',
+                      icon: Icons.refresh,
+                      onPressed: () => ref.invalidate(scenarioSelectionProvider),
                     ),
                   ],
                 ),
@@ -701,7 +689,7 @@ class _ScenarioSelectionScreenState
           itemBuilder: (context, index) {
             if (index == 0) {
               final isSelected = state.selectedCefrLevel == null;
-              return _CefrChip(
+              return AppChip(
                 label: 'All',
                 isSelected: isSelected,
                 onTap: () => notifier.setCefrFilter(null),
@@ -710,7 +698,7 @@ class _ScenarioSelectionScreenState
             final level = _cefrLevels[index - 1];
             final isSelected =
                 state.selectedCefrLevel?.toUpperCase() == level.toUpperCase();
-            return _CefrChip(
+            return AppChip(
               label: level,
               isSelected: isSelected,
               onTap: () => notifier.setCefrFilter(level),
@@ -757,58 +745,6 @@ class _ScenarioSelectionScreenState
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// A single CEFR-level filter chip (reused from the original design).
-class _CefrChip extends StatelessWidget {
-  const _CefrChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryPink : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.primaryPink
-                : AppColors.primaryPinkLight,
-            width: 1.5,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.shadowPink,
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : [],
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.quicksand(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : AppColors.textDark,
-          ),
         ),
       ),
     );

@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_button.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
 import '../widgets/language_step.dart';
 import '../widgets/cefr_step.dart';
@@ -63,14 +65,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     });
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: Column(
             children: [
@@ -188,29 +183,10 @@ class _NextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      child: ElevatedButton(
-        onPressed: isEnabled ? onPressed : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryPink,
-          disabledBackgroundColor: AppColors.primaryPinkLight,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          elevation: isEnabled ? 4 : 0,
-          shadowColor: AppColors.shadowPink,
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.quicksand(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
+    return AppButton(
+      label: label,
+      isExpanded: false,
+      onPressed: isEnabled ? onPressed : null,
     );
   }
 }

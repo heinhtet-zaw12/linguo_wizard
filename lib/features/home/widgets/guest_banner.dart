@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_card.dart';
 
 /// Banner shown to guest users encouraging them to sign up.
 class GuestBanner extends StatefulWidget {
@@ -19,21 +20,9 @@ class _GuestBannerState extends State<GuestBanner> {
   Widget build(BuildContext context) {
     if (_dismissed) return const SizedBox.shrink();
 
-    return Container(
+    return AppCard(
+      borderColor: AppColors.primaryPinkLight,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.primaryPink.withValues(alpha: 0.15),
-            AppColors.accentGold.withValues(alpha: 0.1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primaryPinkLight,
-          width: 1.5,
-        ),
-      ),
       child: Row(
         children: [
           // Icon

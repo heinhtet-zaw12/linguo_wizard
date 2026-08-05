@@ -27,6 +27,8 @@ class LinguoWizardApp extends StatelessWidget {
       title: 'Linguo Wizard',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
       routerConfig: appRouter,
     );
   }

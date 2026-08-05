@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../badge/widgets/badge_popup.dart';
 import '../models/score_data.dart';
 import '../viewmodels/feedback_viewmodel.dart';
@@ -71,14 +73,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
       body: Stack(
         children: [
           // ─── Main Content ───
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [AppColors.bgTop, AppColors.bgBottom],
-              ),
-            ),
+          GradientBackground(
             child: SafeArea(
               child: Column(
                 children: [
@@ -112,45 +107,26 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen> {
                   // ─── Done Button ───
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Belt-and-suspenders: sync XP to Firestore if authenticated.
-                          final user = ref.read(currentUserProvider);
-                          if (user != null && !user.isAnonymous) {
-                            final fs = ref.read(firestoreServiceProvider);
-                            fs.getProgress(user.uid).then((progress) {
-                              final existingXp = progress?['totalXp'] as int? ?? 0;
-                              final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
-                              fs.saveProgress(
-                                user.uid,
-                                totalXp: existingXp + scoreData.xpEarned,
-                                scenariosCompleted: existingCompleted,
-                                lastScenarioAt: DateTime.now(),
-                              );
-                            });
-                          }
-                          context.go('/home');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryPink,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          elevation: 4,
-                          shadowColor: AppColors.shadowPink,
-                        ),
-                        child: Text(
-                          'Done',
-                          style: GoogleFonts.quicksand(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
+                    child: AppButton(
+                      label: 'Done',
+                      onPressed: () {
+                        // Belt-and-suspenders: sync XP to Firestore if authenticated.
+                        final user = ref.read(currentUserProvider);
+                        if (user != null && !user.isAnonymous) {
+                          final fs = ref.read(firestoreServiceProvider);
+                          fs.getProgress(user.uid).then((progress) {
+                            final existingXp = progress?['totalXp'] as int? ?? 0;
+                            final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
+                            fs.saveProgress(
+                              user.uid,
+                              totalXp: existingXp + scoreData.xpEarned,
+                              scenariosCompleted: existingCompleted,
+                              lastScenarioAt: DateTime.now(),
+                            );
+                          });
+                        }
+                        context.go('/home');
+                      },
                     ),
                   ),
                 ],

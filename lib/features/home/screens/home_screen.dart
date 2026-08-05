@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/gradient_background.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../widgets/streak_ring.dart';
@@ -25,14 +26,7 @@ class HomeScreen extends ConsumerWidget {
     final isGuest = ref.watch(isGuestProvider);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.bgTop, AppColors.bgBottom],
-          ),
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
