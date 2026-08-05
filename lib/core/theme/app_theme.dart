@@ -1,41 +1,69 @@
 import 'package:flutter/material.dart';
 
-/// Central color palette — extracted from the 3D claymorphism wizard mascot.
-class AppColors {
-  AppColors._();
+import 'app_colors.dart';
+import 'app_text_styles.dart';
 
-  // ─── Primary palette ───
-  static const Color primaryPink = Color(0xFFF2A7B3);
-  static const Color primaryPinkDark = Color(0xFFD4869A);
-  static const Color primaryPinkLight = Color(0xFFFCCDD6);
+// Re-export app_colors.dart so existing imports continue to work.
+export 'app_colors.dart';
 
-  // ─── Background gradient ───
-  static const Color bgTop = Color(0xFFFADADD);
-  static const Color bgBottom = Color(0xFFF8C8D4);
-
-  // ─── Accent ───
-  static const Color accentGold = Color(0xFFF5C862);
-  static const Color accentCoral = Color(0xFFE8836B);
-
-  // ─── Text ───
-  static const Color textDark = Color(0xFF3D2C35);
-  static const Color textMuted = Color(0xFF7A6570);
-  static const Color textLight = Color(0xFFFFFFFF);
-
-  // ─── Effects ───
-  static const Color shadowPink = Color(0x30D4869A);
-}
-
+/// Application theme configuration.
+/// Dark-only — single ThemeData for the futuristic dark theme.
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get light => ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: AppColors.bgTop,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primaryPink,
-          brightness: Brightness.light,
+  static ThemeData get dark {
+    final colorScheme = ColorScheme.dark(
+      primary: AppColors.accentStart,
+      secondary: AppColors.accentMid,
+      surface: AppColors.surface1,
+      error: AppColors.danger,
+      onPrimary: AppColors.textOnAccent,
+      onSurface: AppColors.textPrimary,
+    );
+
+    return ThemeData(
+      brightness: Brightness.dark,
+      useMaterial3: true,
+      scaffoldBackgroundColor: AppColors.surfaceBase,
+      colorScheme: colorScheme,
+      fontFamily: 'Inter',
+      textTheme: _buildTextTheme(),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        titleTextStyle: AppTextStyles.headingMedium(
+          color: AppColors.textPrimary,
         ),
-        useMaterial3: true,
-      );
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.surfaceGlass,
+        elevation: 0,
+        indicatorColor: AppColors.accentStart,
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppTextStyles.labelMedium(color: AppColors.textOnAccent);
+          }
+          return AppTextStyles.labelMedium(color: AppColors.textTertiary);
+        }),
+      ),
+    );
+  }
+
+  /// Build a TextTheme using GoogleFonts.
+  static TextTheme _buildTextTheme() {
+    return TextTheme(
+      displayLarge: AppTextStyles.displayLarge(color: AppColors.textPrimary),
+      displayMedium: AppTextStyles.displayMedium(color: AppColors.textPrimary),
+      headlineLarge: AppTextStyles.headingLarge(color: AppColors.textPrimary),
+      headlineMedium: AppTextStyles.headingMedium(color: AppColors.textPrimary),
+      headlineSmall: AppTextStyles.headingSmall(color: AppColors.textPrimary),
+      bodyLarge: AppTextStyles.bodyLarge(color: AppColors.textSecondary),
+      bodyMedium: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+      bodySmall: AppTextStyles.bodySmall(color: AppColors.textTertiary),
+      labelLarge: AppTextStyles.labelLarge(color: AppColors.textPrimary),
+      labelMedium: AppTextStyles.labelMedium(color: AppColors.textSecondary),
+      labelSmall: AppTextStyles.labelSmall(color: AppColors.textTertiary),
+    );
+  }
 }
