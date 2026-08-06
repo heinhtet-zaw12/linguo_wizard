@@ -386,7 +386,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
       hintStyle: AppTextStyles.bodyMedium(color: AppColors.textTertiary),
       filled: true,
       fillColor: AppColors.surfaceGlass,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: AppRadius.lg,
         borderSide: BorderSide.none,

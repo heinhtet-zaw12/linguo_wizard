@@ -103,7 +103,7 @@ class _PreScenarioReviewScreenState
           child: state.dueItems.isEmpty
               ? _buildEmptyState()
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: AppSpacing.horizontal5,
                   itemCount: state.dueItems.length,
                   itemBuilder: (context, index) {
                     return _SrsItemCard(

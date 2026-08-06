@@ -243,7 +243,7 @@ class _ScoreBreakdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: AppSpacing.horizontal6,
       child: Row(
         children: [
           _BreakdownCard(label: 'Fluency', score: fluency, index: 0),
@@ -309,7 +309,7 @@ class _XpBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s5, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.warning.withValues(alpha: 0.15),
         borderRadius: AppRadius.pill,
@@ -368,7 +368,7 @@ class _GrammarCorrections extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: AppSpacing.horizontal6,
       itemCount: corrections.length,
       itemBuilder: (context, index) {
         final correction = corrections[index];

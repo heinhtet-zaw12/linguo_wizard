@@ -71,7 +71,7 @@ class LeaderboardScreen extends ConsumerWidget {
               },
               color: AppColors.accentStart,
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4, vertical: 8),
                 itemCount: entries.length,
                 itemBuilder: (context, index) {
                   final entry = entries[index];

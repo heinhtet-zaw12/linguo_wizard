@@ -72,7 +72,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: AppSpacing.horizontal8,
               child: Form(
                 key: _formKey,
                 child: GlassCard(

@@ -367,7 +367,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
   Widget _buildTopBar(Scenario scenario) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.surfaceGlass,
         border: Border(
@@ -481,7 +481,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
   Widget _buildPartialTranscript(String transcript) {
     return GlassCard(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s6, vertical: 8),
       child: Text(
         transcript,
         textAlign: TextAlign.center,

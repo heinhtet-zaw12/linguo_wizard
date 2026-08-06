@@ -369,12 +369,12 @@ class _ScenarioSelectionScreenState
 
   Widget _buildCuratedDivider() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.s5, 12, AppSpacing.s5, 12),
       child: Row(
         children: [
           const Expanded(child: Divider(color: AppColors.borderSubtle)),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: AppSpacing.horizontal3,
             child: Text(
               'Curated Scenarios',
               style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
@@ -403,7 +403,7 @@ class _ScenarioSelectionScreenState
             decoration: InputDecoration(
               hintText: 'Search scenarios...',
               hintStyle: AppTextStyles.bodyMedium(color: AppColors.textTertiary),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4, vertical: 12),
               border: OutlineInputBorder(
                 borderRadius: AppRadius.xxl,
                 borderSide: BorderSide.none,
@@ -505,7 +505,7 @@ class _ScenarioSelectionScreenState
       height: 42,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: AppSpacing.horizontal4,
         itemCount: _categories.length,
         itemBuilder: (context, index) {
           final category = _categories[index];
@@ -520,7 +520,7 @@ class _ScenarioSelectionScreenState
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4, vertical: 8),
                 decoration: BoxDecoration(
                   gradient: (isSelected || isAllSelected) ? AppGradients.accent : null,
                   color: (isSelected || isAllSelected) ? null : AppColors.surfaceGlass,

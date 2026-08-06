@@ -93,7 +93,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: AppSpacing.horizontal8,
               child: Form(
                 key: _formKey,
                 child: GlassCard(
@@ -185,7 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         children: [
                           const Expanded(child: Divider(color: AppColors.borderSubtle)),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: AppSpacing.horizontal3,
                             child: Text(
                               'OR',
                               style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
