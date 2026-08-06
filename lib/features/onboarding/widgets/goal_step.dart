@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../models/onboarding_data.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_shadows.dart';
 
 /// Step 3: Pick a learning goal.
 class GoalStep extends StatelessWidget {
@@ -24,12 +25,12 @@ class GoalStep extends StatelessWidget {
         children: [
           Text(
             "What's your goal?",
-            style: AppTextStyles.displayMedium(color: AppColors.textDark),
+            style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           Text(
             'We\'ll tailor scenarios to match',
-            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+            style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 32),
           Expanded(
@@ -78,19 +79,13 @@ class _GoalCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryPink : Colors.white,
+          color: isSelected ? AppColors.accentStart.withValues(alpha: 0.15) : AppColors.surfaceGlass,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.primaryPink : AppColors.primaryPinkLight,
+            color: isSelected ? AppColors.accentCyan : AppColors.borderSubtle,
             width: 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected ? AppColors.shadowPink : Colors.black.withValues(alpha: 0.04),
-              blurRadius: isSelected ? 12 : 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          boxShadow: isSelected ? AppShadows.glowBlue : AppShadows.elevation1,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -99,7 +94,9 @@ class _GoalCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               label,
-              style: AppTextStyles.labelLarge(),
+              style: AppTextStyles.labelLarge(
+                color: isSelected ? AppColors.textOnAccent : AppColors.textPrimary,
+              ),
             ),
           ],
         ),

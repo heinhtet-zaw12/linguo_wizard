@@ -10,6 +10,7 @@ import '../widgets/language_step.dart';
 import '../widgets/cefr_step.dart';
 import '../widgets/goal_step.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_gradients.dart';
 
 /// Three-step onboarding: language → CEFR level → goal.
 ///
@@ -115,7 +116,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         },
                         child: Text(
                           'Back',
-                          style: AppTextStyles.bodyLarge(color: AppColors.textMuted),
+                          style: AppTextStyles.bodyLarge(color: AppColors.textSecondary),
                         ),
                       )
                     else
@@ -157,7 +158,8 @@ class _PageIndicator extends StatelessWidget {
           width: isActive ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primaryPink : AppColors.primaryPinkLight,
+            gradient: isActive ? AppGradients.accent : null,
+            color: isActive ? null : AppColors.surfaceGlass,
             borderRadius: BorderRadius.circular(4),
           ),
         );
@@ -181,7 +183,6 @@ class _NextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppButton(
       label: label,
-      isExpanded: false,
       onPressed: isEnabled ? onPressed : null,
     );
   }

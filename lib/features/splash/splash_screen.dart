@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/gradient_background.dart';
 import '../../../core/theme/app_text_styles.dart';
 
-/// Animated splash screen — 3D Claymorphism style.
+/// Animated splash screen — futuristic dark theme.
 ///
 /// Handles navigation internally based on auth state and onboarding status:
 ///   - Not authenticated → /login
@@ -146,52 +147,51 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: AnimatedBuilder(
-        animation: _exitCtrl,
-        builder: (context, _) {
-          return Stack(
-            children: [
-              // 1 ── Gradient background
-              const _BackgroundGradient(),
+      body: GradientBackground(
+        child: AnimatedBuilder(
+          animation: _exitCtrl,
+          builder: (context, _) {
+            return Stack(
+              children: [
+                // 1 ── Radial glow behind logo
+                _RadialGlow(opacity: _glowOpacity, size: size),
 
-              // 2 ── Radial glow behind logo
-              _RadialGlow(opacity: _glowOpacity, size: size),
-
-              // 3 ── Center column: logo + text
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _AnimatedLogo(
-                      scale: _logoScale,
-                      bob: _bobCtrl,
-                      size: size,
-                    ),
-                    const SizedBox(height: 28),
-                    _AppName(opacity: _titleOpacity, slide: _titleSlide),
-                    const SizedBox(height: 10),
-                    _Tagline(opacity: _taglineOpacity, slide: _taglineSlide),
-                  ],
-                ),
-              ),
-
-              // 4 ── Sparkle particles
-              _SparkleBurst(controller: _sparkleCtrl, size: size),
-
-              // 5 ── Floating decorative orbs
-              _FloatingOrbs(bob: _bobCtrl),
-
-              // 6 ── White exit overlay
-              if (_exitCtrl.isAnimating || _exitCtrl.isCompleted)
-                IgnorePointer(
-                  child: Opacity(
-                    opacity: _exitOpacity.value,
-                    child: Container(color: Colors.white),
+                // 2 ── Center column: logo + text
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _AnimatedLogo(
+                        scale: _logoScale,
+                        bob: _bobCtrl,
+                        size: size,
+                      ),
+                      const SizedBox(height: 28),
+                      _AppName(opacity: _titleOpacity, slide: _titleSlide),
+                      const SizedBox(height: 10),
+                      _Tagline(opacity: _taglineOpacity, slide: _taglineSlide),
+                    ],
                   ),
                 ),
-            ],
-          );
-        },
+
+                // 3 ── Sparkle particles
+                _SparkleBurst(controller: _sparkleCtrl, size: size),
+
+                // 4 ── Floating decorative orbs
+                _FloatingOrbs(bob: _bobCtrl),
+
+                // 5 ── Dark exit overlay
+                if (_exitCtrl.isAnimating || _exitCtrl.isCompleted)
+                  IgnorePointer(
+                    child: Opacity(
+                      opacity: _exitOpacity.value,
+                      child: Container(color: AppColors.surfaceBase),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -200,23 +200,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 // ═══════════════════════════════════════════════════════════════
 //  Sub-widgets
 // ═══════════════════════════════════════════════════════════════
-
-class _BackgroundGradient extends StatelessWidget {
-  const _BackgroundGradient();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AppColors.bgTop, AppColors.bgBottom],
-        ),
-      ),
-    );
-  }
-}
 
 class _RadialGlow extends StatelessWidget {
   const _RadialGlow({required this.opacity, required this.size});
@@ -237,8 +220,8 @@ class _RadialGlow extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppColors.primaryPink.withValues(alpha: v * 0.5),
-                  AppColors.primaryPinkLight.withValues(alpha: v * 0.2),
+                  AppColors.accentStart.withValues(alpha: v * 0.5),
+                  AppColors.accentMid.withValues(alpha: v * 0.2),
                   Colors.transparent,
                 ],
               ),
@@ -296,7 +279,7 @@ class _ClayShadow extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: const [
           BoxShadow(
-            color: AppColors.shadowPink,
+            color: AppColors.borderGlow,
             blurRadius: 28,
             offset: Offset(0, 10),
           ),
@@ -331,7 +314,7 @@ class _AppName extends StatelessWidget {
             opacity: opacity.value,
             child: Text(
               'Linguo Wizard',
-              style: AppTextStyles.displayMedium(color: AppColors.textDark),
+              style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
             ),
           ),
         );
@@ -356,7 +339,7 @@ class _Tagline extends StatelessWidget {
             opacity: opacity.value,
             child: Text(
               'Speak naturally. Learn magically.',
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ),
         );
@@ -395,10 +378,10 @@ class _SparklePainter extends CustomPainter {
   final double progress;
 
   static const _colors = [
-    AppColors.accentGold,
-    AppColors.primaryPinkLight,
+    AppColors.warning,
+    AppColors.accentEnd,
     Colors.white,
-    AppColors.accentCoral,
+    AppColors.danger,
   ];
 
   @override
@@ -431,7 +414,7 @@ class _SparklePainter extends CustomPainter {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  Floating pastel orbs
+//  Floating accent orbs
 // ═══════════════════════════════════════════════════════════════
 
 class _FloatingOrbs extends StatelessWidget {
@@ -451,25 +434,25 @@ class _FloatingOrbs extends StatelessWidget {
               top: mq.size.height * 0.12 + sin * 8,
               left: mq.size.width * 0.08,
               size: 48,
-              color: AppColors.primaryPinkLight.withValues(alpha: 0.35),
+              color: AppColors.accentEnd.withValues(alpha: 0.35),
             ),
             _orb(
               top: mq.size.height * 0.18 - sin * 6,
               right: mq.size.width * 0.1,
               size: 32,
-              color: AppColors.accentGold.withValues(alpha: 0.25),
+              color: AppColors.warning.withValues(alpha: 0.25),
             ),
             _orb(
               bottom: mq.size.height * 0.15 + sin * 10,
               left: mq.size.width * 0.14,
               size: 24,
-              color: AppColors.accentCoral.withValues(alpha: 0.2),
+              color: AppColors.danger.withValues(alpha: 0.2),
             ),
             _orb(
               bottom: mq.size.height * 0.2 - sin * 7,
               right: mq.size.width * 0.06,
               size: 40,
-              color: AppColors.primaryPinkDark.withValues(alpha: 0.18),
+              color: AppColors.accentStart.withValues(alpha: 0.18),
             ),
           ],
         );
@@ -502,4 +485,3 @@ class _FloatingOrbs extends StatelessWidget {
     );
   }
 }
-

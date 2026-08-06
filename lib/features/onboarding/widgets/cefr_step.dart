@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../models/onboarding_data.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_shadows.dart';
 
 /// Step 2: Pick a CEFR level.
 class CefrStep extends StatelessWidget {
@@ -24,12 +25,12 @@ class CefrStep extends StatelessWidget {
         children: [
           Text(
             "What's your level?",
-            style: AppTextStyles.displayMedium(color: AppColors.textDark),
+            style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           Text(
             'We\'ll match scenarios to your skill',
-            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+            style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 32),
           // Level description cards
@@ -91,19 +92,13 @@ class _CefrLevelCard extends StatelessWidget {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryPink : Colors.white,
+          color: isSelected ? AppColors.accentStart.withValues(alpha: 0.15) : AppColors.surfaceGlass,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.primaryPink : AppColors.primaryPinkLight,
+            color: isSelected ? AppColors.accentCyan : AppColors.borderSubtle,
             width: 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected ? AppColors.shadowPink : Colors.black.withValues(alpha: 0.04),
-              blurRadius: isSelected ? 12 : 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          boxShadow: isSelected ? AppShadows.glowBlue : AppShadows.elevation1,
         ),
         child: Row(
           children: [
@@ -113,14 +108,16 @@ class _CefrLevelCard extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Colors.white.withValues(alpha: 0.25)
-                    : AppColors.accentGold.withValues(alpha: 0.2),
+                    ? AppColors.accentCyan.withValues(alpha: 0.25)
+                    : AppColors.warning.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: Text(
                   level,
-                  style: AppTextStyles.headingMedium(),
+                  style: AppTextStyles.headingMedium(
+                    color: isSelected ? AppColors.textOnAccent : AppColors.textPrimary,
+                  ),
                 ),
               ),
             ),
@@ -128,13 +125,15 @@ class _CefrLevelCard extends StatelessWidget {
             Expanded(
               child: Text(
                 _description,
-                style: AppTextStyles.bodyMedium(),
+                style: AppTextStyles.bodyMedium(
+                  color: isSelected ? AppColors.textOnAccent : AppColors.textSecondary,
+                ),
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.white, size: 22)
+              const Icon(Icons.check_circle, color: AppColors.accentCyan, size: 22)
             else
-              Icon(Icons.circle_outlined, color: AppColors.primaryPinkLight, size: 22),
+              Icon(Icons.circle_outlined, color: AppColors.textTertiary, size: 22),
           ],
         ),
       ),
