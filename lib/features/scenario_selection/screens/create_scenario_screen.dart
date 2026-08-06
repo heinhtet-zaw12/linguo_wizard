@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_chip.dart' show GlassChip;
+import '../../../core/widgets/error_banner.dart';
 import '../viewmodels/create_scenario_viewmodel.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../widgets/scenario_preview_card.dart';
@@ -170,26 +171,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
         if (state.errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.danger.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.error_outline, size: 18, color: AppColors.danger),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      state.errorMessage!,
-                      style: AppTextStyles.labelMedium(color: AppColors.danger),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: ErrorBanner(message: state.errorMessage!),
           ),
         AppButton(
           label: 'Generate Scenario',
@@ -216,26 +198,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
         if (state.errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.danger.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.error_outline, size: 18, color: AppColors.danger),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      state.errorMessage!,
-                      style: AppTextStyles.labelMedium(color: AppColors.danger),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: ErrorBanner(message: state.errorMessage!),
           ),
         AppButton(
           label: 'Try it',

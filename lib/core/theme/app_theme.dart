@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'app_dimensions.dart';
 import 'app_text_styles.dart';
 
 // Re-export app_colors.dart so existing imports continue to work.
@@ -46,6 +47,24 @@ class AppTheme {
           }
           return AppTextStyles.labelMedium(color: AppColors.textTertiary);
         }),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.surface2,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
+        titleTextStyle: AppTextStyles.headingMedium(
+          color: AppColors.textPrimary,
+        ),
+        contentTextStyle: AppTextStyles.bodyMedium(
+          color: AppColors.textSecondary,
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: AppColors.surface3,
+        contentTextStyle: AppTextStyles.bodyMedium(
+          color: AppColors.textPrimary,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.sm),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }

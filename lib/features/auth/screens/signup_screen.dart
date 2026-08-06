@@ -7,6 +7,7 @@ import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/error_banner.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -105,40 +106,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                       // ─── Inline Error Banner ───
                       if (authState.errorMessage != null) ...[
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.danger.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: AppColors.danger.withValues(alpha: 0.4),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.error_outline_rounded,
-                                color: AppColors.danger,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  authState.errorMessage!,
-                                  style: AppTextStyles.labelMedium(color: AppColors.danger),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () => ref.read(authProvider.notifier).clearError(),
-                                child: const Icon(
-                                  Icons.close_rounded,
-                                  color: AppColors.danger,
-                                  size: 18,
-                                ),
-                              ),
-                            ],
-                          ),
+                        ErrorBanner(
+                          message: authState.errorMessage!,
+                          onDismiss: () => ref.read(authProvider.notifier).clearError(),
                         ),
                         const SizedBox(height: 16),
                       ],

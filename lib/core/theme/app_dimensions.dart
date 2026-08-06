@@ -38,10 +38,16 @@ class AppSpacing {
 class AppRadius {
   AppRadius._();
 
-  static const BorderRadius sm = BorderRadius.all(Radius.circular(12));
-  static const BorderRadius md = BorderRadius.all(Radius.circular(16));
-  static const BorderRadius lg = BorderRadius.all(Radius.circular(24));
+  static const BorderRadius xs = BorderRadius.all(Radius.circular(4));
+  static const BorderRadius sm = BorderRadius.all(Radius.circular(8));
+  static const BorderRadius md = BorderRadius.all(Radius.circular(12));
+  static const BorderRadius lg = BorderRadius.all(Radius.circular(16));
+  static const BorderRadius xl = BorderRadius.all(Radius.circular(20));
+  static const BorderRadius xxl = BorderRadius.all(Radius.circular(24));
   static const BorderRadius pill = BorderRadius.all(Radius.circular(9999));
+
+  // Legacy aliases — map old names to new tokens
+  static const BorderRadius sm12 = sm; // 12px → AppRadius.sm
 
   // Mixed radii (for message bubbles with tail effect)
   static const BorderRadius bubbleUser = BorderRadius.only(
