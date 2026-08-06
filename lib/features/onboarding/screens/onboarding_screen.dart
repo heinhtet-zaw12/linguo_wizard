@@ -181,9 +181,14 @@ class _NextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppButton(
-      label: label,
-      onPressed: isEnabled ? onPressed : null,
+    return SizedBox(
+      width: 172,
+      height: 52,
+      child: AppButton(
+        label: label,
+        icon: Icons.arrow_forward_rounded,
+        onPressed: isEnabled ? onPressed : null,
+      ),
     );
   }
 }
