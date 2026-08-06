@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/glass_card.dart';
 import '../../../core/widgets/cefr_badge.dart';
 import '../../../core/widgets/info_row.dart';
 import '../models/scenario.dart';
@@ -21,7 +21,7 @@ class ScenarioPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
+    return GlassCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +33,7 @@ class ScenarioPreviewCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 scenario.category.toUpperCase(),
-                style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+                style: AppTextStyles.labelSmall(color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -41,7 +41,7 @@ class ScenarioPreviewCard extends StatelessWidget {
           // Title
           Text(
             scenario.title,
-            style: AppTextStyles.headingLarge(color: AppColors.textDark),
+            style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 12),
           // Persona
@@ -60,19 +60,19 @@ class ScenarioPreviewCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primaryPinkLight.withValues(alpha: 0.3),
+              color: AppColors.accentCyan.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(Icons.flag_outlined,
-                    size: 16, color: AppColors.primaryPinkDark),
+                    size: 16, color: AppColors.accentCyan),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     scenario.goalDescription,
-                    style: AppTextStyles.labelMedium(color: AppColors.textDark),
+                    style: AppTextStyles.labelMedium(color: AppColors.textPrimary),
                   ),
                 ),
               ],
@@ -94,12 +94,12 @@ class ScenarioPreviewCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryPinkLight.withValues(alpha: 0.4),
+                    color: AppColors.accentCyan.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     tag,
-                    style: AppTextStyles.labelSmall(color: AppColors.primaryPinkDark),
+                    style: AppTextStyles.labelSmall(color: AppColors.accentCyan),
                   ),
                 );
               }).toList(),
