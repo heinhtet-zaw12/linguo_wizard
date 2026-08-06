@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_dimensions.dart';
 import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../feedback/viewmodels/feedback_viewmodel.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
@@ -99,7 +103,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             },
             child: Text(
               'Start Fresh',
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ),
           TextButton(
@@ -112,7 +116,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             },
             child: Text(
               'Resume',
-              style: AppTextStyles.bodyMedium(color: AppColors.primaryPink),
+              style: AppTextStyles.bodyMedium(color: AppColors.accentStart),
             ),
           ),
         ],
@@ -149,14 +153,14 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             onPressed: () => ctx.pop('discard'),
             child: Text(
               'Discard',
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ),
           TextButton(
             onPressed: () => ctx.pop('save'),
             child: Text(
               'Save & Exit',
-              style: AppTextStyles.bodyMedium(color: AppColors.primaryPink),
+              style: AppTextStyles.bodyMedium(color: AppColors.accentStart),
             ),
           ),
         ],
@@ -197,7 +201,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             onPressed: () => ctx.pop(),
             child: Text(
               'Cancel',
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ),
           TextButton(
@@ -207,7 +211,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             },
             child: Text(
               'New Chat',
-              style: AppTextStyles.bodyMedium(color: AppColors.primaryPink),
+              style: AppTextStyles.bodyMedium(color: AppColors.accentStart),
             ),
           ),
         ],
@@ -365,21 +369,20 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+        color: AppColors.surfaceGlass,
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.borderSubtle,
+            width: 0.5,
           ),
-        ],
+        ),
       ),
       child: Row(
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back_ios, size: 20),
             onPressed: () => context.pop(),
-            color: AppColors.textDark,
+            color: AppColors.textPrimary,
           ),
           Expanded(
             child: Column(
@@ -387,14 +390,36 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               children: [
                 Text(
                   scenario.title,
-                  style: AppTextStyles.bodyLarge(color: AppColors.textDark),
+                  style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   scenario.goalDescription,
-                  style: AppTextStyles.labelMedium(color: AppColors.textMuted),
+                  style: AppTextStyles.bodySmall(color: AppColors.textSecondary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 6),
+                // Thin gradient progress bar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: Container(
+                    height: 3,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface2,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: 3,
+                        decoration: const BoxDecoration(
+                          gradient: AppGradients.accent,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -403,7 +428,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             icon: const Icon(Icons.add_circle_outline, size: 22),
             tooltip: 'New Chat',
             onPressed: _onNewChat,
-            color: AppColors.primaryPink,
+            color: AppColors.accentStart,
           ),
         ],
       ),
@@ -426,6 +451,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           final isPlaybackActive =
               state.playingMessageId == message.id;
 
+          final isUser = message.sender == MessageSender.user;
+
           return VoiceMessageBubble(
             message: message,
             isPlaying: isSpeaking || isPlaybackActive,
@@ -439,20 +466,26 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     }
                   }
                 : null,
-          );
+          )
+              .animate()
+              .fadeIn(duration: 300.ms)
+              .slideX(
+                begin: isUser ? 0.1 : -0.1,
+                duration: 300.ms,
+                curve: Curves.easeOut,
+              );
         },
       ),
     );
   }
 
   Widget _buildPartialTranscript(String transcript) {
-    return Container(
-      width: double.infinity,
+    return GlassCard(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Text(
         transcript,
         textAlign: TextAlign.center,
-        style: AppTextStyles.bodyMedium(color: AppColors.textMuted.withValues(alpha: 0.6)).copyWith(
+        style: AppTextStyles.bodyMedium(color: AppColors.textPrimary).copyWith(
           fontStyle: FontStyle.italic,
         ),
       ),
@@ -462,6 +495,15 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   Widget _buildBottomControls(ConversationState state, ConversationViewModel vm) {
     return Container(
       padding: const EdgeInsets.only(bottom: 32, top: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceGlass,
+        border: Border(
+          top: BorderSide(
+            color: AppColors.borderSubtle,
+            width: 0.5,
+          ),
+        ),
+      ),
       child: Column(
         children: [
           if (state.turnCount > 0)
@@ -469,7 +511,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
                 'Turn ${state.turnCount}',
-                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
               ),
             ),
           MicButton(
@@ -479,7 +521,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
           const SizedBox(height: 8),
           Text(
             vm.micHint,
-            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+            style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
           ),
           if (state.turnCount > 0 && state.loopState == ConversationLoopState.idle)
             Padding(

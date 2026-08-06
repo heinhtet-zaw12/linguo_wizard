@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_shadows.dart';
 import '../providers/conversation_provider.dart';
 
 /// Large circular mic button that reflects the current conversation loop state.
 ///
-/// - IDLE: solid primary pink, mic icon, tappable to start recording
-/// - RECORDING: pulsing coral, stop icon, tappable to stop recording
-/// - PROCESSING: loading spinner, disabled
-/// - SPEAKING: greyed out, volume icon, disabled
+/// - IDLE: gradient fill (accentStart → accentEnd), mic icon, tappable
+/// - RECORDING: accentCyan fill, stop icon, 3 pulsing concentric rings
+/// - PROCESSING: gradient progress spinner, disabled
+/// - SPEAKING: glass fill, volume icon in accentCyan, disabled
 class MicButton extends StatefulWidget {
   final ConversationLoopState loopState;
   final VoidCallback? onPressed;
@@ -24,9 +27,11 @@ class MicButton extends StatefulWidget {
 }
 
 class _MicButtonState extends State<MicButton>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  late AnimationController _pressController;
+  late Animation<double> _pressAnimation;
 
   @override
   void initState() {
@@ -37,6 +42,15 @@ class _MicButtonState extends State<MicButton>
     );
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _pressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+      value: 1.0,
+    );
+    _pressAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+      CurvedAnimation(parent: _pressController, curve: Curves.easeOutBack),
     );
   }
 
@@ -56,73 +70,105 @@ class _MicButtonState extends State<MicButton>
   @override
   void dispose() {
     _pulseController.dispose();
+    _pressController.dispose();
     super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _pulseAnimation,
-      builder: (context, child) {
-        final scale = widget.loopState == ConversationLoopState.recording
-            ? _pulseAnimation.value
-            : 1.0;
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
-      },
-      child: GestureDetector(
-        onTap: _handleTap,
-        child: Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _backgroundColor,
-            boxShadow: [
-              BoxShadow(
-                color: _shadowColor,
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Center(child: _buildIcon()),
-        ),
-      ),
-    );
   }
 
   void _handleTap() {
     if (widget.loopState == ConversationLoopState.idle ||
         widget.loopState == ConversationLoopState.recording) {
+      _pressController.forward(from: 0.0);
       widget.onPressed?.call();
     }
   }
 
-  Color get _backgroundColor {
-    switch (widget.loopState) {
-      case ConversationLoopState.idle:
-        return AppColors.primaryPink;
-      case ConversationLoopState.recording:
-        return AppColors.accentCoral;
-      case ConversationLoopState.processing:
-        return Colors.grey.shade300;
-      case ConversationLoopState.speaking:
-        return Colors.grey.shade300;
-    }
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _pressAnimation,
+      child: AnimatedBuilder(
+        animation: _pulseAnimation,
+        builder: (context, child) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              // Pulsing concentric rings (recording state only)
+              if (widget.loopState == ConversationLoopState.recording) ...[
+                _buildPulseRing(0),
+                _buildPulseRing(1),
+                _buildPulseRing(2),
+              ],
+              child!,
+            ],
+          );
+        },
+        child: GestureDetector(
+          onTap: _handleTap,
+          child: Container(
+            width: AppSizing.micButtonSize,
+            height: AppSizing.micButtonSize,
+            decoration: _buildDecoration(),
+            child: Center(child: _buildIcon()),
+          ),
+        ),
+      ),
+    );
   }
 
-  Color get _shadowColor {
+  Widget _buildPulseRing(int index) {
+    final delay = index * 267.0; // stagger 3 rings across 800ms
+    final progress = (_pulseController.value + (delay / 800.0)) % 1.0;
+    final size = AppSizing.micButtonSize + (48.0 * progress);
+    final opacity = (1.0 - progress).clamp(0.0, 1.0) * 0.6;
+
+    return AnimatedContainer(
+      duration: Duration.zero,
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.accentCyan.withValues(alpha: opacity),
+          width: 2.0,
+        ),
+      ),
+    );
+  }
+
+  BoxDecoration _buildDecoration() {
     switch (widget.loopState) {
       case ConversationLoopState.idle:
-        return AppColors.shadowPink;
+        return BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: AppGradients.accent,
+          boxShadow: AppShadows.glowBlue,
+        );
       case ConversationLoopState.recording:
-        return AppColors.accentCoral.withValues(alpha: 0.3);
+        return BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.accentCyan,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accentCyanGlow.withValues(alpha: 0.4),
+              blurRadius: 20,
+              spreadRadius: -2,
+            ),
+          ],
+        );
       case ConversationLoopState.processing:
+        return BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.surface2,
+        );
       case ConversationLoopState.speaking:
-        return Colors.black12;
+        return BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.surfaceGlass,
+          border: Border.all(
+            color: AppColors.borderSubtle,
+            width: 1.0,
+          ),
+        );
     }
   }
 
@@ -137,12 +183,12 @@ class _MicButtonState extends State<MicButton>
           width: 28,
           height: 28,
           child: CircularProgressIndicator(
-            color: Colors.white,
+            color: AppColors.accentStart,
             strokeWidth: 3,
           ),
         );
       case ConversationLoopState.speaking:
-        return Icon(Icons.volume_up, color: Colors.grey.shade600, size: 32);
+        return const Icon(Icons.volume_up, color: AppColors.accentCyan, size: 32);
     }
   }
 }

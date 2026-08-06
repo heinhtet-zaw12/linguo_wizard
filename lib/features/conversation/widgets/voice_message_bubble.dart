@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_shadows.dart';
+import '../../../core/widgets/app_card.dart';
 import '../models/message.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// A voice message bubble — audio-first with collapsible transcript.
 ///
-/// - AI bubbles show a Play/Pause button and waveform. Transcript hidden
-///   behind a toggle ("Show Transcript" / "Hide Transcript").
-/// - User bubbles show a static mic icon with transcript.
+/// - User bubbles: gradient fill (accentStart → accentEnd), white text
+/// - AI bubbles: glass fill (GlassCard) with cyan glow border
 class VoiceMessageBubble extends StatefulWidget {
   final Message message;
   final bool isPlaying;
@@ -56,46 +59,55 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
   }
 
   Widget _buildBubble() {
-    final backgroundColor = _isUser ? AppColors.primaryPink : Colors.white;
-    final iconColor = _isUser ? Colors.white : AppColors.primaryPink;
-    final shadowColor = _isUser ? AppColors.shadowPink : Colors.black12;
+    if (_isUser) {
+      return _buildUserBubble();
+    }
+    return _buildAiBubble();
+  }
 
+  Widget _buildUserBubble() {
     return Container(
       constraints: const BoxConstraints(maxWidth: 280),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(16),
-          topRight: const Radius.circular(16),
-          bottomLeft: Radius.circular(_isUser ? 16 : 4),
-          bottomRight: Radius.circular(_isUser ? 4 : 16),
-        ),
+      decoration: const BoxDecoration(
+        gradient: AppGradients.accent,
+        borderRadius: AppRadius.bubbleUser,
         boxShadow: [
           BoxShadow(
-            color: shadowColor,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Color(0x4D6366F1),
+            blurRadius: 12,
+            offset: Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Play/Pause button (AI) or mic icon (user)
-          _buildPlayButton(iconColor),
+          const Icon(Icons.mic, color: Colors.white, size: 20),
           const SizedBox(width: 8),
-          _buildAudioWaveform(iconColor),
+          _buildAudioWaveform(Colors.white),
         ],
       ),
     );
   }
 
-  Widget _buildPlayButton(Color color) {
-    if (_isUser) {
-      return const Icon(Icons.mic, color: Colors.white, size: 20);
-    }
+  Widget _buildAiBubble() {
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      borderRadius: AppRadius.bubbleAi,
+      glowColor: AppColors.accentCyanGlow.withValues(alpha: 0.2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildPlayButton(),
+          const SizedBox(width: 8),
+          _buildAudioWaveform(AppColors.accentCyan),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildPlayButton() {
     final isThisPlaying = widget.isPlaybackActive;
     return GestureDetector(
       onTap: widget.onPlayPause,
@@ -104,7 +116,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
         child: Icon(
           isThisPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
           key: ValueKey(isThisPlaying),
-          color: color,
+          color: AppColors.accentCyan,
           size: 28,
         ),
       ),
@@ -120,12 +132,20 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: List.generate(12, (i) {
           final heights = [8.0, 14.0, 6.0, 18.0, 10.0, 16.0, 4.0, 12.0, 8.0, 15.0, 6.0, 10.0];
+          final barColor = Color.lerp(AppColors.accentStart, AppColors.accentEnd, i / 12.0)!;
           return AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             width: 3,
             height: widget.isPlaybackActive ? heights[i] * 1.3 : heights[i],
             decoration: BoxDecoration(
-              color: color.withValues(alpha: widget.isPlaybackActive ? 0.9 : 0.5),
+              gradient: LinearGradient(
+                colors: [
+                  barColor.withValues(alpha: widget.isPlaybackActive ? 0.9 : 0.5),
+                  color.withValues(alpha: widget.isPlaybackActive ? 0.9 : 0.5),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
               borderRadius: BorderRadius.circular(1.5),
             ),
           );
@@ -139,7 +159,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       constraints: const BoxConstraints(maxWidth: 300),
       child: Text(
         widget.message.transcript,
-        style: AppTextStyles.labelMedium(color: AppColors.textMuted),
+        style: AppTextStyles.labelMedium(color: AppColors.textSecondary),
       ),
     );
   }
@@ -149,9 +169,9 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       onTap: () => setState(() => _showTranscript = !_showTranscript),
       child: Text(
         _showTranscript ? 'Hide Transcript' : 'Show Transcript',
-        style: AppTextStyles.bodyMedium(color: AppColors.primaryPink).copyWith(
+        style: AppTextStyles.bodyMedium(color: AppColors.accentCyan).copyWith(
           decoration: TextDecoration.underline,
-          decorationColor: AppColors.primaryPink.withValues(alpha: 0.4),
+          decorationColor: AppColors.accentCyan.withValues(alpha: 0.4),
         ),
       ),
     );
