@@ -1,12 +1,12 @@
 {
   "version": "1.0",
-  "timestamp": "2026-08-05T15:06:56.825Z",
+  "timestamp": "2026-08-06T06:10:00.000Z",
   "phase": "07",
   "phase_name": "ui-redesign-dark-theme",
   "phase_dir": ".planning/phases/07-ui-redesign-dark-theme",
   "plan": null,
   "task": null,
-  "total_tasks": null,
+  "total_tasks": 22,
   "status": "paused",
   "completed_tasks": [
     {"id": 1, "name": "Explore project context", "status": "done", "commit": "a255398"},
@@ -16,24 +16,53 @@
     {"id": 5, "name": "Write design doc and commit", "status": "done", "commit": "a255398"},
     {"id": 6, "name": "Review written design spec", "status": "done", "commit": "f448c73"},
     {"id": 7, "name": "Create implementation plans (3 plans across 3 waves)", "status": "done", "commit": "f448c73"},
-    {"id": 8, "name": "Review all 3 plans with user", "status": "done", "commit": null}
+    {"id": 8, "name": "Review all 3 plans with user", "status": "done", "commit": null},
+    {"id": 9, "name": "Execute Phase 7 — Wave 1 (theme foundation + glassmorphism widgets)", "status": "done", "commit": "various"},
+    {"id": 10, "name": "Execute Phase 7 — Wave 2 (screen redesigns batch 1)", "status": "done", "commit": "various"},
+    {"id": 11, "name": "Execute Phase 7 — Wave 3 (screen redesigns batch 2 + zero-legacy audit)", "status": "done", "commit": "various"},
+    {"id": 12, "name": "UI/UX Design Audit — scan all 30+ Dart UI files, produce actionable report", "status": "done", "commit": "N/A — review only"}
   ],
   "remaining_tasks": [
-    {"id": 9, "name": "Execute Phase 7 — Wave 1 (Plan 07-01: theme foundation + glassmorphism widgets)", "status": "not_started"},
-    {"id": 10, "name": "Execute Phase 7 — Wave 2 (Plan 07-02: screen redesigns batch 1)", "status": "not_started"},
-    {"id": 11, "name": "Execute Phase 7 — Wave 3 (Plan 07-03: screen redesigns batch 2 + zero-legacy audit)", "status": "not_started"}
+    {"id": 13, "name": "P0: Fix textTertiary contrast (WCAG AA)", "status": "not_started"},
+    {"id": 14, "name": "P0: Bump surfaceGlass opacity", "status": "not_started"},
+    {"id": 15, "name": "P0: Add Semantics + disabled state to AppButton", "status": "not_started"},
+    {"id": 16, "name": "P0: Fix loading spinner color for non-primary buttons", "status": "not_started"},
+    {"id": 17, "name": "P1: Add DialogTheme + SnackBarTheme to AppTheme", "status": "not_started"},
+    {"id": 18, "name": "P1: Replace hardcoded BorderRadius with AppRadius tokens", "status": "not_started"},
+    {"id": 19, "name": "P1: Standardize horizontal padding to AppSpacing tokens", "status": "not_started"},
+    {"id": 20, "name": "P1: Extract ErrorBanner widget (deduplicate 3 locations)", "status": "not_started"},
+    {"id": 21, "name": "P1: Standardize back arrow icon across screens", "status": "not_started"},
+    {"id": 22, "name": "P2: Remove BackdropFilter from GlassCard + GradientNavBar", "status": "not_started"},
+    {"id": 23, "name": "P2: Replace emoji icons with Material Icons", "status": "not_started"},
+    {"id": 24, "name": "P2: Drive conversation progress bar from actual progress", "status": "not_started"},
+    {"id": 25, "name": "P2: Fix hardcoded shadow in voice_message_bubble.dart", "status": "not_started"},
+    {"id": 26, "name": "P2: Fix hardcoded _NextButton width in onboarding", "status": "not_started"},
+    {"id": 27, "name": "P3: Add haptic feedback on mic press, tab switch, badge earn", "status": "not_started"},
+    {"id": 28, "name": "P3: Add page transition animations in router", "status": "not_started"},
+    {"id": 29, "name": "P3: Add guest banner in/out animation", "status": "not_started"},
+    {"id": 30, "name": "P3: Add 'Don't know' option to SRS item cards", "status": "not_started"},
+    {"id": 31, "name": "P3: Add 'Your rank' scroll-to-self on leaderboard", "status": "not_started"},
+    {"id": 32, "name": "P3: Extend badge popup auto-dismiss to 6 seconds", "status": "not_started"}
   ],
   "blockers": [],
   "async_jobs": [],
-  "human_actions_pending": [],
+  "human_actions_pending": [
+    {"action": "Review UI/UX audit and decide which items to prioritize", "context": "22 items across 4 tiers; P0 fixes are one-line changes in app_colors.dart and app_button.dart", "blocking": false}
+  ],
   "decisions": [
     {"decision": "Futuristic & bold dark-only theme", "rationale": "User wants maximum visual impact", "phase": "07"},
     {"decision": "Blue-violet electric palette", "rationale": "User selected electric blue + violet gradients with cyan highlights", "phase": "07"},
     {"decision": "Frosted glass cards with backdrop blur (Glassmorphism 2.0)", "rationale": "User chose full glassmorphism", "phase": "07"},
     {"decision": "Maximum micro-interactions", "rationale": "User wants the app to feel alive", "phase": "07"},
-    {"decision": "Static mesh gradient first, animated deferred to polish", "rationale": "Reduces risk", "phase": "07"}
+    {"decision": "Static mesh gradient first, animated deferred to polish", "rationale": "Reduces risk", "phase": "07"},
+    {"decision": "Replace BackdropFilter with solid semi-transparent color", "rationale": "GPU-intensive blur on 40+ GlassCard instances; gradient blobs are static so blur adds no visual value", "phase": "07"},
+    {"decision": "Bump textTertiary from 0xFF475569 to 0xFF64748B", "rationale": "Current value fails WCAG AA at 2.5:1 contrast ratio on dark background", "phase": "07"}
   ],
-  "uncommitted_files": [],
-  "next_action": "Run /gsd-execute-phase 7 — starts Wave 1 (Plan 07-01: theme foundation rewrite + glassmorphism 2.0 widgets, 17 files)",
-  "context_notes": "Session reviewed all 3 plans. User approved execution. /gsd-execute-phase 7 invoked but context exhausted before executor agents spawned. gsd-tools at ~/.claude/gsd-core/bin/gsd-tools.cjs. Config: executor_model=inherit, parallelization=false, branching=none."
+  "uncommitted_files": [
+    ".planning/STATE.md",
+    ".planning/phases/07-ui-redesign-dark-theme/07-UAT.md",
+    ".planning/phases/07-ui-redesign-dark-theme/07-VERIFICATION.md"
+  ],
+  "next_action": "Save UI/UX audit to .planning/phases/07-ui-redesign-dark-theme/07-UI-AUDIT.md, then begin P0 fixes: update app_colors.dart (textTertiary + surfaceGlass), update app_button.dart (Semantics, disabled state, spinner color)",
+  "context_notes": "Session was a brutal UI/UX design audit of all 30+ Dart UI files. No code changes were made — pure review. Theme architecture is solid but 40% of screens bypass tokens with hardcoded values. Overall score 6.2/10. 22 actionable items identified: 5 P0 (accessibility/critical), 6 P1 (consistency), 5 P2 (performance/polish), 6 P3 (premium feel). gsd-tools at ~/.claude/gsd-core/bin/gsd-tools.cjs."
 }
