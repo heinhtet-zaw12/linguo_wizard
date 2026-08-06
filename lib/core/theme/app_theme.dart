@@ -4,8 +4,9 @@ import 'app_colors.dart';
 import 'app_dimensions.dart';
 import 'app_text_styles.dart';
 
-// Re-export app_colors.dart so existing imports continue to work.
+// Re-export theme files so existing imports continue to work.
 export 'app_colors.dart';
+export 'app_dimensions.dart';
 
 /// Application theme configuration.
 /// Dark-only — single ThemeData for the futuristic dark theme.

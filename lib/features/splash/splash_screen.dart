@@ -276,7 +276,7 @@ class _ClayShadow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: AppRadius.xxl28,
         boxShadow: const [
           BoxShadow(
             color: AppColors.borderGlow,
@@ -291,7 +291,7 @@ class _ClayShadow extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: AppRadius.xxl28,
         child: child,
       ),
     );

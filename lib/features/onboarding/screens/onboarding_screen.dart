@@ -160,7 +160,7 @@ class _PageIndicator extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: isActive ? AppGradients.accent : null,
             color: isActive ? null : AppColors.surfaceGlass,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: AppRadius.xs,
           ),
         );
       }),

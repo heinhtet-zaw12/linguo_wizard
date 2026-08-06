@@ -282,7 +282,7 @@ class _BreakdownCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             ClipRRect(
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: AppRadius.xxs,
               child: Container(
                 height: 3,
                 width: double.infinity,

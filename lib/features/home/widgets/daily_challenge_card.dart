@@ -74,7 +74,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
         height: 140,
         decoration: BoxDecoration(
           color: AppColors.surfaceGlass,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.lg,
         ),
       ),
     );
@@ -108,7 +108,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.warning,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.sm,
                 ),
                 child: Text(
                   '2x XP',

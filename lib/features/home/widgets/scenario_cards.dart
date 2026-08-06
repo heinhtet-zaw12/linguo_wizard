@@ -73,7 +73,7 @@ class _HomeScenarioCard extends ConsumerWidget {
                 height: 4,
                 decoration: BoxDecoration(
                   gradient: AppGradients.accent,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: AppRadius.xxs,
                 ),
               ),
               const SizedBox(height: 12),
@@ -82,7 +82,7 @@ class _HomeScenarioCard extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.accentCyan.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.sm,
                 ),
                 child: Text(
                   scenario.cefrLevel,

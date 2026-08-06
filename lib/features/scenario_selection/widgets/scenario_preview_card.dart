@@ -61,7 +61,7 @@ class ScenarioPreviewCard extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.accentCyan.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.sm,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +95,7 @@ class ScenarioPreviewCard extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: AppColors.accentCyan.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: AppRadius.md10,
                   ),
                   child: Text(
                     tag,

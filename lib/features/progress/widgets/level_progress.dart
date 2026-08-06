@@ -53,7 +53,7 @@ class LevelProgress extends StatelessWidget {
 
           // Animated gradient progress bar
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: AppRadius.sm,
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 0.0, end: progress),
               duration: const Duration(milliseconds: 800),
@@ -63,7 +63,7 @@ class LevelProgress extends StatelessWidget {
                   height: 12,
                   decoration: BoxDecoration(
                     color: AppColors.surface2,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppRadius.sm,
                   ),
                   child: Align(
                     alignment: Alignment.centerLeft,

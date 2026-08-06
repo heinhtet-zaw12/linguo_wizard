@@ -93,7 +93,7 @@ class _CefrLevelCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.accentStart.withValues(alpha: 0.15) : AppColors.surfaceGlass,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.lg,
           border: Border.all(
             color: isSelected ? AppColors.accentCyan : AppColors.borderSubtle,
             width: 1.5,
@@ -110,7 +110,7 @@ class _CefrLevelCard extends StatelessWidget {
                 color: isSelected
                     ? AppColors.accentCyan.withValues(alpha: 0.25)
                     : AppColors.warning.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppRadius.md,
               ),
               child: Center(
                 child: Text(

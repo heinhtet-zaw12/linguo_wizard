@@ -291,7 +291,7 @@ class _ScenarioSelectionScreenState
       trailing: PopupMenuButton<String>(
         icon: Icon(Icons.more_vert, size: 16, color: AppColors.textTertiary),
         padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.md),
         onSelected: (value) {
           if (value == 'delete') {
             _showDeleteDialog(context, scenario, notifier);
@@ -324,7 +324,7 @@ class _ScenarioSelectionScreenState
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
         backgroundColor: AppColors.surface1,
         title: Text(
           'Delete scenario?',
@@ -394,7 +394,7 @@ class _ScenarioSelectionScreenState
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.surfaceGlass,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: AppRadius.xxl,
             border: Border.all(color: AppColors.borderSubtle),
           ),
           child: TextField(
@@ -405,7 +405,7 @@ class _ScenarioSelectionScreenState
               hintStyle: AppTextStyles.bodyMedium(color: AppColors.textTertiary),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: AppRadius.xxl,
                 borderSide: BorderSide.none,
               ),
             ),
@@ -466,7 +466,7 @@ class _ScenarioSelectionScreenState
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
         backgroundColor: AppColors.surface1,
         title: Text(
           'Sign up to create scenarios',
@@ -524,7 +524,7 @@ class _ScenarioSelectionScreenState
                 decoration: BoxDecoration(
                   gradient: (isSelected || isAllSelected) ? AppGradients.accent : null,
                   color: (isSelected || isAllSelected) ? null : AppColors.surfaceGlass,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: AppRadius.xl,
                   border: Border.all(
                     color: (isSelected || isAllSelected)
                         ? AppColors.accentStart

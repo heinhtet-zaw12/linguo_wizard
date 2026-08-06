@@ -68,7 +68,7 @@ class _GuestBannerState extends State<GuestBanner> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     gradient: AppGradients.accent,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.md,
                   ),
                   child: Text(
                     'Sign Up',

@@ -80,7 +80,7 @@ class _LanguageCard extends StatelessWidget {
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
           color: isSelected ? AppColors.accentStart.withValues(alpha: 0.15) : AppColors.surfaceGlass,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.lg,
           border: Border.all(
             color: isSelected ? AppColors.accentCyan : AppColors.borderSubtle,
             width: 1.5,

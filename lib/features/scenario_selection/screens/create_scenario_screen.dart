@@ -339,7 +339,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
         backgroundColor: AppColors.surface1,
         title: Text(
           'Discard scenario?',
@@ -388,11 +388,11 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
       fillColor: AppColors.surfaceGlass,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lg,
         borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.lg,
         borderSide: const BorderSide(color: AppColors.accentCyan, width: 1.5),
       ),
     );

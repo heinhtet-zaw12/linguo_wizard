@@ -42,7 +42,7 @@ class ScenarioCard extends StatelessWidget {
                   height: 4,
                   decoration: BoxDecoration(
                     gradient: AppGradients.accent,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: AppRadius.xxs,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -63,7 +63,7 @@ class ScenarioCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: AppColors.warning.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: AppRadius.sm6,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

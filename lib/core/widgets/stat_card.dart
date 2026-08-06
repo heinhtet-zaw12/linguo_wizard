@@ -35,7 +35,7 @@ class StatCard extends StatelessWidget {
               height: AppSizing.avatarSm,
               decoration: BoxDecoration(
                 gradient: AppGradients.accent,
-                borderRadius: BorderRadius.circular(9999),
+                borderRadius: AppRadius.pill,
               ),
               child: Icon(icon, size: AppSizing.iconLg, color: AppColors.textOnAccent),
             ),
