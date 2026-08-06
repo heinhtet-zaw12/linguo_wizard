@@ -80,6 +80,10 @@ class _NavButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
+  static const double _iconSize = 20;
+  static const double _selectedPillHeight = 28;
+  static const double _spacing = 2;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -91,8 +95,8 @@ class _NavButton extends StatelessWidget {
         children: [
           if (isSelected)
             Container(
-              width: 48,
-              height: 32,
+              width: 44,
+              height: _selectedPillHeight,
               decoration: BoxDecoration(
                 gradient: AppGradients.accent,
                 borderRadius: AppRadius.pill,
@@ -100,17 +104,20 @@ class _NavButton extends StatelessWidget {
               ),
               child: Icon(
                 item.icon,
-                size: AppSizing.iconLg,
+                size: _iconSize,
                 color: AppColors.textOnAccent,
               ),
             )
           else
-            Icon(
-              item.icon,
-              size: AppSizing.iconLg,
-              color: AppColors.textTertiary,
+            SizedBox(
+              height: _selectedPillHeight,
+              child: Icon(
+                item.icon,
+                size: _iconSize,
+                color: AppColors.textTertiary,
+              ),
             ),
-          const SizedBox(height: 4),
+          const SizedBox(height: _spacing),
           Text(
             item.label,
             style: AppTextStyles.labelSmall(
