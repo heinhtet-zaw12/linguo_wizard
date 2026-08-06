@@ -15,29 +15,21 @@ class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   static const _allDestinations = [
-    AppNavDestination(
+    GradientNavItem(
       icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
       label: 'Home',
-      index: 0,
     ),
-    AppNavDestination(
+    GradientNavItem(
       icon: Icons.explore_outlined,
-      selectedIcon: Icons.explore,
       label: 'Scenarios',
-      index: 1,
     ),
-    AppNavDestination(
+    GradientNavItem(
       icon: Icons.bar_chart_outlined,
-      selectedIcon: Icons.bar_chart,
       label: 'Progress',
-      index: 2,
     ),
-    AppNavDestination(
+    GradientNavItem(
       icon: Icons.person_outlined,
-      selectedIcon: Icons.person,
       label: 'Profile',
-      index: 3,
     ),
   ];
 
@@ -64,10 +56,10 @@ class ScaffoldWithNavBar extends ConsumerWidget {
 
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: AppNavBar(
-        destinations: destinations,
-        selectedIndex: safeIndex,
-        onDestinationSelected: (index) {
+      bottomNavigationBar: GradientNavBar(
+        items: destinations,
+        currentIndex: safeIndex,
+        onTap: (index) {
           navigationShell.goBranch(
             index,
             initialLocation: index == navigationShell.currentIndex,
