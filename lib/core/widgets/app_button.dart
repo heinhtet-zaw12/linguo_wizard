@@ -43,16 +43,26 @@ class _AppButtonState extends State<AppButton> {
       AppButtonVariant.ghost => _buildGhost(),
     };
 
-    return GestureDetector(
-      onTapDown: widget.onPressed != null ? _onTapDown : null,
-      onTapUp: widget.onPressed != null ? _onTapUp : null,
-      onTapCancel: widget.onPressed != null ? _onTapCancel : null,
-      onTap: widget.onPressed,
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-        child: button,
+    final isEnabled = widget.onPressed != null;
+
+    return Semantics(
+      button: true,
+      enabled: isEnabled,
+      label: widget.label,
+      child: GestureDetector(
+        onTapDown: isEnabled ? _onTapDown : null,
+        onTapUp: isEnabled ? _onTapUp : null,
+        onTapCancel: isEnabled ? _onTapCancel : null,
+        onTap: widget.onPressed,
+        child: AnimatedScale(
+          scale: _scale,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOut,
+          child: Opacity(
+            opacity: isEnabled ? 1.0 : 0.4,
+            child: button,
+          ),
+        ),
       ),
     );
   }
@@ -106,10 +116,10 @@ class _AppButtonState extends State<AppButton> {
 
   Widget _buildChild(Color color) {
     if (widget.isLoading) {
-      return const SizedBox(
+      return SizedBox(
         width: 20,
         height: 20,
-        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+        child: CircularProgressIndicator(strokeWidth: 2, color: color),
       );
     }
 
