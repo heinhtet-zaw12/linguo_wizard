@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Circular streak indicator showing flame icon and day count.
@@ -13,19 +14,8 @@ class StreakRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final isActive = streakDays > 0;
 
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
       child: Row(
         children: [
           // Ring
@@ -35,10 +25,10 @@ class StreakRing extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isActive
-                  ? AppColors.accentGold.withValues(alpha: 0.2)
-                  : AppColors.primaryPinkLight.withValues(alpha: 0.3),
+                  ? AppColors.warning.withValues(alpha: 0.2)
+                  : AppColors.surfaceGlass,
               border: Border.all(
-                color: isActive ? AppColors.accentGold : AppColors.primaryPinkLight,
+                color: isActive ? AppColors.warning : AppColors.borderSubtle,
                 width: 3,
               ),
             ),
@@ -48,7 +38,7 @@ class StreakRing extends StatelessWidget {
                   : Icon(
                       Icons.local_fire_department_outlined,
                       size: 28,
-                      color: AppColors.textMuted.withValues(alpha: 0.5),
+                      color: AppColors.textTertiary,
                     ),
             ),
           ),
@@ -60,14 +50,14 @@ class StreakRing extends StatelessWidget {
               children: [
                 Text(
                   isActive ? '$streakDays Day Streak!' : 'Start Your Streak!',
-                  style: AppTextStyles.headingMedium(color: AppColors.textDark),
+                  style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   isActive
                       ? 'Keep it going! Practice today.'
                       : 'Complete a scenario to start.',
-                  style: AppTextStyles.labelMedium(color: AppColors.textMuted),
+                  style: AppTextStyles.labelMedium(color: AppColors.textSecondary),
                 ),
               ],
             ),

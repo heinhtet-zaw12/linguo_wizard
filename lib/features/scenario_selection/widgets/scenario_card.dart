@@ -5,15 +5,11 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/cefr_badge.dart';
 import '../models/scenario.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_shadows.dart';
 
 /// A card displaying a scenario's title, description, CEFR badge, category,
 /// featured badge, difficulty dots, and persona.
-///
-/// Optionally accepts a [trailing] widget (e.g., a popup menu button) shown
-/// in the top-right of the card's header row.
-///
-/// When [showTwistBadge] is true, a gold sparkle icon overlay appears in the
-/// top-right corner of the card. Tapping it calls [onTwistTap].
 class ScenarioCard extends StatelessWidget {
   const ScenarioCard({
     super.key,
@@ -36,11 +32,20 @@ class ScenarioCard extends StatelessWidget {
       onTap: onTap,
       child: Stack(
         children: [
-          AppCard(
+          GlassCard(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Gradient top stripe
+                Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    gradient: AppGradients.accent,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 // CEFR badge + category + featured badge
                 Row(
                   children: [
@@ -49,27 +54,25 @@ class ScenarioCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         scenario.category.toUpperCase(),
-                        style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+                        style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (scenario.isFeatured)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.accentGold.withValues(alpha: 0.2),
+                          color: AppColors.warning.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.star,
-                                size: 10, color: AppColors.accentGold),
+                            Icon(Icons.star, size: 10, color: AppColors.warning),
                             const SizedBox(width: 2),
                             Text(
                               'Featured',
-                              style: AppTextStyles.labelLarge(color: AppColors.accentGold),
+                              style: AppTextStyles.labelLarge(color: AppColors.warning),
                             ),
                           ],
                         ),
@@ -81,7 +84,7 @@ class ScenarioCard extends StatelessWidget {
                 // Title
                 Text(
                   scenario.title,
-                  style: AppTextStyles.headingMedium(color: AppColors.textDark),
+                  style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -90,7 +93,7 @@ class ScenarioCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     scenario.description,
-                    style: AppTextStyles.labelMedium(color: AppColors.textMuted),
+                    style: AppTextStyles.labelMedium(color: AppColors.textSecondary),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -99,10 +102,8 @@ class ScenarioCard extends StatelessWidget {
                 // Difficulty dots + persona
                 Row(
                   children: [
-                    // Difficulty dots
                     ...List.generate(3, (i) {
-                      final filled =
-                          i < scenario.difficultyRating.clamp(1, 5) / 2;
+                      final filled = i < scenario.difficultyRating.clamp(1, 5) / 2;
                       return Container(
                         width: 6,
                         height: 6,
@@ -110,20 +111,18 @@ class ScenarioCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: filled
-                              ? AppColors.primaryPink.withValues(alpha: 0.6)
-                              : AppColors.primaryPinkLight
-                                  .withValues(alpha: 0.3),
+                              ? AppColors.accentMid.withValues(alpha: 0.6)
+                              : AppColors.borderSubtle,
                         ),
                       );
                     }),
                     const SizedBox(width: 8),
-                    Icon(Icons.person_outline,
-                        size: 14, color: AppColors.primaryPink),
+                    Icon(Icons.person_outline, size: 14, color: AppColors.accentMid),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
                         scenario.personaName,
-                        style: AppTextStyles.labelSmall(color: AppColors.primaryPinkDark),
+                        style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -142,30 +141,23 @@ class ScenarioCard extends StatelessWidget {
                 message: 'Play again with a twist',
                 child: GestureDetector(
                   onTap: () {
-                    // Stop the outer card's onTap from firing.
                     onTwistTap?.call();
                   },
                   child: Container(
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: AppColors.accentGold,
+                      color: AppColors.warning,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(16),
                         bottomLeft: Radius.circular(12),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.accentGold.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      boxShadow: [AppShadows.glowCyan[0]],
                     ),
                     child: const Icon(
                       Icons.auto_awesome,
                       size: 16,
-                      color: Colors.white,
+                      color: AppColors.surfaceBase,
                     ),
                   ),
                 ),

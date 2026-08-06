@@ -30,7 +30,7 @@ class HomeScreen extends ConsumerWidget {
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryPink),
+              child: CircularProgressIndicator(color: AppColors.accentCyan),
             ),
             error: (e, _) => Center(
               child: Column(
@@ -38,14 +38,14 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Failed to load data',
-                    style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                    style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => ref.invalidate(homeProvider),
                     child: Text(
                       'Retry',
-                      style: AppTextStyles.labelLarge(color: AppColors.primaryPinkDark),
+                      style: AppTextStyles.labelLarge(color: AppColors.accentCyan),
                     ),
                   ),
                 ],
@@ -68,7 +68,7 @@ class HomeScreen extends ConsumerWidget {
       onRefresh: () async {
         ref.read(homeProvider.notifier).refresh();
       },
-      color: AppColors.primaryPink,
+      color: AppColors.accentStart,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -78,12 +78,12 @@ class HomeScreen extends ConsumerWidget {
             // ─── Welcome Header ───
             Text(
               'Hello, ${state.displayName ?? 'Guest'}!',
-              style: AppTextStyles.displayMedium(color: AppColors.textDark),
+              style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
             ),
             const SizedBox(height: 4),
             Text(
               'What shall we practice today?',
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 20),
 
@@ -111,13 +111,13 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 Text(
                   'Recommended',
-                  style: AppTextStyles.headingLarge(color: AppColors.textDark),
+                  style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
                 ),
                 GestureDetector(
                   onTap: () => context.go('/scenarios'),
                   child: Text(
                     'Browse All',
-                    style: AppTextStyles.labelMedium(color: AppColors.primaryPinkDark),
+                    style: AppTextStyles.labelMedium(color: AppColors.accentCyan),
                   ),
                 ),
               ],

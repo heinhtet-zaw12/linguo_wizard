@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/theme/app_gradients.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Banner shown to guest users encouraging them to sign up.
@@ -20,8 +21,8 @@ class _GuestBannerState extends State<GuestBanner> {
   Widget build(BuildContext context) {
     if (_dismissed) return const SizedBox.shrink();
 
-    return AppCard(
-      borderColor: AppColors.primaryPinkLight,
+    return GlassCard(
+      glowColor: AppColors.accentCyan.withValues(alpha: 0.2),
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
@@ -31,12 +32,12 @@ class _GuestBannerState extends State<GuestBanner> {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primaryPink.withValues(alpha: 0.2),
+              color: AppColors.accentCyan.withValues(alpha: 0.2),
             ),
             child: const Icon(
               Icons.person_add_outlined,
               size: 20,
-              color: AppColors.primaryPinkDark,
+              color: AppColors.accentCyan,
             ),
           ),
           const SizedBox(width: 12),
@@ -47,12 +48,12 @@ class _GuestBannerState extends State<GuestBanner> {
               children: [
                 Text(
                   'Sign up to save your progress!',
-                  style: AppTextStyles.labelLarge(color: AppColors.textDark),
+                  style: AppTextStyles.labelLarge(color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Create an account to track streaks and sync across devices.',
-                  style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+                  style: AppTextStyles.labelSmall(color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -62,18 +63,16 @@ class _GuestBannerState extends State<GuestBanner> {
           Column(
             children: [
               GestureDetector(
-                onTap: () =>
-                    context.go('/signup'),
+                onTap: () => context.go('/signup'),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryPink,
+                    gradient: AppGradients.accent,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     'Sign Up',
-                    style: AppTextStyles.labelSmall(color: Colors.white),
+                    style: AppTextStyles.labelSmall(color: AppColors.textOnAccent),
                   ),
                 ),
               ),
@@ -82,7 +81,7 @@ class _GuestBannerState extends State<GuestBanner> {
                 onTap: () => setState(() => _dismissed = true),
                 child: Text(
                   'Maybe Later',
-                  style: AppTextStyles.labelLarge(color: AppColors.textMuted),
+                  style: AppTextStyles.labelLarge(color: AppColors.textTertiary),
                 ),
               ),
             ],

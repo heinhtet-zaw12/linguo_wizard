@@ -3,17 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
-import '../../../core/widgets/app_chip.dart';
+import '../../../core/widgets/app_chip.dart' show GlassChip;
 import '../../../core/widgets/app_button.dart';
 import '../models/scenario.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../viewmodels/twist_viewmodel.dart';
 import '../widgets/scenario_card.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_shadows.dart';
 
 /// Redesigned scenario selection screen with category tabs, search bar,
 /// CEFR chips, and infinite scroll pagination.
@@ -68,8 +71,6 @@ class _ScenarioSelectionScreenState
     super.dispose();
   }
 
-  /// Detect when the user scrolls near the bottom of the grid to trigger
-  /// infinite scroll loadMore.
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
@@ -89,13 +90,11 @@ class _ScenarioSelectionScreenState
     final asyncState = ref.watch(scenarioSelectionProvider);
     final notifier = ref.read(scenarioSelectionProvider.notifier);
 
-    // Watch twist provider for navigation to conversation.
     ref.listen(twistProvider, (prev, next) {
       next.whenOrNull(data: (twistScenario) {
         if (twistScenario != null) {
           ref.read(selectedScenarioProvider.notifier).state = twistScenario;
           context.push('/conversation/${twistScenario.id}');
-          // Reset twist state so the next tap triggers a fresh generation.
           ref.read(twistProvider.notifier).reset();
         }
       });
@@ -106,7 +105,7 @@ class _ScenarioSelectionScreenState
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryPink),
+              child: CircularProgressIndicator(color: AppColors.accentCyan),
             ),
             error: (e, _) => Center(
               child: Padding(
@@ -114,13 +113,12 @@ class _ScenarioSelectionScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.cloud_off,
-                        size: 48, color: AppColors.textMuted),
+                    Icon(Icons.cloud_off, size: 48, color: AppColors.textTertiary),
                     const SizedBox(height: 16),
                     Text(
                       "Couldn't load scenarios. Check your connection and try again.",
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                      style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                     ),
                     const SizedBox(height: 16),
                     AppButton(
@@ -147,16 +145,9 @@ class _ScenarioSelectionScreenState
   ) {
     return Column(
       children: [
-        // Header (title + search toggle + create button)
         _buildHeader(context, state, notifier),
-
-        // Category tabs
         _buildCategoryTabs(state, notifier),
-
-        // CEFR chips
         _buildCefrChips(state, notifier),
-
-        // Search results header (when search is active)
         if (state.searchQuery.isNotEmpty && state.displayScenarios.isNotEmpty)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
@@ -164,21 +155,16 @@ class _ScenarioSelectionScreenState
               alignment: Alignment.centerLeft,
               child: Text(
                 "Showing ${state.displayScenarios.length} results for '${state.searchQuery}'",
-                style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+                style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
               ),
             ),
           ),
-
         const SizedBox(height: 8),
-
-        // Scenario grid(s) or empty state
         Expanded(child: _buildScrollContent(context, ref, state, notifier)),
       ],
     );
   }
 
-  /// Builds the scrollable content: My Scenarios section (if any),
-  /// then curated scenarios grid with infinite scroll.
   Widget _buildScrollContent(
     BuildContext context,
     WidgetRef ref,
@@ -189,7 +175,6 @@ class _ScenarioSelectionScreenState
     final hasCuratedScenarios = state.displayScenarios.isNotEmpty;
     final isSearching = state.searchQuery.isNotEmpty;
 
-    // Show empty state if nothing to display and not loading.
     if (!hasCustomScenarios && !hasCuratedScenarios && !state.isLoading) {
       return _buildEmptyState(context, state);
     }
@@ -206,14 +191,12 @@ class _ScenarioSelectionScreenState
       child: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // ─── My Scenarios section ───
           if (hasCustomScenarios && !isSearching) ...[
             SliverToBoxAdapter(
               child: _buildMyScenariosHeader(),
             ),
             SliverGrid(
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
@@ -222,24 +205,16 @@ class _ScenarioSelectionScreenState
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final scenario = state.customScenarios[index];
-                  return _buildCustomScenarioCard(
-                      context, ref, scenario, notifier);
+                  return _buildCustomScenarioCard(context, ref, scenario, notifier);
                 },
                 childCount: state.customScenarios.length,
               ),
             ),
-            // Divider
-            if (hasCuratedScenarios)
-              SliverToBoxAdapter(
-                child: _buildCuratedDivider(),
-              ),
+            if (hasCuratedScenarios) SliverToBoxAdapter(child: _buildCuratedDivider()),
           ],
-
-          // ─── Curated scenarios grid ───
           if (hasCuratedScenarios)
             SliverGrid(
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
@@ -251,32 +226,24 @@ class _ScenarioSelectionScreenState
                   return ScenarioCard(
                     scenario: scenario,
                     onTap: () {
-                      ref
-                          .read(selectedScenarioProvider.notifier)
-                          .state = scenario;
+                      ref.read(selectedScenarioProvider.notifier).state = scenario;
                       context.push('/conversation/${scenario.id}');
                     },
-                    showTwistBadge:
-                        state.completedScenarioIds.contains(scenario.id),
+                    showTwistBadge: state.completedScenarioIds.contains(scenario.id),
                     onTwistTap: () {
                       final user = ref.read(currentUserProvider);
-                      ref
-                          .read(twistProvider.notifier)
-                          .generateAndLaunchTwist(
+                      ref.read(twistProvider.notifier).generateAndLaunchTwist(
                             originalScenario: scenario,
                             uid: user?.uid,
                           );
                     },
-                  );
+                  ).animate().fadeIn(duration: 400.ms, delay: (index * 50).ms)
+                      .slideY(begin: 0.05, duration: 400.ms, delay: (index * 50).ms);
                 },
                 childCount: state.displayScenarios.length,
               ),
             ),
-
-          // ─── Footer ───
-          SliverToBoxAdapter(
-            child: _buildGridFooter(state),
-          ),
+          SliverToBoxAdapter(child: _buildGridFooter(state)),
         ],
       ),
     );
@@ -290,10 +257,7 @@ class _ScenarioSelectionScreenState
           child: SizedBox(
             width: 24,
             height: 24,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: AppColors.primaryPink,
-            ),
+            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accentCyan),
           ),
         ),
       );
@@ -304,7 +268,7 @@ class _ScenarioSelectionScreenState
         child: Center(
           child: Text(
             "You've seen them all!",
-            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+            style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
           ),
         ),
       );
@@ -312,7 +276,6 @@ class _ScenarioSelectionScreenState
     return const SizedBox(height: 80);
   }
 
-  /// Builds a custom scenario card with a delete menu.
   Widget _buildCustomScenarioCard(
     BuildContext context,
     WidgetRef ref,
@@ -326,12 +289,9 @@ class _ScenarioSelectionScreenState
         context.push('/conversation/${scenario.id}');
       },
       trailing: PopupMenuButton<String>(
-        icon: Icon(Icons.more_vert,
-            size: 16, color: AppColors.textMuted),
+        icon: Icon(Icons.more_vert, size: 16, color: AppColors.textTertiary),
         padding: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onSelected: (value) {
           if (value == 'delete') {
             _showDeleteDialog(context, scenario, notifier);
@@ -342,12 +302,11 @@ class _ScenarioSelectionScreenState
             value: 'delete',
             child: Row(
               children: [
-                Icon(Icons.delete_outline,
-                    size: 18, color: AppColors.accentCoral),
+                Icon(Icons.delete_outline, size: 18, color: AppColors.danger),
                 const SizedBox(width: 8),
                 Text(
                   'Delete Scenario',
-                  style: AppTextStyles.labelMedium(color: AppColors.accentCoral),
+                  style: AppTextStyles.labelMedium(color: AppColors.danger),
                 ),
               ],
             ),
@@ -365,22 +324,22 @@ class _ScenarioSelectionScreenState
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppColors.surface1,
         title: Text(
           'Delete scenario?',
-          style: AppTextStyles.headingLarge(color: AppColors.textDark),
+          style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
         ),
         content: Text(
           'This can\'t be undone.',
-          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+          style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Cancel',
-              style: AppTextStyles.labelLarge(color: AppColors.textDark),
+              style: AppTextStyles.labelLarge(color: AppColors.textSecondary),
             ),
           ),
           TextButton(
@@ -390,7 +349,7 @@ class _ScenarioSelectionScreenState
             },
             child: Text(
               'Delete',
-              style: AppTextStyles.labelLarge(color: AppColors.accentCoral),
+              style: AppTextStyles.labelLarge(color: AppColors.danger),
             ),
           ),
         ],
@@ -403,7 +362,7 @@ class _ScenarioSelectionScreenState
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
       child: Text(
         'My Scenarios',
-        style: AppTextStyles.headingLarge(color: AppColors.textDark),
+        style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
       ),
     );
   }
@@ -413,19 +372,15 @@ class _ScenarioSelectionScreenState
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
       child: Row(
         children: [
-          const Expanded(
-            child: Divider(color: AppColors.primaryPinkLight),
-          ),
+          const Expanded(child: Divider(color: AppColors.borderSubtle)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               'Curated Scenarios',
-              style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+              style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
             ),
           ),
-          const Expanded(
-            child: Divider(color: AppColors.primaryPinkLight),
-          ),
+          const Expanded(child: Divider(color: AppColors.borderSubtle)),
         ],
       ),
     );
@@ -436,23 +391,27 @@ class _ScenarioSelectionScreenState
     if (_isSearchOpen) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-        child: TextField(
-          controller: _searchController,
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: 'Search scenarios...',
-            hintStyle: AppTextStyles.bodyMedium(color: AppColors.textMuted),
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24),
-              borderSide: BorderSide.none,
-            ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surfaceGlass,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.borderSubtle),
           ),
-          style: AppTextStyles.bodyMedium(color: AppColors.textDark),
-          onChanged: _onSearchChanged,
+          child: TextField(
+            controller: _searchController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Search scenarios...',
+              hintStyle: AppTextStyles.bodyMedium(color: AppColors.textTertiary),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(24),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            style: AppTextStyles.bodyMedium(color: AppColors.textPrimary),
+            onChanged: _onSearchChanged,
+          ),
         ),
       );
     }
@@ -467,17 +426,16 @@ class _ScenarioSelectionScreenState
               children: [
                 Text(
                   'Choose a Scenario',
-                  style: AppTextStyles.displayMedium(color: AppColors.textDark),
+                  style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Pick a situation to practice',
-                  style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                  style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                 ),
               ],
             ),
           ),
-          // Create Scenario button
           IconButton(
             icon: const Icon(Icons.add_circle_outline, size: 28),
             tooltip: 'Create Custom Scenario',
@@ -489,11 +447,10 @@ class _ScenarioSelectionScreenState
                 context.push('/create-scenario');
               }
             },
-            color: AppColors.primaryPink,
+            color: AppColors.accentCyan,
           ),
-          // Search toggle
           IconButton(
-            icon: const Icon(Icons.search, color: AppColors.textDark),
+            icon: Icon(Icons.search, color: AppColors.textPrimary),
             onPressed: () {
               setState(() {
                 _isSearchOpen = true;
@@ -509,22 +466,22 @@ class _ScenarioSelectionScreenState
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppColors.surface1,
         title: Text(
           'Sign up to create scenarios',
-          style: AppTextStyles.headingLarge(color: AppColors.textDark),
+          style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
         ),
         content: Text(
           'Create an account to save and use your own custom scenarios.',
-          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+          style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Not now',
-              style: AppTextStyles.labelLarge(color: AppColors.textDark),
+              style: AppTextStyles.labelLarge(color: AppColors.textSecondary),
             ),
           ),
           TextButton(
@@ -534,7 +491,7 @@ class _ScenarioSelectionScreenState
             },
             child: Text(
               'Sign up',
-              style: AppTextStyles.labelLarge(color: AppColors.primaryPink),
+              style: AppTextStyles.labelLarge(color: AppColors.accentCyan),
             ),
           ),
         ],
@@ -554,7 +511,6 @@ class _ScenarioSelectionScreenState
           final category = _categories[index];
           final label = _categoryLabels[index];
           final isSelected = state.selectedCategory == category;
-          // Both null means "All" is selected
           final isAllSelected = category == null && state.selectedCategory == null;
 
           return Padding(
@@ -564,32 +520,26 @@ class _ScenarioSelectionScreenState
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: (isSelected || isAllSelected)
-                      ? AppColors.primaryPink
-                      : Colors.white.withValues(alpha: 0.85),
+                  gradient: (isSelected || isAllSelected) ? AppGradients.accent : null,
+                  color: (isSelected || isAllSelected) ? null : AppColors.surfaceGlass,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: (isSelected || isAllSelected)
-                        ? AppColors.primaryPink
-                        : AppColors.primaryPinkLight,
+                        ? AppColors.accentStart
+                        : AppColors.borderSubtle,
                     width: 1.5,
                   ),
-                  boxShadow: (isSelected || isAllSelected)
-                      ? [
-                          BoxShadow(
-                            color: AppColors.shadowPink,
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ]
-                      : [],
+                  boxShadow: (isSelected || isAllSelected) ? AppShadows.glowBlue : [],
                 ),
                 child: Text(
                   label,
-                  style: AppTextStyles.labelMedium(),
+                  style: AppTextStyles.labelMedium(
+                    color: (isSelected || isAllSelected)
+                        ? AppColors.textOnAccent
+                        : AppColors.textSecondary,
+                  ),
                 ),
               ),
             ),
@@ -607,23 +557,23 @@ class _ScenarioSelectionScreenState
         height: 38,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemCount: _cefrLevels.length + 1, // +1 for "All"
+          itemCount: _cefrLevels.length + 1,
           separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (context, index) {
             if (index == 0) {
               final isSelected = state.selectedCefrLevel == null;
-              return AppChip(
+              return GlassChip(
                 label: 'All',
-                isSelected: isSelected,
+                selected: isSelected,
                 onTap: () => notifier.setCefrFilter(null),
               );
             }
             final level = _cefrLevels[index - 1];
             final isSelected =
                 state.selectedCefrLevel?.toUpperCase() == level.toUpperCase();
-            return AppChip(
+            return GlassChip(
               label: level,
-              isSelected: isSelected,
+              selected: isSelected,
               onTap: () => notifier.setCefrFilter(level),
             );
           },
@@ -637,13 +587,10 @@ class _ScenarioSelectionScreenState
     IconData icon;
 
     if (state.searchQuery.isNotEmpty) {
-      message =
-          "No scenarios match your search. Try a different keyword or CEFR level.";
+      message = "No scenarios match your search. Try a different keyword or CEFR level.";
       icon = Icons.search_off;
-    } else if (state.selectedCefrLevel != null ||
-        state.selectedCategory != null) {
-      message =
-          "No scenarios found. Try adjusting your filters or search.";
+    } else if (state.selectedCefrLevel != null || state.selectedCategory != null) {
+      message = "No scenarios found. Try adjusting your filters or search.";
       icon = Icons.filter_list_off;
     } else {
       message = "Couldn't load scenarios. Check your connection and try again.";
@@ -656,12 +603,12 @@ class _ScenarioSelectionScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48, color: AppColors.textMuted),
+            Icon(icon, size: 48, color: AppColors.textTertiary),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ],
         ),

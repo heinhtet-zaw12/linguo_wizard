@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_gradients.dart';
 
 /// Circular progress indicator showing daily XP goal progress.
 class GoalRing extends StatelessWidget {
@@ -20,19 +22,8 @@ class GoalRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = (currentXp / targetXp).clamp(0.0, 1.0);
 
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
       child: Row(
         children: [
           // Progress ring
@@ -44,7 +35,7 @@ class GoalRing extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${(progress * 100).toInt()}%',
-                  style: AppTextStyles.headingSmall(color: AppColors.primaryPinkDark),
+                  style: AppTextStyles.headingSmall(color: AppColors.accentCyan),
                 ),
               ),
             ),
@@ -57,12 +48,12 @@ class GoalRing extends StatelessWidget {
               children: [
                 Text(
                   'Daily Goal',
-                  style: AppTextStyles.headingMedium(color: AppColors.textDark),
+                  style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '$currentXp / $targetXp XP',
-                  style: AppTextStyles.labelMedium(color: AppColors.primaryPinkDark),
+                  style: AppTextStyles.labelMedium(color: AppColors.warning),
                 ),
               ],
             ),
@@ -85,7 +76,7 @@ class _RingPainter extends CustomPainter {
 
     // Background ring
     final bgPaint = Paint()
-      ..color = AppColors.primaryPinkLight
+      ..color = AppColors.borderSubtle
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6
       ..strokeCap = StrokeCap.round;
@@ -94,7 +85,9 @@ class _RingPainter extends CustomPainter {
 
     // Progress arc
     final progressPaint = Paint()
-      ..color = AppColors.primaryPink
+      ..shader = AppGradients.accent.createShader(
+        Rect.fromCircle(center: center, radius: radius),
+      )
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6
       ..strokeCap = StrokeCap.round;

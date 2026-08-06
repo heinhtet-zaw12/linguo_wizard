@@ -5,18 +5,13 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_chip.dart';
+import '../../../core/widgets/app_chip.dart' show GlassChip;
 import '../viewmodels/create_scenario_viewmodel.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
 import '../widgets/scenario_preview_card.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Screen for creating custom scenarios via AI generation.
-///
-/// 3-step wizard flow:
-/// 1. Form — user describes persona, context, and goal
-/// 2. Preview — user reviews the generated scenario (read-only, per D-10)
-/// 3. Saved — success state with action buttons
 class CreateScenarioScreen extends ConsumerStatefulWidget {
   const CreateScenarioScreen({super.key});
 
@@ -25,8 +20,7 @@ class CreateScenarioScreen extends ConsumerStatefulWidget {
       _CreateScenarioScreenState();
 }
 
-class _CreateScenarioScreenState
-    extends ConsumerState<CreateScenarioScreen> {
+class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
   final _personaController = TextEditingController();
   final _contextController = TextEditingController();
   final _goalController = TextEditingController();
@@ -52,7 +46,6 @@ class _CreateScenarioScreenState
         child: SafeArea(
           child: Stack(
             children: [
-              // Main content
               Column(
                 children: [
                   _buildHeader(context),
@@ -64,12 +57,8 @@ class _CreateScenarioScreenState
                   ),
                 ],
               ),
-
-              // Generation overlay
               if (state.step == CreateScenarioStep.generating)
                 _buildGeneratingOverlay(),
-
-              // Saving overlay
               if (state.step == CreateScenarioStep.saving)
                 _buildSavingOverlay(),
             ],
@@ -85,7 +74,7 @@ class _CreateScenarioScreenState
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
             onPressed: () => context.pop(),
           ),
           const SizedBox(width: 4),
@@ -95,11 +84,11 @@ class _CreateScenarioScreenState
               children: [
                 Text(
                   'Create a Scenario',
-                  style: AppTextStyles.displayMedium(color: AppColors.textDark),
+                  style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
                 ),
                 Text(
                   'Describe who you want to talk to',
-                  style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                  style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -109,13 +98,11 @@ class _CreateScenarioScreenState
     );
   }
 
-  Widget _buildContent(
-      CreateScenarioState state, CreateScenarioViewModel notifier) {
+  Widget _buildContent(CreateScenarioState state, CreateScenarioViewModel notifier) {
     switch (state.step) {
       case CreateScenarioStep.form:
         return _buildForm(state, notifier);
       case CreateScenarioStep.generating:
-        // Show form underneath overlay, or blank
         return _buildForm(state, notifier);
       case CreateScenarioStep.preview:
         return _buildPreview(state, notifier, context);
@@ -130,52 +117,39 @@ class _CreateScenarioScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ─── Persona field ───
         _buildFieldLabel('Who do you want to talk to?'),
         const SizedBox(height: 6),
         TextField(
           controller: _personaController,
           maxLines: 2,
           textCapitalization: TextCapitalization.sentences,
-          decoration: _inputDecoration(
-            hint: 'e.g., a barista, a taxi driver',
-          ),
-          style: AppTextStyles.headingSmall(color: AppColors.textDark),
+          decoration: _inputDecoration(hint: 'e.g., a barista, a taxi driver'),
+          style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
           onChanged: notifier.setPersona,
         ),
         const SizedBox(height: 16),
-
-        // ─── Context field ───
         _buildFieldLabel('Where are you?'),
         const SizedBox(height: 6),
         TextField(
           controller: _contextController,
           maxLines: 2,
           textCapitalization: TextCapitalization.sentences,
-          decoration: _inputDecoration(
-            hint: 'e.g., at a busy coffee shop in London',
-          ),
-          style: AppTextStyles.headingSmall(color: AppColors.textDark),
+          decoration: _inputDecoration(hint: 'e.g., at a busy coffee shop in London'),
+          style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
           onChanged: notifier.setContext,
         ),
         const SizedBox(height: 16),
-
-        // ─── Goal field ───
         _buildFieldLabel("What's your goal?"),
         const SizedBox(height: 6),
         TextField(
           controller: _goalController,
           maxLines: 2,
           textCapitalization: TextCapitalization.sentences,
-          decoration: _inputDecoration(
-            hint: 'e.g., order a flat white and ask about the menu',
-          ),
-          style: AppTextStyles.headingSmall(color: AppColors.textDark),
+          decoration: _inputDecoration(hint: 'e.g., order a flat white and ask about the menu'),
+          style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
           onChanged: notifier.setGoal,
         ),
         const SizedBox(height: 20),
-
-        // ─── CEFR Level ───
         _buildFieldLabel('Your level'),
         const SizedBox(height: 8),
         _buildChipRow(
@@ -184,8 +158,6 @@ class _CreateScenarioScreenState
           onSelected: notifier.setCefrLevel,
         ),
         const SizedBox(height: 16),
-
-        // ─── Tone ───
         _buildFieldLabel('Tone'),
         const SizedBox(height: 8),
         _buildChipRow(
@@ -195,37 +167,30 @@ class _CreateScenarioScreenState
           capitalize: true,
         ),
         const SizedBox(height: 24),
-
-        // ─── Error message ───
         if (state.errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.accentCoral.withValues(alpha: 0.1),
+                color: AppColors.danger.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.accentCoral.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.error_outline,
-                      size: 18, color: AppColors.accentCoral),
+                  Icon(Icons.error_outline, size: 18, color: AppColors.danger),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       state.errorMessage!,
-                      style: AppTextStyles.labelMedium(color: AppColors.accentCoral),
+                      style: AppTextStyles.labelMedium(color: AppColors.danger),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-
-        // ─── Generate button ───
         AppButton(
           label: 'Generate Scenario',
           onPressed: notifier.generate,
@@ -234,8 +199,7 @@ class _CreateScenarioScreenState
     );
   }
 
-  Widget _buildPreview(CreateScenarioState state,
-      CreateScenarioViewModel notifier, BuildContext context) {
+  Widget _buildPreview(CreateScenarioState state, CreateScenarioViewModel notifier, BuildContext context) {
     final scenario = state.generatedScenario;
     if (scenario == null) return const SizedBox.shrink();
 
@@ -244,71 +208,56 @@ class _CreateScenarioScreenState
       children: [
         Text(
           'Your Scenario is Ready!',
-          style: AppTextStyles.headingLarge(color: AppColors.textDark),
+          style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
         ),
         const SizedBox(height: 16),
-
-        // Preview card
         ScenarioPreviewCard(scenario: scenario),
         const SizedBox(height: 16),
-
-        // Error message
         if (state.errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.accentCoral.withValues(alpha: 0.1),
+                color: AppColors.danger.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.accentCoral.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.error_outline,
-                      size: 18, color: AppColors.accentCoral),
+                  Icon(Icons.error_outline, size: 18, color: AppColors.danger),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       state.errorMessage!,
-                      style: AppTextStyles.labelMedium(color: AppColors.accentCoral),
+                      style: AppTextStyles.labelMedium(color: AppColors.danger),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-
-          AppButton(
+        AppButton(
           label: 'Try it',
           icon: Icons.play_arrow_rounded,
           onPressed: () async {
             await notifier.save();
-            // Navigate to conversation on success.
             final currentState = ref.read(createScenarioProvider);
             final scenario = currentState.generatedScenario;
-            if (currentState.step == CreateScenarioStep.saved &&
-                scenario != null) {
+            if (currentState.step == CreateScenarioStep.saved && scenario != null) {
               if (!context.mounted) return;
-              ref
-                  .read(selectedScenarioProvider.notifier)
-                  .state = scenario;
+              ref.read(selectedScenarioProvider.notifier).state = scenario;
               context.push('/conversation/${scenario.id}');
             }
           },
         ),
         const SizedBox(height: 12),
-
-        // ─── Action row ───
         Row(
           children: [
             Expanded(
               child: AppButton(
                 label: 'Regenerate',
                 variant: AppButtonVariant.secondary,
-                isExpanded: true,
                 onPressed: notifier.regenerate,
               ),
             ),
@@ -317,25 +266,20 @@ class _CreateScenarioScreenState
               child: AppButton(
                 label: 'Back to Form',
                 variant: AppButtonVariant.secondary,
-                isExpanded: true,
                 onPressed: notifier.edit,
               ),
             ),
           ],
         ),
         const SizedBox(height: 16),
-
-        // ─── Discard button ───
         Align(
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () => _showDiscardDialog(context, notifier),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.accentCoral,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             child: Text(
               'Discard',
-              style: AppTextStyles.headingSmall(),
+              style: AppTextStyles.headingSmall(color: AppColors.danger),
             ),
           ),
         ),
@@ -352,38 +296,35 @@ class _CreateScenarioScreenState
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: AppColors.primaryPinkLight.withValues(alpha: 0.4),
+            color: AppColors.success.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.check_circle_rounded,
             size: 48,
-            color: AppColors.primaryPink,
+            color: AppColors.success,
           ),
         ),
         const SizedBox(height: 24),
         Text(
           'Success!',
-          style: AppTextStyles.headingLarge(color: AppColors.textDark),
+          style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
         ),
         const SizedBox(height: 12),
         Text(
           'Your custom scenario has been saved.\nFind it under "My Scenarios" on the\nmain screen.',
           textAlign: TextAlign.center,
-          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+          style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         ),
         const SizedBox(height: 32),
         AppButton(
           label: 'Start Conversation',
           icon: Icons.play_arrow_rounded,
           onPressed: () {
-            // Navigate to conversation with saved scenario
             final state = ref.read(createScenarioProvider);
             final scenario = state.generatedScenario;
             if (scenario != null) {
-              ref
-                  .read(selectedScenarioProvider.notifier)
-                  .state = scenario;
+              ref.read(selectedScenarioProvider.notifier).state = scenario;
               context.push('/conversation/${scenario.id}');
             }
           },
@@ -400,23 +341,21 @@ class _CreateScenarioScreenState
 
   Widget _buildGeneratingOverlay() {
     return Container(
-      color: AppColors.bgTop.withValues(alpha: 0.9),
+      color: AppColors.surfaceBase.withValues(alpha: 0.9),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(
-              color: AppColors.primaryPink,
-            ),
+            const CircularProgressIndicator(color: AppColors.accentCyan),
             const SizedBox(height: 24),
             Text(
               'Generating your scenario...',
-              style: AppTextStyles.headingMedium(color: AppColors.textDark),
+              style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
             ),
             const SizedBox(height: 8),
             Text(
               'This may take a few seconds',
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -426,35 +365,33 @@ class _CreateScenarioScreenState
 
   Widget _buildSavingOverlay() {
     return Container(
-      color: AppColors.bgTop.withValues(alpha: 0.9),
+      color: AppColors.surfaceBase.withValues(alpha: 0.9),
       child: const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primaryPink,
-        ),
+        child: CircularProgressIndicator(color: AppColors.accentCyan),
       ),
     );
   }
 
-  void _showDiscardDialog(
-      BuildContext context, CreateScenarioViewModel notifier) {
+  void _showDiscardDialog(BuildContext context, CreateScenarioViewModel notifier) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppColors.surface1,
         title: Text(
           'Discard scenario?',
-          style: AppTextStyles.headingLarge(color: AppColors.textDark),
+          style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
         ),
         content: Text(
           'Your generated scenario won\'t be saved.',
-          style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+          style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
               'Keep editing',
-              style: AppTextStyles.labelLarge(color: AppColors.textDark),
+              style: AppTextStyles.labelLarge(color: AppColors.textSecondary),
             ),
           ),
           TextButton(
@@ -465,7 +402,7 @@ class _CreateScenarioScreenState
             },
             child: Text(
               'Discard',
-              style: AppTextStyles.labelLarge(color: AppColors.accentCoral),
+              style: AppTextStyles.labelLarge(color: AppColors.danger),
             ),
           ),
         ],
@@ -473,21 +410,19 @@ class _CreateScenarioScreenState
     );
   }
 
-  // ─── Helper widgets ───
-
   Widget _buildFieldLabel(String label) {
     return Text(
       label,
-      style: AppTextStyles.headingSmall(color: AppColors.textDark),
+      style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
     );
   }
 
   InputDecoration _inputDecoration({required String hint}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: AppTextStyles.bodyMedium(color: AppColors.textMuted.withValues(alpha: 0.6)),
+      hintStyle: AppTextStyles.bodyMedium(color: AppColors.textTertiary),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: AppColors.surfaceGlass,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -495,7 +430,7 @@ class _CreateScenarioScreenState
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: AppColors.primaryPink, width: 2),
+        borderSide: const BorderSide(color: AppColors.accentCyan, width: 1.5),
       ),
     );
   }
@@ -514,9 +449,9 @@ class _CreateScenarioScreenState
         final label = capitalize
             ? '${item[0].toUpperCase()}${item.substring(1)}'
             : item;
-        return AppChip(
+        return GlassChip(
           label: label.toUpperCase(),
-          isSelected: isSelected,
+          selected: isSelected,
           onTap: () => onSelected(item),
         );
       }).toList(),

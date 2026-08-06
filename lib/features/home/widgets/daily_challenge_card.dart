@@ -16,11 +16,8 @@ import '../../../core/theme/app_text_styles.dart';
 /// Hero card on the Home dashboard showing today's Daily Challenge.
 ///
 /// Displays a countdown timer, challenge description, and "Start Challenge"
-/// button. Switches to a "Challenge Complete!" state with gold checkmark
+/// button. Switches to a "Challenge Complete!" state with checkmark
 /// once the user has completed today's challenge.
-///
-/// Countdown timer updates every minute via Timer.periodic. Timer is
-/// cancelled in dispose() to prevent memory leaks (Pitfall 3 prevention).
 class DailyChallengeCard extends ConsumerStatefulWidget {
   const DailyChallengeCard({super.key});
 
@@ -70,28 +67,19 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
     );
   }
 
-  /// Skeleton placeholder shown while the challenge is loading.
   Widget _buildSkeleton() {
-    return Container(
-      height: 180,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(20),
-        border: const Border(
-          left: BorderSide(color: AppColors.accentGold, width: 2),
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        height: 140,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceGlass,
+          borderRadius: BorderRadius.circular(16),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
     );
   }
 
-  /// Main card layout per UI-SPEC Screen 3.
   Widget _buildCard(
     BuildContext context, {
     required Scenario scenario,
@@ -100,11 +88,10 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
     final countdownText = ref.read(dailyChallengeServiceProvider)
         .formatCountdown(_timeRemaining);
 
-    // Urgency: coral if less than 1 hour remaining.
     final isUrgent = _timeRemaining.inHours < 1 && _timeRemaining.inMinutes > 0;
 
-    return AppCard(
-      borderColor: AppColors.accentGold,
+    return GlassCard(
+      glowColor: AppColors.accentCyan.withValues(alpha: 0.2),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,22 +101,18 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
             children: [
               Text(
                 "Today's Challenge",
-                style: AppTextStyles.headingMedium(color: AppColors.textDark),
+                style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
               ),
               const SizedBox(width: 10),
-              // 2x XP pill
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: AppColors.accentGold,
+                  color: AppColors.warning,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '2x XP',
-                  style: AppTextStyles.labelSmall(color: AppColors.textLight),
+                  style: AppTextStyles.labelSmall(color: AppColors.surfaceBase),
                 ),
               ),
             ],
@@ -139,7 +122,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
           // ─── Row 2: Challenge description ───
           Text(
             scenario.description,
-            style: AppTextStyles.labelMedium(color: AppColors.textMuted),
+            style: AppTextStyles.labelMedium(color: AppColors.textSecondary),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -148,7 +131,9 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
           // ─── Row 3: Countdown timer ───
           Text(
             countdownText,
-            style: AppTextStyles.labelSmall(),
+            style: AppTextStyles.labelSmall(
+              color: isUrgent ? AppColors.danger : AppColors.textTertiary,
+            ),
           ),
           const SizedBox(height: 14),
 
@@ -162,25 +147,19 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
     );
   }
 
-  /// Completed state: gold checkmark + "Challenge Complete! +100 XP"
   Widget _buildCompletedState() {
     return Row(
       children: [
-        Icon(
-          Icons.check_circle,
-          size: 20,
-          color: AppColors.accentGold,
-        ),
+        const Icon(Icons.check_circle, size: 20, color: AppColors.success),
         const SizedBox(width: 8),
         Text(
           'Challenge Complete! +100 XP',
-          style: AppTextStyles.labelMedium(color: AppColors.accentGold),
+          style: AppTextStyles.labelMedium(color: AppColors.success),
         ),
       ],
     );
   }
 
-  /// Primary action button that navigates to the conversation.
   Widget _buildStartButton(Scenario scenario) {
     return AppButton(
       label: 'Start Challenge',

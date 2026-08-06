@@ -6,13 +6,11 @@ import '../../../core/models/srs_item.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_card.dart';
 import '../viewmodels/srs_viewmodel.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Pre-scenario review screen showing due SRS items before conversation starts.
-///
-/// Per D-14: Users see words/phrases to practice before starting a scenario.
-/// Explicit, user-controlled approach with skip option.
 class PreScenarioReviewScreen extends ConsumerStatefulWidget {
   const PreScenarioReviewScreen({super.key, required this.scenarioId});
 
@@ -28,7 +26,6 @@ class _PreScenarioReviewScreenState
   @override
   void initState() {
     super.initState();
-    // Auto-redirect if no due items after loading.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAutoRedirect();
     });
@@ -38,7 +35,6 @@ class _PreScenarioReviewScreenState
     final state = ref.read(srsViewModelProvider);
     state.whenData((data) {
       if (data.dueItems.isEmpty && !data.isLoading) {
-        // No items to review — auto-redirect after brief delay.
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
             context.pushReplacement('/conversation/${widget.scenarioId}');
@@ -57,12 +53,12 @@ class _PreScenarioReviewScreenState
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryPink),
+              child: CircularProgressIndicator(color: AppColors.accentCyan),
             ),
             error: (e, _) => Center(
               child: Text(
                 'Failed to load review items',
-                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
               ),
             ),
             data: (state) => _buildContent(context, state),
@@ -74,20 +70,18 @@ class _PreScenarioReviewScreenState
 
   Widget _buildContent(BuildContext context, SrsState state) {
     if (state.reviewComplete) {
-      // Navigate back or to conversation.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           context.pushReplacement('/conversation/${widget.scenarioId}');
         }
       });
       return const Center(
-        child: CircularProgressIndicator(color: AppColors.primaryPink),
+        child: CircularProgressIndicator(color: AppColors.accentCyan),
       );
     }
 
     return Column(
       children: [
-        // ─── Header ───
         Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -95,18 +89,16 @@ class _PreScenarioReviewScreenState
             children: [
               Text(
                 'Practice these words',
-                style: AppTextStyles.headingLarge(color: AppColors.textDark),
+                style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
               ),
               const SizedBox(height: 4),
               Text(
                 '${state.dueItems.length} items due for review',
-                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
               ),
             ],
           ),
         ),
-
-        // ─── SRS Items List ───
         Expanded(
           child: state.dueItems.isEmpty
               ? _buildEmptyState()
@@ -121,13 +113,10 @@ class _PreScenarioReviewScreenState
                   },
                 ),
         ),
-
-        // ─── Action Buttons ───
         Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              // Start Scenario button
               AppButton(
                 label: 'Start Scenario',
                 onPressed: () {
@@ -136,7 +125,6 @@ class _PreScenarioReviewScreenState
                 },
               ),
               const SizedBox(height: 8),
-              // Skip link
               TextButton(
                 onPressed: () {
                   ref.read(srsViewModelProvider.notifier).skipReview();
@@ -144,7 +132,7 @@ class _PreScenarioReviewScreenState
                 },
                 child: Text(
                   'Skip Review',
-                  style: AppTextStyles.labelLarge(color: AppColors.textMuted),
+                  style: AppTextStyles.labelLarge(color: AppColors.textTertiary),
                 ),
               ),
             ],
@@ -159,20 +147,20 @@ class _PreScenarioReviewScreenState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.check_circle_outline_rounded,
             size: 48,
-            color: AppColors.accentGold,
+            color: AppColors.success,
           ),
           const SizedBox(height: 12),
           Text(
             "You're all caught up!",
-            style: AppTextStyles.bodyLarge(color: AppColors.textDark),
+            style: AppTextStyles.bodyLarge(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 4),
           Text(
             'No items to review.',
-            style: AppTextStyles.labelMedium(color: AppColors.textMuted),
+            style: AppTextStyles.labelMedium(color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -193,35 +181,22 @@ class _SrsItemCard extends StatelessWidget {
   Color _categoryColor() {
     switch (item.category) {
       case 'grammar':
-        return AppColors.accentCoral;
+        return AppColors.danger;
       case 'vocabulary':
-        return AppColors.primaryPinkDark;
+        return AppColors.accentCyan;
       case 'phrase':
-        return AppColors.accentGold;
+        return AppColors.warning;
       default:
-        return AppColors.textMuted;
+        return AppColors.textSecondary;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+    return GlassCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: Row(
         children: [
-          // Category badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
@@ -230,23 +205,21 @@ class _SrsItemCard extends StatelessWidget {
             ),
             child: Text(
               item.category,
-              style: AppTextStyles.labelSmall(),
+              style: AppTextStyles.labelSmall(color: _categoryColor()),
             ),
           ),
           const SizedBox(width: 12),
-          // Text
           Expanded(
             child: Text(
               item.text,
-              style: AppTextStyles.labelLarge(color: AppColors.textDark),
+              style: AppTextStyles.labelLarge(color: AppColors.textPrimary),
             ),
           ),
-          // "I know this" button
           IconButton(
             onPressed: onKnown,
             icon: const Icon(
               Icons.check_circle_outline_rounded,
-              color: Colors.green,
+              color: AppColors.success,
               size: 24,
             ),
             tooltip: 'I know this',

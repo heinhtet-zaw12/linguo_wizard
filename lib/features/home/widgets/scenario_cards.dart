@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_card.dart';
+import '../../../core/theme/app_gradients.dart';
 import '../../scenario_selection/models/scenario.dart';
 import '../../scenario_selection/viewmodels/scenario_selection_viewmodel.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -16,23 +19,12 @@ class ScenarioCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (scenarios.isEmpty) {
-      return Container(
+      return GlassCard(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.7),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowPink.withValues(alpha: 0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
         child: Center(
           child: Text(
             'No scenarios available. Complete onboarding first!',
-            style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+            style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
           ),
         ),
       );
@@ -47,14 +39,16 @@ class ScenarioCards extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final scenario = scenarios[index];
-          return _HomeScenarioCard(scenario: scenario);
+          return _HomeScenarioCard(scenario: scenario)
+              .animate()
+              .fadeIn(duration: 400.ms, delay: (index * 50).ms)
+              .slideX(begin: 0.1, duration: 400.ms, delay: (index * 50).ms);
         },
       ),
     );
   }
 }
 
-/// A single scenario card for the home screen.
 class _HomeScenarioCard extends ConsumerWidget {
   const _HomeScenarioCard({required this.scenario});
 
@@ -67,64 +61,61 @@ class _HomeScenarioCard extends ConsumerWidget {
         ref.read(selectedScenarioProvider.notifier).state = scenario;
         context.push('/conversation/${scenario.id}');
       },
-      child: Container(
-        width: 200,
+      child: GlassCard(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.shadowPink,
-              blurRadius: 12,
-              offset: Offset(0, 4),
-            ),
-            BoxShadow(
-              color: Color(0x99FFFFFF),
-              blurRadius: 8,
-              offset: Offset(0, -3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // CEFR badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: AppColors.accentGold.withValues(alpha: 0.25),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                scenario.cefrLevel,
-                style: AppTextStyles.headingSmall(color: AppColors.textDark),
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Title
-            Text(
-              scenario.title,
-              style: AppTextStyles.headingSmall(color: AppColors.textDark),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const Spacer(),
-            // Persona
-            Row(
-              children: [
-                Icon(Icons.person_outline, size: 14, color: AppColors.primaryPink),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    scenario.personaName,
-                    style: AppTextStyles.labelSmall(color: AppColors.primaryPinkDark),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+        child: SizedBox(
+          width: 200,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Gradient top stripe
+              Container(
+                height: 4,
+                decoration: BoxDecoration(
+                  gradient: AppGradients.accent,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 12),
+              // CEFR badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.accentCyan.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  scenario.cefrLevel,
+                  style: AppTextStyles.headingSmall(color: AppColors.accentCyan),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Title
+              Expanded(
+                child: Text(
+                  scenario.title,
+                  style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(height: 4),
+              // Persona
+              Row(
+                children: [
+                  Icon(Icons.person_outline, size: 14, color: AppColors.accentMid),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      scenario.personaName,
+                      style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
