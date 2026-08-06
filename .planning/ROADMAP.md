@@ -192,7 +192,7 @@ Plans:
 
 **Spec:** `docs/superpowers/specs/2026-08-05-ui-redesign-design.md`
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 **Wave 1**
@@ -201,7 +201,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 07-02-PLAN.md — Screen redesigns batch 1: splash, onboarding (3 steps), auth (3 screens), home dashboard (5 widgets), scenario selection (3 screens) — 18 files total
+- [x] 07-02-PLAN.md — Screen redesigns batch 1: splash, onboarding (3 steps), auth (3 screens), home dashboard (5 widgets), scenario selection (3 screens) — 18 files total
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
