@@ -192,7 +192,7 @@ Plans:
 
 **Spec:** `docs/superpowers/specs/2026-08-05-ui-redesign-design.md`
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -205,7 +205,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 07-03-PLAN.md — Screen redesigns batch 2: conversation (hero screen, mic button, voice bubbles), feedback (score circle, confetti), profile, leaderboard, progress (3 widgets), badge popup — 11 files total + final zero-legacy audit
+- [x] 07-03-PLAN.md — Screen redesigns batch 2: conversation (hero screen, mic button, voice bubbles), feedback (score circle, confetti), profile, leaderboard, progress (3 widgets), badge popup — 11 files total + final zero-legacy audit
 
 ---
 
