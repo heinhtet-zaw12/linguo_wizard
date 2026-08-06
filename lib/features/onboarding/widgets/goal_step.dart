@@ -40,11 +40,11 @@ class GoalStep extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.0,
               children: kGoals.map((entry) {
-                final icon = entry.key;
+                final iconData = entry.key;
                 final label = entry.value;
                 final isSelected = selectedGoal == label;
                 return _GoalCard(
-                  icon: icon,
+                  iconData: iconData,
                   label: label,
                   isSelected: isSelected,
                   onTap: () => onSelected(label),
@@ -60,13 +60,13 @@ class GoalStep extends StatelessWidget {
 
 class _GoalCard extends StatelessWidget {
   const _GoalCard({
-    required this.icon,
+    required this.iconData,
     required this.label,
     required this.isSelected,
     required this.onTap,
   });
 
-  final String icon;
+  final IconData iconData;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
@@ -90,7 +90,7 @@ class _GoalCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(icon, style: const TextStyle(fontSize: 36)),
+            Icon(iconData, size: 36, color: isSelected ? AppColors.textOnAccent : AppColors.textSecondary),
             const SizedBox(height: 10),
             Text(
               label,

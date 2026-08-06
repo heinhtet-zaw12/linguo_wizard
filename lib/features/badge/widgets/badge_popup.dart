@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_gradients.dart';
-import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -37,7 +36,7 @@ class _BadgePopupState extends State<BadgePopup> {
     );
     _confettiController.play();
 
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 6), () {
       if (mounted) {
         _dismiss();
       }

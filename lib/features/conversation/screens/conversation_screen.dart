@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -179,6 +180,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   // ─── User action forwarding ───
 
   void _onMicPressed() {
+    HapticFeedback.lightImpact();
     final scenario = _scenario;
     if (scenario == null) return;
     ref.read(conversationProvider(scenario).notifier).onMicPressed();
@@ -347,7 +349,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
             return Column(
               children: [
-                _buildTopBar(scenario),
+                _buildTopBar(scenario, state),
                 _buildMessageList(state, vm),
                 if (state.loopState == ConversationLoopState.recording &&
                     state.currentPartialTranscript.isNotEmpty)
@@ -365,7 +367,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
   // ─── UI building blocks ───
 
-  Widget _buildTopBar(Scenario scenario) {
+  Widget _buildTopBar(Scenario scenario, ConversationState state) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4, vertical: 12),
       decoration: BoxDecoration(
@@ -400,7 +402,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
-                // Thin gradient progress bar
+                // Thin gradient progress bar — driven by turn count (max 20)
                 ClipRRect(
                   borderRadius: AppRadius.xxs,
                   child: Container(
@@ -411,11 +413,13 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                     ),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: 3,
-                        decoration: const BoxDecoration(
-                          gradient: AppGradients.accent,
+                      child: FractionallySizedBox(
+                        widthFactor: (state.turnCount / 20).clamp(0.0, 1.0),
+                        child: Container(
+                          height: 3,
+                          decoration: const BoxDecoration(
+                            gradient: AppGradients.accent,
+                          ),
                         ),
                       ),
                     ),

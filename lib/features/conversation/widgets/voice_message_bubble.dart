@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_gradients.dart';
-import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/widgets/app_card.dart';
 import '../models/message.dart';
@@ -72,13 +71,7 @@ class _VoiceMessageBubbleState extends State<VoiceMessageBubble> {
       decoration: const BoxDecoration(
         gradient: AppGradients.accent,
         borderRadius: AppRadius.bubbleUser,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x4D6366F1),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
+        boxShadow: AppShadows.bubbleUser,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

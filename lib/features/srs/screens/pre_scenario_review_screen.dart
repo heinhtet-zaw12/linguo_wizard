@@ -109,6 +109,7 @@ class _PreScenarioReviewScreenState
                     return _SrsItemCard(
                       item: state.dueItems[index],
                       onKnown: () => _reviewItem(state.dueItems[index]),
+                      onDontKnow: () => _dontKnowItem(state.dueItems[index]),
                     );
                   },
                 ),
@@ -170,13 +171,18 @@ class _PreScenarioReviewScreenState
   void _reviewItem(SrsItem item) {
     ref.read(srsViewModelProvider.notifier).reviewItem(item);
   }
+
+  void _dontKnowItem(SrsItem item) {
+    ref.read(srsViewModelProvider.notifier).dontKnowItem(item);
+  }
 }
 
 class _SrsItemCard extends StatelessWidget {
-  const _SrsItemCard({required this.item, required this.onKnown});
+  const _SrsItemCard({required this.item, required this.onKnown, required this.onDontKnow});
 
   final SrsItem item;
   final VoidCallback onKnown;
+  final VoidCallback onDontKnow;
 
   Color _categoryColor() {
     switch (item.category) {
@@ -223,6 +229,15 @@ class _SrsItemCard extends StatelessWidget {
               size: 24,
             ),
             tooltip: 'I know this',
+          ),
+          IconButton(
+            onPressed: onDontKnow,
+            icon: const Icon(
+              Icons.cancel_outlined,
+              color: AppColors.danger,
+              size: 24,
+            ),
+            tooltip: "Don't know",
           ),
         ],
       ),

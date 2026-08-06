@@ -48,4 +48,13 @@ class AppShadows {
       spreadRadius: -2,
     ),
   ];
+
+  /// Drop shadow on user voice bubbles
+  static const List<BoxShadow> bubbleUser = [
+    BoxShadow(
+      color: Color(0x4D6366F1),
+      blurRadius: 12,
+      offset: Offset(0, 4),
+    ),
+  ];
 }

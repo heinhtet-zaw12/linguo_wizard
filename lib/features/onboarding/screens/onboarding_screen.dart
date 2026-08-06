@@ -182,7 +182,6 @@ class _NextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 172,
       height: 52,
       child: AppButton(
         label: label,

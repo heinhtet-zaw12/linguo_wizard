@@ -1,10 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
 import '../theme/app_shadows.dart';
 
-/// Glass-style card container with frosted backdrop blur.
+/// Glass-style card container with semi-transparent background.
 class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
@@ -31,32 +30,26 @@ class GlassCard extends StatelessWidget {
 
     final radius = borderRadius ?? AppRadius.md;
 
-    return ClipRRect(
-      borderRadius: radius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          padding: padding ?? AppSpacing.all4,
-          decoration: BoxDecoration(
-            color: AppColors.surfaceGlass,
-            borderRadius: radius,
-            border: Border.all(
-              color: glowColor ?? AppColors.borderSubtle,
-              width: 0.5,
-            ),
-            boxShadow: [
-              ...shadows,
-              if (glowColor != null)
-                BoxShadow(
-                  color: glowColor!,
-                  blurRadius: 20,
-                  spreadRadius: -2,
-                ),
-            ],
-          ),
-          child: child,
+    return Container(
+      padding: padding ?? AppSpacing.all4,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGlass,
+        borderRadius: radius,
+        border: Border.all(
+          color: glowColor ?? AppColors.borderSubtle,
+          width: 0.5,
         ),
+        boxShadow: [
+          ...shadows,
+          if (glowColor != null)
+            BoxShadow(
+              color: glowColor!,
+              blurRadius: 20,
+              spreadRadius: -2,
+            ),
+        ],
       ),
+      child: child,
     );
   }
 }

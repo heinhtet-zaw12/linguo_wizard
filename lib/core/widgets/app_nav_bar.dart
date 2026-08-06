@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_colors.dart';
@@ -33,35 +32,30 @@ class GradientNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          height: AppSizing.navBarHeight,
-          decoration: BoxDecoration(
-            color: AppColors.surfaceGlass,
-            border: Border(
-              top: BorderSide(
-                color: AppColors.borderSubtle,
-                width: 0.5,
+    return Container(
+      height: AppSizing.navBarHeight,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGlass,
+        border: Border(
+          top: BorderSide(
+            color: AppColors.borderSubtle,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            for (int i = 0; i < items.length; i++)
+              Expanded(
+                child: _NavButton(
+                  item: items[i],
+                  isSelected: i == currentIndex,
+                  onTap: () => onTap(i),
+                ),
               ),
-            ),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              children: [
-                for (int i = 0; i < items.length; i++)
-                  Expanded(
-                    child: _NavButton(
-                      item: items[i],
-                      isSelected: i == currentIndex,
-                      onTap: () => onTap(i),
-                    ),
-                  ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     ).animate().slideY(begin: 0.1, duration: 300.ms, curve: Curves.easeOut)

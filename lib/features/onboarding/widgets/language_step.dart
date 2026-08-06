@@ -40,11 +40,11 @@ class LanguageStep extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.6,
               children: kLanguages.map((entry) {
-                final flag = entry.key;
+                final icon = entry.key;
                 final name = entry.value;
                 final isSelected = selectedLanguage == name;
                 return _LanguageCard(
-                  flag: flag,
+                  icon: icon,
                   name: name,
                   isSelected: isSelected,
                   onTap: () => onSelected(name),
@@ -60,13 +60,13 @@ class LanguageStep extends StatelessWidget {
 
 class _LanguageCard extends StatelessWidget {
   const _LanguageCard({
-    required this.flag,
+    required this.icon,
     required this.name,
     required this.isSelected,
     required this.onTap,
   });
 
-  final String flag;
+  final IconData icon;
   final String name;
   final bool isSelected;
   final VoidCallback onTap;
@@ -90,7 +90,7 @@ class _LanguageCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(flag, style: const TextStyle(fontSize: 28)),
+            Icon(icon, size: 28, color: isSelected ? AppColors.textOnAccent : AppColors.textSecondary),
             const SizedBox(height: 6),
             Text(
               name,

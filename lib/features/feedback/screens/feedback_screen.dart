@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -75,6 +76,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen>
   void _checkForBadges() {
     final badges = ref.read(newlyEarnedBadgesProvider);
     if (badges.isNotEmpty) {
+      HapticFeedback.mediumImpact();
       setState(() {
         _showBadgePopup = true;
         _currentBadgeIndex = 0;

@@ -50,12 +50,17 @@ class SrsViewModel extends AsyncNotifier<SrsState> {
   }
 
   /// Mark an item as reviewed (quality 4 = "I know this").
-  Future<void> reviewItem(SrsItem item) async {
+  Future<void> reviewItem(SrsItem item) => _reviewItemWithQuality(item, 4);
+
+  /// Mark an item as "Don't know" (quality 1 = complete blackout, resets interval).
+  Future<void> dontKnowItem(SrsItem item) => _reviewItemWithQuality(item, 1);
+
+  Future<void> _reviewItemWithQuality(SrsItem item, int quality) async {
     final user = ref.read(currentUserProvider);
     if (user == null || user.isAnonymous) return;
 
     final srsService = ref.read(srsServiceProvider);
-    await srsService.reviewItem(user.uid, item, 4);
+    await srsService.reviewItem(user.uid, item, quality);
 
     final current = state.value;
     if (current == null) return;
@@ -63,7 +68,6 @@ class SrsViewModel extends AsyncNotifier<SrsState> {
     final remaining = current.dueItems.where((i) => i.id != item.id).toList();
     state = AsyncData(current.copyWith(dueItems: remaining));
 
-    // If no more items, mark review as complete.
     if (remaining.isEmpty) {
       state = AsyncData(current.copyWith(
         dueItems: remaining,

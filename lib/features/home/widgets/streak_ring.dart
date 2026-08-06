@@ -33,13 +33,11 @@ class StreakRing extends StatelessWidget {
               ),
             ),
             child: Center(
-              child: isActive
-                  ? const Text('🔥', style: TextStyle(fontSize: 28))
-                  : Icon(
-                      Icons.local_fire_department_outlined,
-                      size: 28,
-                      color: AppColors.textTertiary,
-                    ),
+              child: Icon(
+                Icons.local_fire_department,
+                size: 28,
+                color: isActive ? AppColors.warning : AppColors.textTertiary,
+              ),
             ),
           ),
           const SizedBox(width: 16),

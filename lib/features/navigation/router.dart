@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,6 +17,31 @@ import '../scenario_selection/screens/create_scenario_screen.dart';
 import '../scenario_selection/screens/scenario_selection_screen.dart';
 import '../srs/screens/pre_scenario_review_screen.dart';
 import 'scaffold_with_nav_bar.dart';
+
+/// Slide-up transition for full-screen routes.
+CustomTransitionPage<void> _slideUpPage(Widget child) {
+  return CustomTransitionPage<void>(
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.05),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        )),
+        child: FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: const Interval(0.0, 0.5),
+          ),
+          child: child,
+        ),
+      );
+    },
+  );
+}
 
 /// GoRouter configuration for the app.
 ///
@@ -115,25 +141,25 @@ final GoRouter appRouter = GoRouter(
     // ─── Full-screen routes (no bottom nav) ───
     GoRoute(
       path: '/conversation/:id',
-      builder: (context, state) => const ConversationScreen(),
+      pageBuilder: (context, state) => _slideUpPage(const ConversationScreen()),
     ),
     GoRoute(
       path: '/feedback',
-      builder: (context, state) => const FeedbackScreen(),
+      pageBuilder: (context, state) => _slideUpPage(const FeedbackScreen()),
     ),
     GoRoute(
       path: '/leaderboard',
-      builder: (context, state) => const LeaderboardScreen(),
+      pageBuilder: (context, state) => _slideUpPage(const LeaderboardScreen()),
     ),
     GoRoute(
       path: '/create-scenario',
-      builder: (context, state) => const CreateScenarioScreen(),
+      pageBuilder: (context, state) => _slideUpPage(const CreateScenarioScreen()),
     ),
     GoRoute(
       path: '/pre-scenario-review',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final scenarioId = state.extra as String? ?? '';
-        return PreScenarioReviewScreen(scenarioId: scenarioId);
+        return _slideUpPage(PreScenarioReviewScreen(scenarioId: scenarioId));
       },
     ),
   ],
