@@ -57,37 +57,50 @@ class _AppButtonState extends State<AppButton> {
     );
   }
 
+  /// Wraps content so it fills available width when constrained
+  /// but sizes to content when placed in an unconstrained layout.
+  Widget _fillOrContent(Widget child) {
+    return Align(
+      alignment: Alignment.center,
+      widthFactor: 1.0,
+      child: child,
+    );
+  }
+
   Widget _buildPrimary() {
-    return Container(
-      width: double.infinity,
-      height: AppSizing.buttonHeight,
-      decoration: BoxDecoration(
-        gradient: AppGradients.accent,
-        borderRadius: AppRadius.md,
-        boxShadow: AppShadows.glowBlue,
+    return _fillOrContent(
+      Container(
+        height: AppSizing.buttonHeight,
+        decoration: BoxDecoration(
+          gradient: AppGradients.accent,
+          borderRadius: AppRadius.md,
+          boxShadow: AppShadows.glowBlue,
+        ),
+        child: Center(child: _buildChild(AppColors.textOnAccent)),
       ),
-      child: Center(child: _buildChild(AppColors.textOnAccent)),
     );
   }
 
   Widget _buildSecondary() {
-    return Container(
-      width: double.infinity,
-      height: AppSizing.buttonHeight,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceGlass,
-        borderRadius: AppRadius.md,
-        border: Border.all(color: AppColors.accentCyan, width: 1),
+    return _fillOrContent(
+      Container(
+        height: AppSizing.buttonHeight,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceGlass,
+          borderRadius: AppRadius.md,
+          border: Border.all(color: AppColors.accentCyan, width: 1),
+        ),
+        child: Center(child: _buildChild(AppColors.accentCyan)),
       ),
-      child: Center(child: _buildChild(AppColors.accentCyan)),
     );
   }
 
   Widget _buildGhost() {
-    return SizedBox(
-      width: double.infinity,
-      height: AppSizing.buttonHeight,
-      child: Center(child: _buildChild(AppColors.accentCyan)),
+    return _fillOrContent(
+      SizedBox(
+        height: AppSizing.buttonHeight,
+        child: Center(child: _buildChild(AppColors.accentCyan)),
+      ),
     );
   }
 
