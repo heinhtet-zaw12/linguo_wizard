@@ -14,9 +14,6 @@ import '../widgets/mistake_summary.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Progress tab screen displaying gamification stats.
-///
-/// Shows level progress, XP, streak, badges earned, and mistake summary.
-/// Accessible as one of the 4 bottom nav tabs (per D-01).
 class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});
 
@@ -29,7 +26,7 @@ class ProgressScreen extends ConsumerWidget {
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryPink),
+              child: CircularProgressIndicator(color: AppColors.accentStart),
             ),
             error: (e, _) => Center(
               child: Column(
@@ -37,14 +34,14 @@ class ProgressScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Failed to load progress',
-                    style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                    style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => ref.invalidate(progressViewModelProvider),
                     child: Text(
                       'Retry',
-                      style: AppTextStyles.labelLarge(color: AppColors.primaryPinkDark),
+                      style: AppTextStyles.labelLarge(color: AppColors.accentStart),
                     ),
                   ),
                 ],
@@ -68,12 +65,12 @@ class ProgressScreen extends ConsumerWidget {
               Icon(
                 Icons.person_outline_rounded,
                 size: 48,
-                color: AppColors.textMuted.withValues(alpha: 0.5),
+                color: AppColors.textTertiary,
               ),
               const SizedBox(height: 12),
               Text(
                 state.error!,
-                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -86,37 +83,26 @@ class ProgressScreen extends ConsumerWidget {
       onRefresh: () async {
         ref.read(progressViewModelProvider.notifier).refresh();
       },
-      color: AppColors.primaryPink,
+      color: AppColors.accentStart,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Header ───
             Text(
               'Your Progress',
-              style: AppTextStyles.displayMedium(color: AppColors.textDark),
+              style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
             ),
             const SizedBox(height: 20),
-
-            // ─── Level Progress ───
             _buildLevelProgress(state),
             const SizedBox(height: 16),
-
-            // ─── Stats Row ───
             _buildStatsRow(state),
             const SizedBox(height: 20),
-
-            // ─── Badge Grid ───
             BadgeGrid(earnedBadges: state.earnedBadges),
             const SizedBox(height: 20),
-
-            // ─── Mistake Summary ───
             MistakeSummary(stats: state.mistakeStats),
             const SizedBox(height: 20),
-
-            // ─── Leaderboard Button ───
             _buildLeaderboardButton(context),
             const SizedBox(height: 20),
           ],
@@ -126,7 +112,6 @@ class ProgressScreen extends ConsumerWidget {
   }
 
   Widget _buildLevelProgress(ProgressState state) {
-    // Determine next level XP.
     final levels = LevelConfig.levels;
     final nextLevelIndex = (state.currentLevel + 1).clamp(0, levels.length - 1);
     final nextLevelXp = levels[nextLevelIndex].xpRequired;
@@ -144,21 +129,21 @@ class ProgressScreen extends ConsumerWidget {
       children: [
         StatCard(
           icon: Icons.local_fire_department_rounded,
-          iconColor: AppColors.accentGold,
+          iconColor: AppColors.warning,
           value: '${state.currentStreak}',
           label: 'Day Streak',
         ),
         const SizedBox(width: 12),
         StatCard(
           icon: Icons.star_rounded,
-          iconColor: AppColors.primaryPink,
+          iconColor: AppColors.accentStart,
           value: '${state.totalXp}',
           label: 'Total XP',
         ),
         const SizedBox(width: 12),
         StatCard(
           icon: Icons.check_circle_outline_rounded,
-          iconColor: Colors.green,
+          iconColor: AppColors.success,
           value: '${state.scenariosCompleted}',
           label: 'Scenarios',
         ),

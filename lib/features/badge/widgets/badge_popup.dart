@@ -1,13 +1,15 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_shadows.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Celebratory badge award popup with confetti animation.
-///
-/// Per D-11: "Celebratory, interruptive by design — user should feel rewarded."
-/// Auto-dismisses after 4 seconds or on tap.
 class BadgePopup extends StatefulWidget {
   const BadgePopup({
     super.key,
@@ -35,7 +37,6 @@ class _BadgePopupState extends State<BadgePopup> {
     );
     _confettiController.play();
 
-    // Auto-dismiss after 4 seconds.
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
         _dismiss();
@@ -61,7 +62,7 @@ class _BadgePopupState extends State<BadgePopup> {
         children: [
           // Semi-transparent overlay
           Container(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: Colors.black.withValues(alpha: 0.6),
           ),
 
           // Confetti
@@ -72,11 +73,11 @@ class _BadgePopupState extends State<BadgePopup> {
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
               colors: const [
-                AppColors.primaryPink,
-                AppColors.accentGold,
-                AppColors.primaryPinkLight,
-                Colors.green,
-                AppColors.accentCoral,
+                AppColors.accentStart,
+                AppColors.accentMid,
+                AppColors.accentCyan,
+                AppColors.warning,
+                AppColors.success,
               ],
               numberOfParticles: 30,
               gravity: 0.1,
@@ -88,74 +89,70 @@ class _BadgePopupState extends State<BadgePopup> {
           Center(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 40),
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadowPink.withValues(alpha: 0.3),
-                    blurRadius: 24,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Trophy icon
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.accentGold.withValues(alpha: 0.2),
-                      border: Border.all(
-                        color: AppColors.accentGold.withValues(alpha: 0.4),
-                        width: 2,
+              child: GlassCard(
+                padding: const EdgeInsets.all(32),
+                glowColor: AppColors.accentCyanGlow.withValues(alpha: 0.3),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Gradient circle with trophy icon
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppGradients.accent,
+                        boxShadow: AppShadows.glowCyan,
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.emoji_events_rounded,
+                          color: Colors.white,
+                          size: 40,
+                        ),
                       ),
                     ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.emoji_events_rounded,
-                        color: AppColors.accentGold,
-                        size: 40,
-                      ),
+                    const SizedBox(height: 16),
+
+                    // "Awesome!" label
+                    Text(
+                      'Awesome!',
+                      style: AppTextStyles.labelLarge(color: AppColors.accentCyan),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 8),
 
-                  // "New Badge!" label
-                  Text(
-                    'New Badge!',
-                    style: AppTextStyles.labelLarge(color: AppColors.accentGold),
-                  ),
-                  const SizedBox(height: 8),
+                    // Badge name
+                    Text(
+                      widget.badgeName,
+                      style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
 
-                  // Badge name
-                  Text(
-                    widget.badgeName,
-                    style: AppTextStyles.headingLarge(color: AppColors.textDark),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
+                    // Badge description
+                    Text(
+                      widget.badgeDescription,
+                      style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
 
-                  // Badge description
-                  Text(
-                    widget.badgeDescription,
-                    style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Tap to dismiss hint
-                  Text(
-                    'Tap anywhere to continue',
-                    style: AppTextStyles.labelSmall(color: AppColors.textMuted.withValues(alpha: 0.6)),
-                  ),
-                ],
+                    // Tap to dismiss hint
+                    Text(
+                      'Tap anywhere to continue',
+                      style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            )
+                .animate()
+                .scale(
+                  begin: const Offset(0.9, 0.9),
+                  duration: 250.ms,
+                  curve: Curves.easeOutBack,
+                )
+                .fadeIn(duration: 250.ms),
           ),
         ],
       ),

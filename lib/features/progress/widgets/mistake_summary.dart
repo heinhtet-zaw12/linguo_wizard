@@ -1,48 +1,35 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/widgets/app_card.dart';
 import '../viewmodels/progress_viewmodel.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Displays a summary of mistake patterns for the last 7 days.
-///
-/// Shows overall accuracy percentage, grammar mistakes count,
-/// and vocabulary gaps count. Per D-15: summary only, no trend charts.
 class MistakeSummary extends StatelessWidget {
   const MistakeSummary({
     super.key,
     required this.stats,
   });
 
-  /// Mistake statistics to display.
   final MistakeStats stats;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Mistake Summary',
-            style: AppTextStyles.headingMedium(color: AppColors.textDark),
+            style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 4),
           Text(
             'Last 7 days',
-            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+            style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
           ),
           const SizedBox(height: 12),
           Row(
@@ -52,24 +39,24 @@ class MistakeSummary extends StatelessWidget {
                 label: 'Accuracy',
                 value: '${stats.accuracyPercent.round()}%',
                 color: stats.accuracyPercent >= 80
-                    ? Colors.green
+                    ? AppColors.success
                     : stats.accuracyPercent >= 50
-                        ? AppColors.accentGold
-                        : AppColors.accentCoral,
+                        ? AppColors.warning
+                        : AppColors.danger,
               ),
               const SizedBox(width: 12),
               _StatItem(
                 icon: Icons.rule_outlined,
                 label: 'Grammar',
                 value: '${stats.grammarMistakes}',
-                color: AppColors.accentCoral,
+                color: AppColors.danger,
               ),
               const SizedBox(width: 12),
               _StatItem(
                 icon: Icons.translate_outlined,
                 label: 'Vocabulary',
                 value: '${stats.vocabularyGaps}',
-                color: AppColors.primaryPinkDark,
+                color: AppColors.accentStart,
               ),
             ],
           ),
@@ -99,7 +86,7 @@ class _StatItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.sm,
         ),
         child: Column(
           children: [
@@ -112,7 +99,7 @@ class _StatItem extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               label,
-              style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+              style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
             ),
           ],
         ),

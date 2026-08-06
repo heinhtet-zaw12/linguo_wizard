@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Displays the user's current level with an animated progress bar.
-///
-/// Shows level name, progress fraction (0-100%), and XP remaining to next level.
 class LevelProgress extends StatelessWidget {
   const LevelProgress({
     super.key,
@@ -15,61 +16,42 @@ class LevelProgress extends StatelessWidget {
     required this.nextLevelXp,
   });
 
-  /// Name of the current level (e.g. "Beginner", "Elementary").
   final String levelName;
-
-  /// Progress fraction toward the next level (0.0 to 1.0).
   final double progress;
-
-  /// Current total XP.
   final int currentXp;
-
-  /// XP required for the next level.
   final int nextLevelXp;
 
   @override
   Widget build(BuildContext context) {
     final xpRemaining = nextLevelXp - currentXp;
 
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Level label and name
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.school_rounded,
-                color: AppColors.primaryPinkDark,
+                color: AppColors.accentStart,
                 size: 20,
               ),
               const SizedBox(width: 8),
               Text(
                 'Level',
-                style: AppTextStyles.labelMedium(color: AppColors.textMuted),
+                style: AppTextStyles.labelMedium(color: AppColors.textSecondary),
               ),
               const Spacer(),
               Text(
                 levelName,
-                style: AppTextStyles.headingSmall(color: AppColors.textDark),
+                style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
               ),
             ],
           ),
           const SizedBox(height: 12),
 
-          // Animated progress bar
+          // Animated gradient progress bar
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: TweenAnimationBuilder<double>(
@@ -77,23 +59,35 @@ class LevelProgress extends StatelessWidget {
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeOutCubic,
               builder: (context, value, _) {
-                return LinearProgressIndicator(
-                  value: value,
-                  minHeight: 12,
-                  backgroundColor: AppColors.primaryPinkLight.withValues(alpha: 0.4),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryPink),
+                return Container(
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface2,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FractionallySizedBox(
+                      widthFactor: value,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: AppGradients.accent,
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
           ),
           const SizedBox(height: 8),
 
-          // XP info
           Text(
             xpRemaining > 0
                 ? '$currentXp / $nextLevelXp XP  ($xpRemaining XP to next level)'
                 : '$currentXp XP  (Max level reached!)',
-            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+            style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
           ),
         ],
       ),

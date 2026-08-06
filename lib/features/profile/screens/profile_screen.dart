@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_gradients.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/theme/app_shadows.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../../core/widgets/info_row.dart';
@@ -25,7 +27,7 @@ class ProfileScreen extends ConsumerWidget {
         child: SafeArea(
           child: asyncState.when(
             loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryPink),
+              child: CircularProgressIndicator(color: AppColors.accentStart),
             ),
             error: (e, _) => Center(
               child: Column(
@@ -33,14 +35,14 @@ class ProfileScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Failed to load profile',
-                    style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                    style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () => ref.invalidate(profileViewModelProvider),
                     child: Text(
                       'Retry',
-                      style: AppTextStyles.labelLarge(color: AppColors.primaryPinkDark),
+                      style: AppTextStyles.labelLarge(color: AppColors.accentStart),
                     ),
                   ),
                 ],
@@ -64,12 +66,12 @@ class ProfileScreen extends ConsumerWidget {
               Icon(
                 Icons.person_outline_rounded,
                 size: 48,
-                color: AppColors.textMuted.withValues(alpha: 0.5),
+                color: AppColors.textTertiary,
               ),
               const SizedBox(height: 12),
               Text(
                 state.error!,
-                style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -82,37 +84,26 @@ class ProfileScreen extends ConsumerWidget {
       onRefresh: () async {
         ref.read(profileViewModelProvider.notifier).refresh();
       },
-      color: AppColors.primaryPink,
+      color: AppColors.accentStart,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Header ───
             Text(
               'Profile',
-              style: AppTextStyles.displayMedium(color: AppColors.textDark),
+              style: AppTextStyles.displayMedium(color: AppColors.textPrimary),
             ),
             const SizedBox(height: 24),
-
-            // ─── Avatar + Name ───
             _buildAvatarSection(state),
             const SizedBox(height: 24),
-
-            // ─── Stats Row ───
             _buildStatsRow(state),
             const SizedBox(height: 24),
-
-            // ─── Account Info ───
             _buildAccountInfo(state),
             const SizedBox(height: 24),
-
-            // ─── Settings ───
             _buildSettingsSection(context, ref),
             const SizedBox(height: 24),
-
-            // ─── Logout Button ───
             _buildLogoutButton(context, ref),
             const SizedBox(height: 20),
           ],
@@ -129,42 +120,44 @@ class ProfileScreen extends ConsumerWidget {
     return Center(
       child: Column(
         children: [
+          // Gradient-bordered avatar circle
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(2),
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primaryPinkLight,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadowPink.withValues(alpha: 0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              gradient: AppGradients.accent,
+              boxShadow: AppShadows.glowBlue,
             ),
-            child: state.photoUrl != null
-                ? ClipOval(
-                    child: Image.network(
-                      state.photoUrl!,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => _buildInitials(initials),
-                    ),
-                  )
-                : _buildInitials(initials),
+            child: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.surface1,
+              ),
+              child: state.photoUrl != null
+                  ? ClipOval(
+                      child: Image.network(
+                        state.photoUrl!,
+                        width: 76,
+                        height: 76,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => _buildInitials(initials),
+                      ),
+                    )
+                  : _buildInitials(initials),
+            ),
           ),
           const SizedBox(height: 12),
           Text(
             state.displayName,
-            style: AppTextStyles.headingLarge(color: AppColors.textDark),
+            style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
           ),
           if (state.email.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
               state.email,
-              style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ],
         ],
@@ -176,7 +169,7 @@ class ProfileScreen extends ConsumerWidget {
     return Center(
       child: Text(
         initials,
-        style: AppTextStyles.displayMedium(color: AppColors.primaryPinkDark),
+        style: AppTextStyles.displayMedium(color: AppColors.accentStart),
       ),
     );
   }
@@ -186,21 +179,21 @@ class ProfileScreen extends ConsumerWidget {
       children: [
         StatCard(
           icon: Icons.star_rounded,
-          iconColor: AppColors.primaryPink,
+          iconColor: AppColors.accentStart,
           value: '${state.totalXp}',
           label: 'Total XP',
         ),
         const SizedBox(width: 12),
         StatCard(
           icon: Icons.local_fire_department_rounded,
-          iconColor: AppColors.accentGold,
+          iconColor: AppColors.warning,
           value: '${state.currentStreak}',
           label: 'Day Streak',
         ),
         const SizedBox(width: 12),
         StatCard(
           icon: Icons.check_circle_outline_rounded,
-          iconColor: Colors.green,
+          iconColor: AppColors.success,
           value: '${state.scenariosCompleted}',
           label: 'Scenarios',
         ),
@@ -209,7 +202,7 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildAccountInfo(ProfileState state) {
-    return AppCard(
+    return GlassCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
@@ -222,75 +215,53 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildSettingsSection(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-
-    return AppCard(
+    // Dark-only theme — no toggle UI. Settings section is minimal.
+    return GlassCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Settings',
-            style: AppTextStyles.headingSmall(color: AppColors.textDark),
+            style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 12),
-          // ─── Dark Mode Toggle ───
-          _buildThemeTile(ref, themeMode),
+          Row(
+            children: [
+              Icon(
+                Icons.dark_mode_outlined,
+                size: 22,
+                color: AppColors.textSecondary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Dark Mode',
+                  style: AppTextStyles.bodyMedium(color: AppColors.textPrimary),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.accentStart.withValues(alpha: 0.15),
+                  borderRadius: AppRadius.pill,
+                ),
+                child: Text(
+                  'Always On',
+                  style: AppTextStyles.labelSmall(color: AppColors.accentStart),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildThemeTile(WidgetRef ref, ThemeMode currentMode) {
-    return Row(
-      children: [
-        Icon(
-          Icons.dark_mode_outlined,
-          size: 22,
-          color: AppColors.textMuted,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            'Dark Mode',
-            style: AppTextStyles.bodyMedium(color: AppColors.textDark),
-          ),
-        ),
-        SegmentedButton<ThemeMode>(
-          segments: const [
-            ButtonSegment(
-              value: ThemeMode.system,
-              label: Text('Auto', style: TextStyle(fontSize: 12)),
-              icon: Icon(Icons.brightness_auto, size: 16),
-            ),
-            ButtonSegment(
-              value: ThemeMode.light,
-              label: Text('Light', style: TextStyle(fontSize: 12)),
-              icon: Icon(Icons.light_mode, size: 16),
-            ),
-            ButtonSegment(
-              value: ThemeMode.dark,
-              label: Text('Dark', style: TextStyle(fontSize: 12)),
-              icon: Icon(Icons.dark_mode, size: 16),
-            ),
-          ],
-          selected: {currentMode},
-          onSelectionChanged: (selected) {
-            ref.read(themeModeProvider.notifier).setMode(selected.first);
-          },
-          style: ButtonStyle(
-            visualDensity: VisualDensity.compact,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
     return AppButton(
       label: 'Sign Out',
-      variant: AppButtonVariant.secondary,
+      variant: AppButtonVariant.ghost,
       icon: Icons.logout_rounded,
       onPressed: () async {
         final confirmed = await showDialog<bool>(
@@ -309,14 +280,14 @@ class ProfileScreen extends ConsumerWidget {
                 onPressed: () => Navigator.pop(ctx, false),
                 child: Text(
                   'Cancel',
-                  style: AppTextStyles.bodyMedium(color: AppColors.textMuted),
+                  style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx, true),
                 child: Text(
                   'Sign Out',
-                  style: AppTextStyles.labelLarge(color: Colors.red),
+                  style: AppTextStyles.labelLarge(color: AppColors.danger),
                 ),
               ),
             ],

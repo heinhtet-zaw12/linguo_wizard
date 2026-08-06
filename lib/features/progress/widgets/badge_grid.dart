@@ -3,48 +3,36 @@ import 'package:flutter/material.dart' hide Badge;
 import '../../../core/config/badge_config.dart';
 import '../../../core/models/badge.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_dimensions.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Displays all badge definitions in a 3-column grid.
-///
-/// Earned badges show in full color; unearned badges are greyed out.
 class BadgeGrid extends StatelessWidget {
   const BadgeGrid({
     super.key,
     required this.earnedBadges,
   });
 
-  /// List of badges the user has earned (matched by badge ID).
   final List<Badge> earnedBadges;
 
   @override
   Widget build(BuildContext context) {
     final earnedIds = earnedBadges.map((b) => b.id).toSet();
 
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowPink.withValues(alpha: 0.15),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Badges',
-            style: AppTextStyles.headingMedium(color: AppColors.textDark),
+            style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 4),
           Text(
             '${earnedIds.length} of ${badgeDefinitions.length} earned',
-            style: AppTextStyles.labelSmall(color: AppColors.textMuted),
+            style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
           ),
           const SizedBox(height: 12),
           GridView.builder(
@@ -86,32 +74,23 @@ class _BadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: isEarned
-            ? AppColors.accentGold.withValues(alpha: 0.15)
-            : Colors.grey.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isEarned
-              ? AppColors.accentGold.withValues(alpha: 0.4)
-              : Colors.grey.withValues(alpha: 0.2),
-          width: 1.5,
-        ),
-      ),
+      glowColor: isEarned ? AppColors.warning.withValues(alpha: 0.2) : null,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             isEarned ? Icons.emoji_events_rounded : Icons.emoji_events_outlined,
-            color: isEarned ? AppColors.accentGold : Colors.grey.withValues(alpha: 0.4),
+            color: isEarned ? AppColors.warning : AppColors.textTertiary,
             size: 28,
           ),
           const SizedBox(height: 6),
           Text(
             name,
-            style: AppTextStyles.labelSmall(),
+            style: AppTextStyles.labelSmall(
+              color: isEarned ? AppColors.textPrimary : AppColors.textTertiary,
+            ),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
