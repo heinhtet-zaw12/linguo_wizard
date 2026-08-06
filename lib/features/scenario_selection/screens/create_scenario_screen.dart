@@ -75,7 +75,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+            icon: const Icon(Icons.arrow_back_ios_rounded, size: 20, color: AppColors.textPrimary),
             onPressed: () => context.pop(),
           ),
           const SizedBox(width: 4),

@@ -380,7 +380,7 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios, size: 20),
+            icon: const Icon(Icons.arrow_back_ios_rounded, size: 20),
             onPressed: () => context.pop(),
             color: AppColors.textPrimary,
           ),
