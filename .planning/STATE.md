@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: In Progress
-stopped_at: context exhaustion at 75% (2026-08-06)
-last_updated: "2026-08-06T06:23:49.921Z"
+status: Complete
+stopped_at: Phase 7 complete (2026-08-08)
+last_updated: "2026-08-08T00:00:00.000Z"
 progress:
   total_phases: 7
   completed_phases: 7
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-14)
 
 **Core value:** The voice conversation loop — speak naturally to an AI character, get immersive practice, and receive actionable feedback afterward.
-**Current focus:** Phase 07 — ui-redesign-dark-theme
+**Current focus:** Phase 07 complete — all phases done for v1.0 milestone
 
 ## Progress
 
@@ -32,6 +32,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 | Phase 4 | **Complete** | 100% |
 | Phase 5 | **Complete** | 100% |
 | Phase 6 | **Complete** | 100% |
+| Phase 7 | **Complete** | 100% |
 
 ## Phase 1 — Complete
 
@@ -100,12 +101,11 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 - 2026-07-21: Phase 3 complete — Firebase Auth, Firestore, cloud sync
 - 2026-07-21: Phase 4 complete — gamification (streaks, XP, badges, SRS, leaderboard, progress)
 - 2026-07-21: Phase 4 UAT passed — 13/13 automated verification tests
-- 2026-07-22: **Enhancement session** — Conversation voice message UI overhaul + history persistence:
-  - Audio-first bubble with Play/Pause controls for AI messages
-  - Collapsible transcript ("Show Transcript"/"Hide Transcript" toggle)
-  - New `ConversationStorageService` (SharedPreferences for guests, Firestore for auth users)
-  - Save/discard dialog on exit, New Chat button to reset, Resume prompt on re-entry
-  - See `.planning/tmp/conversation-update-plan.md` for full scope
+- 2026-07-22: **Enhancement session** — Conversation voice message UI overhaul + history persistence
+- 2026-08-05: Phase 6 complete — shared component library, dark mode toggle, glass morphism
+- 2026-08-06: Phase 7 plans complete — futuristic dark theme rewrite (3 plans, 29+ files)
+- 2026-08-06: UI/UX audit — 22-item report, 20/22 implemented (P0+P1+P2+most P3)
+- 2026-08-08: Phase 7 closed — final 2 P3 items done (guest banner animation, leaderboard scroll-to-self), 22/22 audit complete
 
 ## Phase 5 — Complete
 
@@ -115,21 +115,31 @@ Screens are pure UI layers. ViewModels (StateNotifiers) own all orchestration lo
 - [x] **Plan 04: Daily Challenge** — DailyChallengeService with UTC rotation, DailyChallengeCard with countdown timer, Home dashboard integration, 2x XP bonus, Firestore seed documents
 - [ ] Plan 05: Premium & Polish (planned)
 
-## Phase 6 — In Progress
+## Phase 6 — Complete
 
 - [x] **Wave 1: Design System Foundation** — Design tokens (colors, typography, spacing, shadows), dark mode, `flutter_animate` dependency. 5 new token files in lib/core/theme/. AppTheme refactored with light + dark. Backward-compatible legacy aliases preserved.
 - [x] **Wave 2: Shared Component Library** — AppButton (gradient+glow), AppCard (frosted glass), AppChip (glass pill), AppNavBar (frosted glass), StatCard, GradientBackground, CefrBadge, InfoRow, AppTextField. All 18 screens refactored. 183 font refs migrated to AppTextStyles.
 - [x] **Wave 3: Screen Redesign** — Dark mode toggle (SharedPreferences-backed ThemeModeProvider), SegmentedButton in profile settings. Leaderboard migrated to GradientBackground + semantic tokens. Glass morphism applied to all shared widgets.
 - [x] **Wave 4: Dark Mode + Polish** — Theme toggle wired (AppColorProvider syncs on change), flutter_animate entrance animations on StatCard + AppNavBar, glass morphism on AppCard/AppButton/AppChip.
 
+## Phase 7 — Complete
+
+- [x] **Plan 01: Theme Foundation Rewrite** — Dark-only theme with futuristic palette, glassmorphism 2.0 widgets (GlassCard, AppChip 2.0, GradientNavBar, StatCard), design tokens, 5 theme files
+- [x] **Plan 02: Screen Redesigns Batch 1** — Splash, onboarding, auth (login/signup/forgot), home, scenario selection — 18 files migrated to token-based styling
+- [x] **Plan 03: Screen Redesigns Batch 2** — Conversation, feedback, profile, leaderboard, progress, badge popup — 11 files migrated, zero legacy color references
+- [x] **UI/UX Audit** — 22-item audit report, all 22 items implemented (P0 + P1 + P2 + P3):
+  - P0 (5): textTertiary contrast, surfaceGlass opacity, AppButton semantics+disabled, spinner color
+  - P1 (6): DialogTheme+SnackBarTheme, AppRadius tokens, ErrorBanner extraction, padding standardization, back arrow standardization
+  - P2 (5): BackdropFilter removal, emoji→Material Icons, hardcoded shadows/buttons/progress
+  - P3 (6): Haptic feedback, page transitions, SRS "Don't know", badge popup dismiss, guest banner animation, leaderboard scroll-to-self
+
 ---
 *Last updated: 2026-08-05 after Phase 6 completion*
 
 ## Session
 
-**Last session:** 2026-08-06T08:10:00Z
-**Stopped at:** Audit fixes 13/22 (59%) — P0+P1 complete, pausing before P2
-**Resume file:** .planning/phases/07-ui-redesign-dark-theme/.continue-here.md
+**Last session:** 2026-08-08
+**Stopped at:** Phase 7 complete — v1.0 milestone fully done
 
 ## Remaining Work
 
