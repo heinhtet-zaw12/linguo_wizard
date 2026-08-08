@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -88,6 +89,9 @@ class _GuestBannerState extends State<GuestBanner> {
           ),
         ],
       ),
-    );
+    )
+        .animate()
+        .slideY(begin: -0.15, end: 0, duration: 400.ms, curve: Curves.easeOut)
+        .fadeIn(duration: 400.ms);
   }
 }

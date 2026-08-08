@@ -3,19 +3,53 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/app_dimensions.dart';
-import '../../../core/theme/app_shadows.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_card.dart';
 import '../viewmodels/leaderboard_viewmodel.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// Full-screen leaderboard showing top users ranked by XP.
-class LeaderboardScreen extends ConsumerWidget {
+class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LeaderboardScreen> createState() => _LeaderboardScreenState();
+}
+
+class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _scrolledToSelf = false;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToCurrentUser(List<LeaderboardEntry> entries) {
+    if (_scrolledToSelf) return;
+
+    final selfIndex = entries.indexWhere((e) => e.isCurrentUser);
+    if (selfIndex < 0) return;
+
+    _scrolledToSelf = true;
+
+    // Wait for layout, then scroll to center the user's row
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      // Each tile is ~56px (12+16+16+12 padding) + 8 gap
+      final tileHeight = 56.0;
+      final targetOffset = (selfIndex * tileHeight) - 120.0;
+      _scrollController.animateTo(
+        targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+        duration: 600.ms,
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final asyncEntries = ref.watch(leaderboardViewModelProvider);
 
     return Scaffold(
@@ -65,13 +99,21 @@ class LeaderboardScreen extends ConsumerWidget {
               );
             }
 
+            // Trigger scroll-to-self after first data load
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToCurrentUser(entries);
+            });
+
             return RefreshIndicator(
               onRefresh: () async {
+                _scrolledToSelf = false;
                 ref.read(leaderboardViewModelProvider.notifier).refresh();
               },
               color: AppColors.accentStart,
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4, vertical: 8),
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.s4, vertical: 8),
                 itemCount: entries.length,
                 itemBuilder: (context, index) {
                   final entry = entries[index];
