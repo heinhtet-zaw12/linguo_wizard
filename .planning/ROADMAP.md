@@ -209,4 +209,30 @@ Plans:
 
 ---
 
-*Last updated: 2026-08-05*
+---
+
+## Phase 8: Text-Only AI Response Mode
+
+**Goal:** Add a conversation screen toggle that disables TTS playback and renders AI responses as simple text bubbles instead of voice message bubbles
+
+**Success Criteria:**
+
+1. Toggle button visible on conversation screen (top-right, near End Conversation button)
+2. When ON: AI responses render as text bubbles, no TTS plays
+3. When OFF: Existing voice bubble behavior preserved
+4. Toggle can be switched mid-conversation
+5. `flutter analyze` passes with zero errors
+
+**Requires:** Phase 7 complete
+
+**Spec:** `docs/superpowers/specs/2026-08-10-text-only-mode-design.md`
+
+**Plans:** 1 plan
+
+Plans:
+
+- [ ] 08-01-PLAN.md — State + ViewModel + TextMessageBubble + toggle wiring into ConversationScreen
+
+---
+
+*Last updated: 2026-08-10*
