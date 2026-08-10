@@ -24,6 +24,7 @@ class ConversationState {
   final List<Badge> newlyEarnedBadges;
   final String? errorMessage;
   final String? playingMessageId;
+  final bool textOnlyMode;
 
   const ConversationState({
     this.messages = const [],
@@ -39,6 +40,7 @@ class ConversationState {
     this.newlyEarnedBadges = const [],
     this.errorMessage,
     this.playingMessageId,
+    this.textOnlyMode = false,
   });
 
   ConversationState copyWith({
@@ -58,7 +60,8 @@ class ConversationState {
     bool clearError = false,
     bool clearPlayingMessageId = false,
     bool clearScoreData = false,
-}) {
+    bool? textOnlyMode,
+  }) {
     return ConversationState(
       messages: messages ?? this.messages,
       isRecording: isRecording ?? this.isRecording,
@@ -76,6 +79,7 @@ class ConversationState {
       playingMessageId: clearPlayingMessageId
           ? null
           : (playingMessageId ?? this.playingMessageId),
+      textOnlyMode: textOnlyMode ?? this.textOnlyMode,
     );
   }
 }

@@ -190,9 +190,20 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     );
     state = AsyncData(current.copyWith(messages: [...current.messages, aiMessage]));
 
-    // Transition to speaking
+    // Re-read state after adding AI message.
     current = state.value;
     if (current == null) return;
+
+    if (current.textOnlyMode) {
+      // Text-only mode: skip TTS, go directly to idle.
+      state = AsyncData(current.copyWith(
+        loopState: ConversationLoopState.idle,
+        isAiSpeaking: false,
+      ));
+      return;
+    }
+
+    // Voice mode: transition to speaking, then TTS.
     state = AsyncData(current.copyWith(
       loopState: ConversationLoopState.speaking,
       isAiSpeaking: true,
@@ -342,6 +353,13 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     final current = state.value;
     if (current == null) return;
     state = AsyncData(current.copyWith(clearError: true));
+  }
+
+  /// Toggle text-only mode (AI responses as text, no TTS).
+  void toggleTextOnlyMode() {
+    final current = state.value;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(textOnlyMode: !current.textOnlyMode));
   }
 
   // ─── Conversation Persistence ───
