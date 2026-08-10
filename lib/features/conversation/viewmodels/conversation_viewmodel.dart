@@ -141,7 +141,18 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
 
   void _stopRecording() {
     _sttService.stopListening();
-    // The onResult callback with finalResult=true will handle the transition
+    // Safety net: if the STT engine doesn't fire a finalResult callback
+    // (e.g. user stops with no speech), force back to idle after a short delay.
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final current = state.value;
+      if (current != null && current.loopState == ConversationLoopState.recording) {
+        state = AsyncData(current.copyWith(
+          loopState: ConversationLoopState.idle,
+          isRecording: false,
+          currentPartialTranscript: '',
+        ));
+      }
+    });
   }
 
   Future<void> _processFinalTranscript(String transcript) async {
