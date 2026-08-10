@@ -18,6 +18,7 @@ import '../providers/conversation_provider.dart';
 import '../viewmodels/conversation_viewmodel.dart';
 import '../widgets/mic_button.dart';
 import '../widgets/voice_message_bubble.dart';
+import '../widgets/text_message_bubble.dart';
 import '../../../core/theme/app_text_styles.dart';
 
 /// The main conversation screen — displays the voice message loop.
@@ -434,6 +435,18 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
             onPressed: _onNewChat,
             color: AppColors.accentStart,
           ),
+          IconButton(
+            icon: Icon(
+              state.textOnlyMode ? Icons.chat : Icons.record_voice_over,
+              size: 22,
+            ),
+            tooltip: 'Text-only mode',
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              ref.read(conversationProvider(scenario).notifier).toggleTextOnlyMode();
+            },
+            color: state.textOnlyMode ? AppColors.accentCyan : AppColors.textSecondary,
+          ),
         ],
       ),
     );
@@ -457,7 +470,14 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
           final isUser = message.sender == MessageSender.user;
 
-          return VoiceMessageBubble(
+          final showTextBubble = state.textOnlyMode && message.sender == MessageSender.ai;
+
+          return showTextBubble
+              ? TextMessageBubble(message: message)
+                  .animate()
+                  .fadeIn(duration: 300.ms)
+                  .slideX(begin: -0.1, duration: 300.ms, curve: Curves.easeOut)
+              : VoiceMessageBubble(
             message: message,
             isPlaying: isSpeaking || isPlaybackActive,
             isPlaybackActive: isPlaybackActive,
