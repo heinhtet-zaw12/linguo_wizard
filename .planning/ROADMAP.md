@@ -227,11 +227,11 @@ Plans:
 
 **Spec:** `docs/superpowers/specs/2026-08-10-text-only-mode-design.md`
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 
-- [ ] 08-01-PLAN.md — State + ViewModel + TextMessageBubble + toggle wiring into ConversationScreen
+- [x] 08-01-PLAN.md — State + ViewModel + TextMessageBubble + toggle wiring into ConversationScreen
 
 ---
 
