@@ -125,34 +125,54 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
 
     _sttService.startListening(
       onResult: (result) {
+        final current = state.value;
+        if (current == null) return;
+
+        // Ignore finalResult if we already left the recording state
+        // (e.g. user tapped stop and we processed the transcript manually).
+        if (result.finalResult && current.loopState != ConversationLoopState.recording) {
+          return;
+        }
+
         if (result.finalResult) {
           _processFinalTranscript(result.recognizedWords);
         } else {
-          final current = state.value;
-          if (current != null) {
-            state = AsyncData(current.copyWith(
-              currentPartialTranscript: result.recognizedWords,
-            ));
-          }
+          state = AsyncData(current.copyWith(
+            currentPartialTranscript: result.recognizedWords,
+          ));
         }
       },
     );
   }
 
   void _stopRecording() {
+    final current = state.value;
+    if (current == null) return;
+
+    // Capture whatever was transcribed so far.
+    final transcript = current.currentPartialTranscript.trim();
+
+    // Stop the STT engine (it may or may not fire a finalResult).
     _sttService.stopListening();
-    // Safety net: if the STT engine doesn't fire a finalResult callback
-    // (e.g. user stops with no speech), force back to idle after a short delay.
-    Future.delayed(const Duration(milliseconds: 500), () {
-      final current = state.value;
-      if (current != null && current.loopState == ConversationLoopState.recording) {
-        state = AsyncData(current.copyWith(
-          loopState: ConversationLoopState.idle,
-          isRecording: false,
-          currentPartialTranscript: '',
-        ));
-      }
-    });
+
+    if (transcript.isNotEmpty) {
+      // User spoke something — send it immediately.
+      _processFinalTranscript(transcript);
+    } else {
+      // No speech captured — fall back to idle after a brief safety-net delay.
+      // This handles the edge case where the STT engine fires a finalResult
+      // with content after we've already reset state.
+      Future.delayed(const Duration(milliseconds: 500), () {
+        final latest = state.value;
+        if (latest != null && latest.loopState == ConversationLoopState.recording) {
+          state = AsyncData(latest.copyWith(
+            loopState: ConversationLoopState.idle,
+            isRecording: false,
+            currentPartialTranscript: '',
+          ));
+        }
+      });
+    }
   }
 
   Future<void> _processFinalTranscript(String transcript) async {

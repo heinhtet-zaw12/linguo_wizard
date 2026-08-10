@@ -40,8 +40,10 @@ class AppConfig {
   /// Maximum duration for STT listening session
   static const Duration sttListenTimeout = Duration(seconds: 30);
 
-  /// Duration of silence before STT auto-pauses
-  static const Duration sttPauseTimeout = Duration(seconds: 3);
+  /// Safety-net silence timeout — very generous so the mic stays open
+  /// until the user manually taps to stop. Only fires if the user walks
+  /// away without ending the turn.
+  static const Duration sttPauseTimeout = Duration(seconds: 60);
 
   /// Enable/disable daily rate limiting for AI calls.
   /// Set to `true` to enforce limits; `false` allows unlimited calls (for testing).
