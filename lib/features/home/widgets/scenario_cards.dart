@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_dimensions.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_gradients.dart';
 import '../../scenario_selection/models/scenario.dart';
@@ -20,7 +21,7 @@ class ScenarioCards extends StatelessWidget {
   Widget build(BuildContext context) {
     if (scenarios.isEmpty) {
       return GlassCard(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.all5,
         child: Center(
           child: Text(
             'No scenarios available. Complete onboarding first!',

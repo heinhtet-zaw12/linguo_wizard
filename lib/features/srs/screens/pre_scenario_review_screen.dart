@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/models/srs_item.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_dimensions.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
@@ -83,7 +84,7 @@ class _PreScenarioReviewScreenState
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: AppSpacing.all5,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -115,7 +116,7 @@ class _PreScenarioReviewScreenState
                 ),
         ),
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: AppSpacing.all5,
           child: Column(
             children: [
               AppButton(

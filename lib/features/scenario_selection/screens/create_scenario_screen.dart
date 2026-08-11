@@ -52,7 +52,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
                   _buildHeader(context),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                      padding: const EdgeInsets.fromLTRB(AppSpacing.s5, 0, AppSpacing.s5, 24),
                       child: _buildContent(state, notifier),
                     ),
                   ),
@@ -71,7 +71,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 12, 12),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.s5, 16, 12, 12),
       child: Row(
         children: [
           IconButton(

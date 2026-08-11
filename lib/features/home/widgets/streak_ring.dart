@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_dimensions.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
 
@@ -15,7 +16,7 @@ class StreakRing extends StatelessWidget {
     final isActive = streakDays > 0;
 
     return GlassCard(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.all5,
       child: Row(
         children: [
           // Ring

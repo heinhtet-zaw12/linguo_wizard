@@ -201,7 +201,7 @@ class _ScenarioSelectionScreenState
         _buildCefrChips(state, notifier),
         if (state.searchQuery.isNotEmpty && state.displayScenarios.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.s5, 4, AppSpacing.s5, 0),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -410,7 +410,7 @@ class _ScenarioSelectionScreenState
 
   Widget _buildMyScenariosHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.s5, 8, AppSpacing.s5, 8),
       child: Text(
         'My Scenarios',
         style: AppTextStyles.headingLarge(color: AppColors.textPrimary),
@@ -472,7 +472,7 @@ class _ScenarioSelectionScreenState
     }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 12, 4),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.s5, 16, 12, 4),
       child: Row(
         children: [
           Expanded(

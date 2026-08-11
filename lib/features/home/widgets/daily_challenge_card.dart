@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/service_providers.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_dimensions.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../scenario_selection/models/scenario.dart';
@@ -69,7 +70,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
 
   Widget _buildSkeleton() {
     return GlassCard(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.all5,
       child: Container(
         height: 140,
         decoration: BoxDecoration(
@@ -92,7 +93,7 @@ class _DailyChallengeCardState extends ConsumerState<DailyChallengeCard> {
 
     return GlassCard(
       glowColor: AppColors.accentCyan.withValues(alpha: 0.2),
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.all5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
