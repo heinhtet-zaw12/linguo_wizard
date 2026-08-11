@@ -30,6 +30,8 @@ class ScenarioSelectionScreen extends ConsumerStatefulWidget {
 
 class _ScenarioSelectionScreenState
     extends ConsumerState<ScenarioSelectionScreen> {
+  bool _hasLoadedData = false;
+
   static const _cefrLevels = ['A1', 'A2', 'B1', 'B2', 'C1'];
 
   static const _categories = [
@@ -113,9 +115,32 @@ class _ScenarioSelectionScreenState
       body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.accentCyan),
-            ),
+            loading: () {
+              if (_hasLoadedData) {
+                // Refresh — keep previous content, show loading bar at top.
+                return Column(
+                  children: [
+                    const LinearProgressIndicator(
+                      minHeight: 2,
+                      color: AppColors.accentCyan,
+                      backgroundColor: Colors.transparent,
+                    ),
+                    Expanded(
+                      child: _buildContent(
+                        context,
+                        ref,
+                        asyncState.value!,
+                        ref.read(scenarioSelectionProvider.notifier),
+                      ),
+                    ),
+                  ],
+                );
+              }
+              // Initial load — show centered spinner.
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.accentCyan),
+              );
+            },
             error: (e, _) => Center(
               child: Padding(
                 padding: const EdgeInsets.all(32),
@@ -139,7 +164,10 @@ class _ScenarioSelectionScreenState
                 ),
               ),
             ),
-            data: (state) => _buildContent(context, ref, state, notifier),
+            data: (state) {
+              _hasLoadedData = true;
+              return _buildContent(context, ref, state, notifier);
+            },
           ),
         ),
       ),
