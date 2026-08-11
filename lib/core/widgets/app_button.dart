@@ -6,7 +6,7 @@ import '../theme/app_shadows.dart';
 import '../theme/app_text_styles.dart';
 
 /// Unified button component with multiple variants.
-enum AppButtonVariant { primary, secondary, ghost }
+enum AppButtonVariant { primary, secondary, compact, ghost }
 
 class AppButton extends StatefulWidget {
   const AppButton({
@@ -40,6 +40,7 @@ class _AppButtonState extends State<AppButton> {
     final button = switch (widget.variant) {
       AppButtonVariant.primary => _buildPrimary(),
       AppButtonVariant.secondary => _buildSecondary(),
+      AppButtonVariant.compact => _buildCompact(),
       AppButtonVariant.ghost => _buildGhost(),
     };
 
@@ -101,6 +102,22 @@ class _AppButtonState extends State<AppButton> {
           border: Border.all(color: AppColors.accentCyan, width: 1),
         ),
         child: Center(child: _buildChild(AppColors.accentCyan)),
+      ),
+    );
+  }
+
+  /// Compact filled variant — same gradient as primary, shorter height,
+  /// no glow shadow. For tight spaces like onboarding nav bars.
+  Widget _buildCompact() {
+    return _fillOrContent(
+      Container(
+        height: AppSizing.buttonHeightSm, // 40px
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s4),
+        decoration: BoxDecoration(
+          gradient: AppGradients.accent,
+          borderRadius: AppRadius.md,
+        ),
+        child: Center(child: _buildChild(AppColors.textOnAccent)),
       ),
     );
   }

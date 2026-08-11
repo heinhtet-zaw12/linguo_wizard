@@ -6,14 +6,14 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
-import '../widgets/language_step.dart';
 import '../widgets/cefr_step.dart';
 import '../widgets/goal_step.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_gradients.dart';
 
-/// Three-step onboarding: language → CEFR level → goal.
+/// Two-step onboarding: CEFR level → goal.
 ///
+/// Language is hardcoded as English (single-language app).
 /// Saves selections to SharedPreferences and navigates to scenario selection.
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -75,7 +75,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 padding: const EdgeInsets.only(top: 16),
                 child: _PageIndicator(
                   currentPage: state.currentPage,
-                  totalPages: 3,
+                  totalPages: 2,
                 ),
               ),
 
@@ -88,10 +88,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     // Only update state if user somehow triggers a page change
                   },
                   children: [
-                    LanguageStep(
-                      selectedLanguage: state.selectedLanguage,
-                      onSelected: vm.setLanguage,
-                    ),
                     CefrStep(
                       selectedLevel: state.selectedCefrLevel,
                       onSelected: vm.setCefrLevel,
@@ -181,13 +177,11 @@ class _NextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: AppButton(
-        label: label,
-        icon: Icons.arrow_forward_rounded,
-        onPressed: isEnabled ? onPressed : null,
-      ),
+    return AppButton(
+      label: label,
+      icon: Icons.arrow_forward_rounded,
+      variant: AppButtonVariant.compact,
+      onPressed: isEnabled ? onPressed : null,
     );
   }
 }

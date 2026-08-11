@@ -65,7 +65,8 @@ class ProfileState {
 class ProfileViewModel extends AsyncNotifier<ProfileState> {
   @override
   Future<ProfileState> build() async {
-    final user = ref.read(currentUserProvider);
+    // Watch auth state so this provider refetches when the user signs in/out.
+    final user = ref.watch(currentUserProvider);
     if (user == null || user.isAnonymous) {
       return const ProfileState(isLoading: false, error: 'Sign in to view profile');
     }

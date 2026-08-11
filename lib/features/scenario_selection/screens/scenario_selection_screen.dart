@@ -85,6 +85,15 @@ class _ScenarioSelectionScreenState
     });
   }
 
+  void _closeSearch() {
+    _debounce?.cancel();
+    _searchController.clear();
+    ref.read(scenarioSelectionProvider.notifier).setSearchQuery('');
+    setState(() {
+      _isSearchOpen = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final asyncState = ref.watch(scenarioSelectionProvider);
@@ -407,6 +416,10 @@ class _ScenarioSelectionScreenState
               border: OutlineInputBorder(
                 borderRadius: AppRadius.xxl,
                 borderSide: BorderSide.none,
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(Icons.close, color: AppColors.textTertiary, size: 20),
+                onPressed: _closeSearch,
               ),
             ),
             style: AppTextStyles.bodyMedium(color: AppColors.textPrimary),

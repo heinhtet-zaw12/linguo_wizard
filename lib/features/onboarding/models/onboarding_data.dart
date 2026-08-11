@@ -29,15 +29,6 @@ class OnboardingData {
 
 // ─── Preset options ───
 
-const List<MapEntry<IconData, String>> kLanguages = [
-  MapEntry(Icons.translate, 'English'),
-  MapEntry(Icons.translate, 'Spanish'),
-  MapEntry(Icons.translate, 'French'),
-  MapEntry(Icons.translate, 'Japanese'),
-  MapEntry(Icons.translate, 'Korean'),
-  MapEntry(Icons.translate, 'Mandarin'),
-];
-
 const List<String> kCefrLevels = ['A1', 'A2', 'B1', 'B2', 'C1'];
 
 const List<MapEntry<IconData, String>> kGoals = [

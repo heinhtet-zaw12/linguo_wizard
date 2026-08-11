@@ -6,32 +6,27 @@ import '../models/onboarding_data.dart';
 
 const _kOnboardingCompletedKey = 'onboarding_completed';
 
-/// State for the onboarding flow.
+/// State for the onboarding flow (2 steps: CEFR level → goal).
 class OnboardingState {
   final int currentPage;
-  final String? selectedLanguage;
   final String? selectedCefrLevel;
   final String? selectedGoal;
 
   const OnboardingState({
     this.currentPage = 0,
-    this.selectedLanguage,
     this.selectedCefrLevel,
     this.selectedGoal,
   });
 
   OnboardingState copyWith({
     int? currentPage,
-    String? selectedLanguage,
     String? selectedCefrLevel,
     String? selectedGoal,
-    bool clearLanguage = false,
     bool clearCefrLevel = false,
     bool clearGoal = false,
   }) {
     return OnboardingState(
       currentPage: currentPage ?? this.currentPage,
-      selectedLanguage: clearLanguage ? null : (selectedLanguage ?? this.selectedLanguage),
       selectedCefrLevel: clearCefrLevel ? null : (selectedCefrLevel ?? this.selectedCefrLevel),
       selectedGoal: clearGoal ? null : (selectedGoal ?? this.selectedGoal),
     );
@@ -40,17 +35,15 @@ class OnboardingState {
   bool get canProceed {
     switch (currentPage) {
       case 0:
-        return selectedLanguage != null;
-      case 1:
         return selectedCefrLevel != null;
-      case 2:
+      case 1:
         return selectedGoal != null;
       default:
         return false;
     }
   }
 
-  bool get isLastPage => currentPage == 2;
+  bool get isLastPage => currentPage == 1;
 }
 
 /// ViewModel for the onboarding flow.
@@ -70,24 +63,6 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
     return user != null && !user.isAnonymous;
   }
 
-  void setLanguage(String language) {
-    state = state.copyWith(selectedLanguage: language);
-    // Fire-and-forget persistence.
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setString('onboarding_language', language);
-    });
-    if (_isAuthenticated) {
-      final user = ref.read(currentUserProvider)!;
-      final fs = ref.read(firestoreServiceProvider);
-      fs.savePreferences(
-        user.uid,
-        language: language,
-        cefrLevel: state.selectedCefrLevel ?? 'A1',
-        goal: state.selectedGoal ?? 'Travel',
-      );
-    }
-  }
-
   void setCefrLevel(String level) {
     state = state.copyWith(selectedCefrLevel: level);
     SharedPreferences.getInstance().then((prefs) {
@@ -98,7 +73,7 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
       final fs = ref.read(firestoreServiceProvider);
       fs.savePreferences(
         user.uid,
-        language: state.selectedLanguage ?? 'English',
+        language: 'English',
         cefrLevel: level,
         goal: state.selectedGoal ?? 'Travel',
       );
@@ -115,7 +90,7 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
       final fs = ref.read(firestoreServiceProvider);
       fs.savePreferences(
         user.uid,
-        language: state.selectedLanguage ?? 'English',
+        language: 'English',
         cefrLevel: state.selectedCefrLevel ?? 'A1',
         goal: goal,
       );
@@ -123,7 +98,7 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
   }
 
   void nextPage() {
-    if (state.currentPage < 2) {
+    if (state.currentPage < 1) {
       state = state.copyWith(currentPage: state.currentPage + 1);
     }
   }
@@ -140,7 +115,7 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
   /// When authenticated, also syncs to Firestore and creates user profile.
   Future<void> saveAndComplete() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('onboarding_language', state.selectedLanguage ?? 'English');
+    await prefs.setString('onboarding_language', 'English');
     await prefs.setString('onboarding_cefr', state.selectedCefrLevel ?? 'A1');
     await prefs.setString('onboarding_goal', state.selectedGoal ?? 'Travel');
     await prefs.setBool(_kOnboardingCompletedKey, true);
@@ -148,7 +123,9 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
     if (_isAuthenticated) {
       final user = ref.read(currentUserProvider)!;
       final fs = ref.read(firestoreServiceProvider);
-      // Create user profile if it doesn't exist, then save preferences.
+      // Ensure profile exists, then save preferences.
+      // Use updateUserProfile (not createUserProfile) to avoid overwriting
+      // the displayName that was saved during sign-up.
       try {
         final existing = await fs.getUserProfile(user.uid);
         if (existing == null) {
@@ -157,10 +134,14 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
             displayName: user.displayName ?? 'User',
             email: user.email,
           );
+        } else if (user.displayName != null &&
+            user.displayName != existing['displayName']) {
+          // Sync display name from Firebase Auth if it changed (e.g. Google sign-in).
+          await fs.updateUserProfile(user.uid, displayName: user.displayName);
         }
         await fs.savePreferences(
           user.uid,
-          language: state.selectedLanguage ?? 'English',
+          language: 'English',
           cefrLevel: state.selectedCefrLevel ?? 'A1',
           goal: state.selectedGoal ?? 'Travel',
         );

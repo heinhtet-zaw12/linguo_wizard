@@ -29,6 +29,8 @@ class LeaderboardEntry {
 class LeaderboardViewModel extends AsyncNotifier<List<LeaderboardEntry>> {
   @override
   Future<List<LeaderboardEntry>> build() async {
+    // Watch auth state so this provider refetches when the user signs in/out.
+    ref.watch(currentUserProvider);
     return _loadLeaderboard();
   }
 

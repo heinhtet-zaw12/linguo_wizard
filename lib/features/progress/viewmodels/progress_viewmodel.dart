@@ -93,7 +93,8 @@ class ProgressState {
 class ProgressViewModel extends AsyncNotifier<ProgressState> {
   @override
   Future<ProgressState> build() async {
-    final user = ref.read(currentUserProvider);
+    // Watch auth state so this provider refetches when the user signs in/out.
+    final user = ref.watch(currentUserProvider);
     if (user == null || user.isAnonymous) {
       return const ProgressState(isLoading: false, error: 'Sign in to view progress');
     }

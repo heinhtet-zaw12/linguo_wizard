@@ -75,8 +75,9 @@ class HomeState {
 class HomeViewModel extends AsyncNotifier<HomeState> {
   @override
   Future<HomeState> build() async {
-    final user = ref.read(currentUserProvider);
-    final isGuest = ref.read(isGuestProvider);
+    // Watch auth state so this provider refetches when the user signs in/out.
+    final user = ref.watch(currentUserProvider);
+    final isGuest = ref.watch(isGuestProvider);
 
     try {
       HomeState baseState;

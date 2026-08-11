@@ -6,11 +6,18 @@ import 'package:uuid/uuid.dart';
 
 import '../../features/scenario_selection/models/scenario.dart';
 import '../config/app_config.dart';
+import 'system_prompt_builder.dart';
 
 // Wraps the Google Generative AI package for persona-based conversations.
 class AiService {
   GenerativeModel? _model;
   ChatSession? _chat;
+
+  /// CEFR level for the current conversation — used for per-turn reminders.
+  String _cefrLevel = 'B1';
+
+  /// How many user turns have been sent (for turn-based reminder cadence).
+  int _turnCount = 0;
 
   // Whether a persona has been initialized and the service is ready to chat.
   bool get isReady => _chat != null;
@@ -18,11 +25,12 @@ class AiService {
   // Initializes a new persona-based chat session.
   //
   // Creates a [GenerativeModel] with a system instruction that defines
-  // the persona's character, name, and conversation goal.
+  // the persona's character, name, conversation goal, and CEFR constraints.
   void initializePersona({
     required String personaName,
     required String personaDescription,
     required String scenarioGoal,
+    required String cefrLevel,
   }) {
     final apiKey = AppConfig.geminiApiKey;
     if (apiKey.isEmpty) {
@@ -32,27 +40,43 @@ class AiService {
       );
     }
 
+    _cefrLevel = cefrLevel.toUpperCase();
+    _turnCount = 0;
+
+    final systemInstruction = SystemPromptBuilder.buildSystemInstruction(
+      personaName: personaName,
+      personaDescription: personaDescription,
+      scenarioGoal: scenarioGoal,
+      cefrLevel: _cefrLevel,
+    );
+
     _model = GenerativeModel(
       model: AppConfig.geminiModel,
       apiKey: apiKey,
-      systemInstruction: Content.system(
-        'You are $personaName. $personaDescription '
-        'Your goal in this conversation: $scenarioGoal. '
-        'Stay in character at all times. '
-        'Keep responses short and natural for a spoken conversation (1-3 sentences). '
-        'If the user makes grammar mistakes, gently correct them naturally '
-        'within the conversation rather than breaking character.',
-      ),
+      systemInstruction: Content.system(systemInstruction),
     );
     _chat = _model!.startChat();
   }
 
   /// Sends a message to the AI and returns the response text.
+  ///
+  /// Wraps the user's text with a per-turn CEFR reminder to prevent
+  /// the model from drifting toward its default (B2+) register as the
+  /// conversation grows longer.
   Future<String> sendMessage(String userText) async {
     if (_chat == null) {
       throw StateError('AiService not initialized. Call initializePersona first.');
     }
-    final response = await _chat!.sendMessage(Content.text(userText));
+
+    _turnCount++;
+
+    final wrappedText = SystemPromptBuilder.wrapUserMessage(
+      userText: userText,
+      cefrLevel: _cefrLevel,
+      turnCount: _turnCount,
+    );
+
+    final response = await _chat!.sendMessage(Content.text(wrappedText));
     return response.text ?? '';
   }
 

@@ -203,10 +203,14 @@ class AuthViewModel extends Notifier<AuthState> {
       final goal = prefs.getString('onboarding_goal');
       final onboardingCompleted = prefs.getBool('onboarding_completed') ?? false;
 
+      // Use the display name entered during sign-up, falling back to 'User'.
+      final authService = ref.read(authServiceProvider);
+      final displayName = authService.currentUser?.displayName ?? 'User';
+
       if (!onboardingCompleted) {
         // No guest data to migrate — create empty profile.
         final fs = ref.read(firestoreServiceProvider);
-        await fs.createUserProfile(uid, displayName: 'User');
+        await fs.createUserProfile(uid, displayName: displayName);
         state = state.copyWith(migrationComplete: true);
         return;
       }
@@ -214,7 +218,7 @@ class AuthViewModel extends Notifier<AuthState> {
       final fs = ref.read(firestoreServiceProvider);
 
       // Create user profile.
-      await fs.createUserProfile(uid, displayName: 'User');
+      await fs.createUserProfile(uid, displayName: displayName);
 
       // Save preferences.
       await fs.savePreferences(

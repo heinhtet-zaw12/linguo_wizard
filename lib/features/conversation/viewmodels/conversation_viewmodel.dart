@@ -44,6 +44,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
       personaName: scenario.personaName,
       personaDescription: scenario.personaDescription,
       scenarioGoal: scenario.goalDescription,
+      cefrLevel: scenario.cefrLevel,
     );
 
     final openingMessage = Message.create(
