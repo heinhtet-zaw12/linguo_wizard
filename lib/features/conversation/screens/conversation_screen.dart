@@ -38,11 +38,22 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   Scenario? _scenario;
   bool _hasNavigatedToFeedback = false;
   bool _hasCheckedSaved = false;
+  bool _scenarioTimedOut = false;
 
   @override
   void initState() {
     super.initState();
     _scenario = ref.read(selectedScenarioProvider);
+
+    // Fallback: if scenario never arrives (deep link, app restart), redirect after 3s.
+    Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      if (_scenario == null && ref.read(selectedScenarioProvider) == null) {
+        setState(() {
+          _scenarioTimedOut = true;
+        });
+      }
+    });
   }
 
   @override
@@ -291,8 +302,43 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   Widget build(BuildContext context) {
     final scenario = _scenario;
 
-    // Loading state — scenario not yet selected.
+    // Scenario not yet selected.
     if (scenario == null) {
+      if (_scenarioTimedOut) {
+        // Fallback: scenario never arrived (deep link, app restart, etc.)
+        return Scaffold(
+          body: GradientBackground(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    color: AppColors.danger,
+                    size: 56,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No scenario selected',
+                    style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please choose a scenario to start practicing.',
+                    style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 24),
+                  AppButton(
+                    label: 'Browse Scenarios',
+                    onPressed: () => context.go('/scenarios'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+      // Brief loading state while scenario is being passed from selection screen.
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
