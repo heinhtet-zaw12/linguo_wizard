@@ -178,6 +178,55 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
     return true;
   }
 
+  /// Show exit dialog when back button/gesture is triggered.
+  void _showExitDialog() {
+    final scenario = _scenario;
+    if (scenario == null) {
+      context.pop();
+      return;
+    }
+
+    final vm = ref.read(conversationProvider(scenario).notifier);
+
+    showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Save Progress?',
+          style: AppTextStyles.bodyMedium(),
+        ),
+        content: Text(
+          'Do you want to save this conversation so you can continue later?',
+          style: AppTextStyles.bodyMedium(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              await vm.deleteSavedConversation();
+              if (mounted) context.pop();
+            },
+            child: Text(
+              'Discard',
+              style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              await vm.saveConversation();
+              if (mounted) context.pop();
+            },
+            child: Text(
+              'Save & Exit',
+              style: AppTextStyles.bodyMedium(color: AppColors.accentStart),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ─── User action forwarding ───
 
   void _onMicPressed() {
@@ -254,12 +303,9 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, _) async {
+      onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
-        final shouldPop = await _onWillPop();
-        if (shouldPop && mounted) {
-          context.pop();
-        }
+        _showExitDialog();
       },
       child: Scaffold(
       body: GradientBackground(

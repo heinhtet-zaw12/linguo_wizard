@@ -59,6 +59,16 @@ class AuthViewModel extends Notifier<AuthState> {
 
   Future<void> signUpWithEmail(
       String email, String password, String displayName) async {
+    // Validate display name before proceeding
+    final sanitizedName = _validateAndSanitizeDisplayName(displayName);
+    if (sanitizedName == null) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Display name must be 1-50 characters and contain only letters, numbers, spaces, or hyphens.',
+      );
+      return;
+    }
+
     state = state.copyWith(isLoading: true, clearError: true);
     try {
       // Check if current user is anonymous before sign-up.
@@ -70,7 +80,7 @@ class AuthViewModel extends Notifier<AuthState> {
       // ignore: avoid_print
       print('[AuthViewModel] signUpWithEmail: calling Firebase createUser...');
       final credential =
-          await authService.signUpWithEmail(email, password, displayName);
+          await authService.signUpWithEmail(email, password, sanitizedName);
       // ignore: avoid_print
       print(
           '[AuthViewModel] Firebase createUser success. UID: ${credential.user?.uid}');
@@ -83,7 +93,7 @@ class AuthViewModel extends Notifier<AuthState> {
           print('[AuthViewModel] Creating Firestore user profile...');
           await fs.createUserProfile(
             credential.user!.uid,
-            displayName: displayName,
+            displayName: sanitizedName,
             email: email,
           );
           // ignore: avoid_print
@@ -246,6 +256,35 @@ class AuthViewModel extends Notifier<AuthState> {
         migrationComplete: false,
       );
     }
+  }
+
+  /// Validate and sanitize display name.
+  ///
+  /// Returns sanitized name if valid, null if invalid.
+  /// - Strips HTML tags and control characters
+  /// - Enforces length limits (1-50 characters)
+  /// - Allows only letters, numbers, spaces, hyphens, and underscores
+  String? _validateAndSanitizeDisplayName(String name) {
+    // Strip HTML tags
+    var sanitized = name.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Strip control characters (except spaces)
+    sanitized = sanitized.replaceAll(RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]'), '');
+
+    // Trim whitespace
+    sanitized = sanitized.trim();
+
+    // Check length
+    if (sanitized.isEmpty || sanitized.length > 50) {
+      return null;
+    }
+
+    // Allow only letters, numbers, spaces, hyphens, and underscores
+    if (!RegExp(r'^[a-zA-Z0-9 _-]+$').hasMatch(sanitized)) {
+      return null;
+    }
+
+    return sanitized;
   }
 
   /// Convert raw exceptions to user-friendly messages.

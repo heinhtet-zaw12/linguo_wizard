@@ -70,15 +70,23 @@ class CreateScenarioViewModel extends Notifier<CreateScenarioState> {
   CreateScenarioState build() => const CreateScenarioState();
 
   void setPersona(String value) {
-    state = state.copyWith(persona: value, errorMessage: null);
+    state = state.copyWith(persona: _sanitizeInput(value), errorMessage: null);
   }
 
   void setContext(String value) {
-    state = state.copyWith(context: value, errorMessage: null);
+    state = state.copyWith(context: _sanitizeInput(value), errorMessage: null);
   }
 
   void setGoal(String value) {
-    state = state.copyWith(goal: value, errorMessage: null);
+    state = state.copyWith(goal: _sanitizeInput(value), errorMessage: null);
+  }
+
+  /// Sanitize user input by stripping control characters and trimming whitespace.
+  String _sanitizeInput(String input) {
+    // Strip control characters (except newlines and tabs) and trim
+    return input
+        .replaceAll(RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]'), '')
+        .trim();
   }
 
   void setCefrLevel(String level) {
@@ -90,11 +98,31 @@ class CreateScenarioViewModel extends Notifier<CreateScenarioState> {
   }
 
   /// Generate a scenario from the form inputs.
-  /// Validates all fields are filled first.
+  /// Validates all fields are filled and within length limits.
   Future<void> generate() async {
     if (!state.isFormValid) {
       state = state.copyWith(
         errorMessage: 'Please fill in all fields before generating.',
+      );
+      return;
+    }
+
+    // Validate input lengths to prevent API abuse
+    if (state.persona.length > 100) {
+      state = state.copyWith(
+        errorMessage: 'Persona description is too long (max 100 characters).',
+      );
+      return;
+    }
+    if (state.context.length > 150) {
+      state = state.copyWith(
+        errorMessage: 'Context is too long (max 150 characters).',
+      );
+      return;
+    }
+    if (state.goal.length > 200) {
+      state = state.copyWith(
+        errorMessage: 'Goal is too long (max 200 characters).',
       );
       return;
     }
@@ -129,6 +157,15 @@ class CreateScenarioViewModel extends Notifier<CreateScenarioState> {
 
   /// Regenerate with the same inputs.
   Future<void> regenerate() async {
+    // Validate input lengths before regenerating
+    if (state.persona.length > 100 || state.context.length > 150 || state.goal.length > 200) {
+      state = state.copyWith(
+        step: CreateScenarioStep.form,
+        errorMessage: 'Input exceeds maximum length. Please edit your scenario.',
+      );
+      return;
+    }
+
     state = state.copyWith(
       step: CreateScenarioStep.generating,
       errorMessage: null,

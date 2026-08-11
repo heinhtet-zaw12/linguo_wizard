@@ -123,6 +123,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
         TextField(
           controller: _personaController,
           maxLines: 2,
+          maxLength: 100,
           textCapitalization: TextCapitalization.sentences,
           decoration: _inputDecoration(hint: 'e.g., a barista, a taxi driver'),
           style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
@@ -134,6 +135,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
         TextField(
           controller: _contextController,
           maxLines: 2,
+          maxLength: 150,
           textCapitalization: TextCapitalization.sentences,
           decoration: _inputDecoration(hint: 'e.g., at a busy coffee shop in London'),
           style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
@@ -145,6 +147,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
         TextField(
           controller: _goalController,
           maxLines: 2,
+          maxLength: 200,
           textCapitalization: TextCapitalization.sentences,
           decoration: _inputDecoration(hint: 'e.g., order a flat white and ask about the menu'),
           style: AppTextStyles.headingSmall(color: AppColors.textPrimary),
