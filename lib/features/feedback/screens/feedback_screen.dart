@@ -30,6 +30,7 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen>
     with SingleTickerProviderStateMixin {
   bool _showBadgePopup = false;
   int _currentBadgeIndex = 0;
+  bool _scoreDataTimedOut = false;
 
   // Score counter animation
   late AnimationController _scoreController;
@@ -52,6 +53,17 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen>
     _confettiController = ConfettiController(
       duration: const Duration(seconds: 2),
     );
+
+    // Start a timeout — if score data hasn't arrived in 3 seconds, show error fallback.
+    Future.delayed(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      final scoreData = ref.read(currentScoreProvider);
+      if (scoreData == null) {
+        setState(() {
+          _scoreDataTimedOut = true;
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForBadges();
@@ -101,6 +113,41 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen>
     final badges = ref.watch(newlyEarnedBadgesProvider);
 
     if (scoreData == null) {
+      if (_scoreDataTimedOut) {
+        // Fallback: score data never arrived (direct navigation, app restart, etc.)
+        return Scaffold(
+          body: GradientBackground(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline_rounded,
+                    color: AppColors.danger,
+                    size: 56,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No score data available',
+                    style: AppTextStyles.headingMedium(color: AppColors.textPrimary),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please complete a scenario first.',
+                    style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 24),
+                  AppButton(
+                    label: 'Go Home',
+                    onPressed: () => context.go('/home'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+      // Brief loading state while score data is being passed from conversation screen.
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
