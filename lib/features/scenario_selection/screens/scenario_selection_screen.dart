@@ -90,9 +90,23 @@ class _ScenarioSelectionScreenState
   void _closeSearch() {
     _debounce?.cancel();
     _searchController.clear();
+
+    // Save the current scroll position before rebuilding the list.
+    final scrollOffset = _scrollController.hasClients ? _scrollController.offset : 0.0;
+
     ref.read(scenarioSelectionProvider.notifier).setSearchQuery('');
     setState(() {
       _isSearchOpen = false;
+    });
+
+    // Restore the scroll position after the rebuild.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients && scrollOffset > 0) {
+        _scrollController.jumpTo(scrollOffset.clamp(
+          0.0,
+          _scrollController.position.maxScrollExtent,
+        ));
+      }
     });
   }
 

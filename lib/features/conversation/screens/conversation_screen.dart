@@ -40,6 +40,8 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   bool _hasCheckedSaved = false;
   bool _scenarioTimedOut = false;
 
+  ConversationLoopState? _previousLoopState;
+
   @override
   void initState() {
     super.initState();
@@ -438,6 +440,16 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
                   ),
                 );
               });
+            }
+
+            // Haptic feedback on recording start/stop transitions.
+            if (_previousLoopState != state.loopState) {
+              if (state.loopState == ConversationLoopState.recording) {
+                HapticFeedback.mediumImpact();
+              } else if (_previousLoopState == ConversationLoopState.recording) {
+                HapticFeedback.lightImpact();
+              }
+              _previousLoopState = state.loopState;
             }
 
             return Column(

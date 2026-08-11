@@ -107,10 +107,20 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen>
     });
   }
 
+  Future<void> _handleDone() async {
+    final notifier = ref.read(feedbackProvider.notifier);
+    await notifier.saveProgress();
+    if (mounted) {
+      notifier.clearScore();
+      context.go('/home');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final scoreData = ref.watch(currentScoreProvider);
     final badges = ref.watch(newlyEarnedBadgesProvider);
+    final isSaving = ref.watch(isSavingProgressProvider);
 
     if (scoreData == null) {
       if (_scoreDataTimedOut) {
@@ -179,24 +189,9 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen>
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                     child: AppButton(
-                      label: 'Done',
-                      onPressed: () {
-                        final user = ref.read(currentUserProvider);
-                        if (user != null && !user.isAnonymous) {
-                          final fs = ref.read(firestoreServiceProvider);
-                          fs.getProgress(user.uid).then((progress) {
-                            final existingXp = progress?['totalXp'] as int? ?? 0;
-                            final existingCompleted = progress?['scenariosCompleted'] as int? ?? 0;
-                            fs.saveProgress(
-                              user.uid,
-                              totalXp: existingXp + scoreData.xpEarned,
-                              scenariosCompleted: existingCompleted,
-                              lastScenarioAt: DateTime.now(),
-                            );
-                          });
-                        }
-                        context.go('/home');
-                      },
+                      label: isSaving ? 'Saving...' : 'Done',
+                      isLoading: isSaving,
+                      onPressed: isSaving ? null : _handleDone,
                     ),
                   ),
                 ],

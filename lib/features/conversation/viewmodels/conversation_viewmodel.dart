@@ -29,6 +29,11 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   final RateLimiterService _rateLimiter = RateLimiterService();
   final ConversationStorageService _conversationStorage = ConversationStorageService();
 
+  /// Flag to track if we're in message playback mode (playMessage).
+  /// When true, the TTS completion handler clears playingMessageId
+  /// instead of resetting the conversation loop state.
+  bool _isPlayingMessage = false;
+
   /// Initialize services, AI persona, and seed the opening message.
   @override
   Future<ConversationState> build(Scenario scenario) async {
@@ -52,19 +57,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
       transcript: scenario.openingMessage,
     );
 
-    _ttsService.setCompletionHandler(() {
-      try {
-        final current = state.value;
-        if (current != null) {
-          state = AsyncData(current.copyWith(
-            loopState: ConversationLoopState.idle,
-            isAiSpeaking: false,
-          ));
-        }
-      } catch (_) {
-        // Provider disposed — ignore.
-      }
-    });
+    _ttsService.setCompletionHandler(_handleTtsCompletion);
 
     return ConversationState(
       scenario: scenario,
@@ -74,6 +67,34 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
           ? null
           : 'Microphone is unavailable. Voice input will not work, but you can still end the conversation.',
     );
+  }
+
+  /// Unified TTS completion handler.
+  ///
+  /// Handles both conversation AI speech and message playback completion.
+  /// Uses the [_isPlayingMessage] flag to determine the correct behavior
+  /// without race conditions from nested handler restoration.
+  void _handleTtsCompletion() {
+    try {
+      final current = state.value;
+      if (current == null) return;
+
+      if (_isPlayingMessage) {
+        // Message playback completed — clear the playing message ID.
+        _isPlayingMessage = false;
+        state = AsyncData(current.copyWith(clearPlayingMessageId: true));
+      } else {
+        // Conversation AI speech completed — reset to idle.
+        if (current.loopState == ConversationLoopState.speaking) {
+          state = AsyncData(current.copyWith(
+            loopState: ConversationLoopState.idle,
+            isAiSpeaking: false,
+          ));
+        }
+      }
+    } catch (_) {
+      // Provider disposed — ignore.
+    }
   }
 
   // ─── Mic button actions ───
@@ -264,26 +285,10 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     if (current == null) return;
     state = AsyncData(current.copyWith(playingMessageId: messageId));
 
-    _ttsService.setCompletionHandler(() {
-      try {
-        final s = state.value;
-        if (s != null) {
-          state = AsyncData(s.copyWith(clearPlayingMessageId: true));
-        }
-      } catch (_) {}
-      // Restore the original conversation completion handler.
-      _ttsService.setCompletionHandler(() {
-        try {
-          final s = state.value;
-          if (s != null && s.loopState == ConversationLoopState.speaking) {
-            state = AsyncData(s.copyWith(
-              loopState: ConversationLoopState.idle,
-              isAiSpeaking: false,
-            ));
-          }
-        } catch (_) {}
-      });
-    });
+    // Set the flag before speaking. The unified completion handler
+    // (_handleTtsCompletion) will check this flag and clear playingMessageId
+    // when TTS completes, avoiding race conditions from nested handler restoration.
+    _isPlayingMessage = true;
 
     await _ttsService.speak(transcript);
   }
@@ -291,6 +296,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   /// Stop active playback and reset to idle.
   Future<void> stopPlayback() async {
     await _ttsService.stop();
+    _isPlayingMessage = false;
     final current = state.value;
     if (current != null) {
       state = AsyncData(current.copyWith(clearPlayingMessageId: true));
