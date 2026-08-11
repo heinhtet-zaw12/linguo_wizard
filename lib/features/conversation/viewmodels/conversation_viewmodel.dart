@@ -37,7 +37,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     _aiService = AiService();
     _evaluationService = EvaluationService();
 
-    await _sttService.initialize();
+    final sttReady = await _sttService.initialize();
     await _ttsService.initialize();
 
     _aiService.initializePersona(
@@ -69,6 +69,10 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     return ConversationState(
       scenario: scenario,
       messages: [openingMessage],
+      sttAvailable: sttReady,
+      errorMessage: sttReady
+          ? null
+          : 'Microphone is unavailable. Voice input will not work, but you can still end the conversation.',
     );
   }
 
@@ -116,6 +120,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
   void _startRecording() {
     final current = state.value;
     if (current == null) return;
+    if (!current.sttAvailable) return;
     if (current.turnCount >= 20) return; // maxConversationTurns
 
     state = AsyncData(current.copyWith(
@@ -305,6 +310,7 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     final current = state.value;
     if (current == null) return '';
     if (current.isEvaluating) return 'Evaluating your conversation…';
+    if (!current.sttAvailable) return 'Microphone unavailable';
     switch (current.loopState) {
       case ConversationLoopState.idle:
         return 'Tap to speak';

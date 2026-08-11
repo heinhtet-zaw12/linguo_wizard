@@ -25,6 +25,7 @@ class ConversationState {
   final String? errorMessage;
   final String? playingMessageId;
   final bool textOnlyMode;
+  final bool sttAvailable;
 
   const ConversationState({
     this.messages = const [],
@@ -41,6 +42,7 @@ class ConversationState {
     this.errorMessage,
     this.playingMessageId,
     this.textOnlyMode = false,
+    this.sttAvailable = true,
   });
 
   ConversationState copyWith({
@@ -61,6 +63,7 @@ class ConversationState {
     bool clearPlayingMessageId = false,
     bool clearScoreData = false,
     bool? textOnlyMode,
+    bool? sttAvailable,
   }) {
     return ConversationState(
       messages: messages ?? this.messages,
@@ -80,6 +83,7 @@ class ConversationState {
           ? null
           : (playingMessageId ?? this.playingMessageId),
       textOnlyMode: textOnlyMode ?? this.textOnlyMode,
+      sttAvailable: sttAvailable ?? this.sttAvailable,
     );
   }
 }
