@@ -42,7 +42,6 @@ class _GlassCardState extends State<GlassCard>
       duration: const Duration(milliseconds: 100),
     );
     _scaleAnim = TweenSequence<double>([
-      TweenSequenceItem(tween: ConstantTween(1.0), weight: 0),
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 0.98).chain(CurveTween(curve: Curves.easeOut)),
         weight: 50,
@@ -53,7 +52,6 @@ class _GlassCardState extends State<GlassCard>
       ),
     ]).animate(_controller);
     _opacityAnim = TweenSequence<double>([
-      TweenSequenceItem(tween: ConstantTween(1.0), weight: 0),
       TweenSequenceItem(tween: ConstantTween(0.85), weight: 50),
       TweenSequenceItem(tween: ConstantTween(1.0), weight: 50),
     ]).animate(_controller);

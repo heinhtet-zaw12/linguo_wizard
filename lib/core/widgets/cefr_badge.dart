@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
 import '../theme/app_shadows.dart';
+import '../theme/app_text_styles.dart';
 
 /// CEFR level badge (A1, A2, B1, B2, C1).
 class CefrBadge extends StatelessWidget {
@@ -23,12 +24,7 @@ class CefrBadge extends StatelessWidget {
       ),
       child: Text(
         level,
-        style: const TextStyle(
-          fontFamily: 'JetBrains Mono',
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: AppColors.accentCyan,
-        ),
+        style: AppTextStyles.labelUppercase(color: AppColors.accentCyan),
       ),
     );
   }

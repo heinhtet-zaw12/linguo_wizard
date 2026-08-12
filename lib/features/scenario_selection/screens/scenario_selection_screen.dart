@@ -8,6 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/shimmer_skeleton.dart';
 import '../../../core/widgets/app_chip.dart' show GlassChip;
 import '../../../core/widgets/app_button.dart';
 import '../models/scenario.dart';
@@ -130,7 +131,7 @@ class _ScenarioSelectionScreenState
         child: SafeArea(
           child: asyncState.when(
             loading: () {
-              if (_hasLoadedData) {
+              if (_hasLoadedData && asyncState.value != null) {
                 // Refresh — keep previous content, show loading bar at top.
                 return Column(
                   children: [
@@ -150,10 +151,8 @@ class _ScenarioSelectionScreenState
                   ],
                 );
               }
-              // Initial load — show centered spinner.
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.accentCyan),
-              );
+              // Initial load — show skeleton grid.
+              return _buildSkeleton();
             },
             error: (e, _) => Center(
               child: Padding(
@@ -161,7 +160,9 @@ class _ScenarioSelectionScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.cloud_off, size: 48, color: AppColors.textTertiary),
+                    Icon(Icons.cloud_off, size: 48, color: AppColors.textTertiary)
+                        .animate(onPlay: (c) => c.repeat(reverse: true))
+                        .slideY(begin: -0.02, end: 0.02, duration: 1200.ms, curve: Curves.easeInOut),
                     const SizedBox(height: 16),
                     Text(
                       "Couldn't load scenarios. Check your connection and try again.",
@@ -184,6 +185,53 @@ class _ScenarioSelectionScreenState
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSkeleton() {
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          // ─── Header Skeleton ───
+          Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.s5, 16, 12, 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SkeletonBlock(width: 200, height: 28),
+                      const SizedBox(height: 6),
+                      const SkeletonBlock(width: 160, height: 16),
+                    ],
+                  ),
+                ),
+                SkeletonBlock(width: 28, height: 28, borderRadius: AppRadius.pill),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ─── Category Tabs Skeleton ───
+          const CategoryTabsSkeleton(),
+          const SizedBox(height: 8),
+
+          // ─── CEFR Chips Skeleton ───
+          const CefrChipsSkeleton(),
+          const SizedBox(height: 16),
+
+          // ─── Grid Skeleton ───
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s5),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: const ScenarioGridSkeleton(cardCount: 8),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -658,7 +706,9 @@ class _ScenarioSelectionScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48, color: AppColors.textTertiary),
+            Icon(icon, size: 48, color: AppColors.textTertiary)
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .slideY(begin: -0.02, end: 0.02, duration: 1200.ms, curve: Curves.easeInOut),
             const SizedBox(height: 16),
             Text(
               message,

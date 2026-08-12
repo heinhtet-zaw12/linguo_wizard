@@ -5,10 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:confetti/confetti.dart';
 
-import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_gradients.dart';
-import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_card.dart';
@@ -111,7 +109,11 @@ class _FeedbackScreenState extends ConsumerState<FeedbackScreen>
     final notifier = ref.read(feedbackProvider.notifier);
     await notifier.saveProgress();
     if (mounted) {
-      notifier.clearScore();
+      // Navigate to home. Score data is cleared when the next conversation
+      // starts (see conversation_screen.dart initState), not here — clearing
+      // here causes a Riverpod assertion because feedbackProvider watches
+      // currentScoreProvider and modifying a watched provider from within
+      // its own notifier's method triggers "!_didChangeDependency".
       context.go('/home');
     }
   }
@@ -418,7 +420,17 @@ class _GrammarCorrections extends StatelessWidget {
         final correction = corrections[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: GlassCard(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.md,
+              border: Border(
+                left: BorderSide(
+                  color: AppColors.danger,
+                  width: 3,
+                ),
+              ),
+            ),
+            child: GlassCard(
             padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,6 +465,7 @@ class _GrammarCorrections extends StatelessWidget {
                 ],
               ),
             ),
+          ),
           );
       },
     );

@@ -42,7 +42,7 @@ class GlassChip extends StatelessWidget {
         child: Center(
           child: Text(
             label,
-            style: AppTextStyles.labelMedium(
+            style: AppTextStyles.labelUppercase(
               color: selected
                   ? AppColors.textOnAccent
                   : AppColors.textSecondary,

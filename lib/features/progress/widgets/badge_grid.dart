@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart' hide Badge;
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/badge_config.dart';
 import '../../../core/models/badge.dart';
@@ -6,9 +8,10 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_dimensions.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../feedback/viewmodels/feedback_viewmodel.dart';
 
 /// Displays all badge definitions in a 3-column grid.
-class BadgeGrid extends StatelessWidget {
+class BadgeGrid extends ConsumerWidget {
   const BadgeGrid({
     super.key,
     required this.earnedBadges,
@@ -17,11 +20,12 @@ class BadgeGrid extends StatelessWidget {
   final List<Badge> earnedBadges;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final earnedIds = earnedBadges.map((b) => b.id).toSet();
+    final newlyEarnedIds = ref.watch(newlyEarnedBadgesProvider).map((b) => b.id).toSet();
 
     return GlassCard(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.all5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,10 +52,12 @@ class BadgeGrid extends StatelessWidget {
             itemBuilder: (context, index) {
               final definition = badgeDefinitions[index];
               final isEarned = earnedIds.contains(definition.id);
+              final isNewlyEarned = newlyEarnedIds.contains(definition.id);
               return _BadgeCard(
                 name: definition.name,
                 description: definition.description,
                 isEarned: isEarned,
+                isNewlyEarned: isNewlyEarned,
               );
             },
           ),
@@ -66,15 +72,17 @@ class _BadgeCard extends StatelessWidget {
     required this.name,
     required this.description,
     required this.isEarned,
+    this.isNewlyEarned = false,
   });
 
   final String name;
   final String description;
   final bool isEarned;
+  final bool isNewlyEarned;
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
+    final card = GlassCard(
       padding: const EdgeInsets.all(10),
       glowColor: isEarned ? AppColors.warning.withValues(alpha: 0.2) : null,
       child: Column(
@@ -98,5 +106,18 @@ class _BadgeCard extends StatelessWidget {
         ],
       ),
     );
+
+    if (!isNewlyEarned) return card;
+
+    return card
+        .animate(onPlay: (c) => c.repeat(reverse: true))
+        .scale(
+          begin: const Offset(1.0, 1.0),
+          end: const Offset(1.08, 1.08),
+          duration: 600.ms,
+          curve: Curves.easeInOut,
+        )
+        .then(delay: 200.ms)
+        .fade(begin: 1.0, end: 0.7, duration: 600.ms, curve: Curves.easeInOut);
   }
 }

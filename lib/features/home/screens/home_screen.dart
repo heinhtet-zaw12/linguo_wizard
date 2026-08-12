@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/shimmer_skeleton.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../widgets/streak_ring.dart';
@@ -29,9 +30,7 @@ class HomeScreen extends ConsumerWidget {
       body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.accentCyan),
-            ),
+            loading: () => _buildSkeleton(),
             error: (e, _) => Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -54,6 +53,49 @@ class HomeScreen extends ConsumerWidget {
             data: (state) => _buildContent(context, ref, state, isGuest),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSkeleton() {
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s5, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ─── Welcome Header Skeleton ───
+          const SkeletonBlock(width: 160, height: 28),
+          const SizedBox(height: 8),
+          const SkeletonBlock(width: 200, height: 16),
+          const SizedBox(height: 20),
+
+          // ─── Streak Ring Skeleton ───
+          const StreakRingSkeleton(),
+          const SizedBox(height: 12),
+
+          // ─── Goal Ring Skeleton ───
+          const GoalRingSkeleton(),
+          const SizedBox(height: 20),
+
+          // ─── Daily Challenge Card Skeleton ───
+          const DailyChallengeCardSkeleton(),
+          const SizedBox(height: 24),
+
+          // ─── Recommended Section Skeleton ───
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const SkeletonBlock(width: 140, height: 22),
+              const SkeletonBlock(width: 80, height: 16),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // ─── Scenario Cards Skeleton ───
+          const ScenarioCardsSkeleton(cardCount: 3),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

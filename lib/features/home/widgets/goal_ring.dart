@@ -34,9 +34,12 @@ class GoalRing extends StatelessWidget {
             child: CustomPaint(
               painter: _RingPainter(progress: progress),
               child: Center(
-                child: Text(
-                  '${(progress * 100).toInt()}%',
-                  style: AppTextStyles.headingSmall(color: AppColors.accentCyan),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '${(progress * 100).toInt()}%',
+                    style: AppTextStyles.headingSmall(color: AppColors.accentCyan),
+                  ),
                 ),
               ),
             ),
