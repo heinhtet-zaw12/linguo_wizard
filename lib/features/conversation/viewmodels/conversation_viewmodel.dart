@@ -42,15 +42,32 @@ class ConversationViewModel extends FamilyAsyncNotifier<ConversationState, Scena
     _aiService = AiService();
     _evaluationService = EvaluationService();
 
-    final sttReady = await _sttService.initialize();
-    await _ttsService.initialize();
+    bool sttReady = false;
+    try {
+      sttReady = await _sttService.initialize();
+    } catch (_) {
+      sttReady = false;
+    }
 
-    _aiService.initializePersona(
-      personaName: scenario.personaName,
-      personaDescription: scenario.personaDescription,
-      scenarioGoal: scenario.goalDescription,
-      cefrLevel: scenario.cefrLevel,
-    );
+    try {
+      await _ttsService.initialize();
+    } catch (_) {
+      // TTS init failure is non-critical; voice output will be unavailable.
+    }
+
+    try {
+      _aiService.initializePersona(
+        personaName: scenario.personaName,
+        personaDescription: scenario.personaDescription,
+        scenarioGoal: scenario.goalDescription,
+        cefrLevel: scenario.cefrLevel,
+      );
+    } catch (_) {
+      return ConversationState(
+        scenario: scenario,
+        errorMessage: 'AI service failed to initialize. Check your API key.',
+      );
+    }
 
     final openingMessage = Message.create(
       sender: MessageSender.ai,

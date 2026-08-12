@@ -34,7 +34,7 @@ class GlassChip extends StatelessWidget {
           border: Border.all(
             color: selected
                 ? AppColors.accentStart
-                : AppColors.borderSubtle,
+                : AppColors.borderGlow,
             width: 1,
           ),
           boxShadow: selected ? AppShadows.glowCyan : null,

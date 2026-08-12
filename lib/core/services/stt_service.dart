@@ -10,7 +10,11 @@ class SttService {
   // Returns true if initialization succeeded.
   Future<bool> initialize() async {
     if (_initialized) return true;
-    _initialized = await _speech.initialize();
+    try {
+      _initialized = await _speech.initialize();
+    } catch (_) {
+      _initialized = false;
+    }
     return _initialized;
   }
 
@@ -24,6 +28,7 @@ class SttService {
     SpeechSoundLevelChange? onSoundLevel,
     String? localeId,
   }) async {
+    if (!_initialized) return;
     await _speech.listen(
       onResult: onResult,
       listenOptions: SpeechListenOptions(
@@ -40,6 +45,7 @@ class SttService {
 
   // Stops the current listening session.
   Future<void> stopListening() async {
+    if (!_initialized) return;
     await _speech.stop();
   }
 

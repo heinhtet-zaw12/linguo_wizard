@@ -1,35 +1,35 @@
-import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Application-wide configuration constants.
+///
+/// SECURITY NOTE: API keys should NEVER be bundled in compiled app binaries.
+/// For production, proxy API calls through a Cloud Function (e.g., Firebase Functions).
+/// This config loads from .env for development only.
 class AppConfig {
   AppConfig._();
 
-  static final Map<String, String> _env = {};
-
-  /// Loads environment variables from the bundled .env asset.
+  /// Loads environment variables from .env file (development only).
+  /// In production, use Cloud Functions to proxy API calls.
   static Future<void> loadEnv() async {
     try {
-      final content = await rootBundle.loadString('.env');
-      for (final line in content.split('\n')) {
-        final trimmed = line.trim();
-        if (trimmed.isEmpty || trimmed.startsWith('#')) continue;
-        final eqIndex = trimmed.indexOf('=');
-        if (eqIndex == -1) continue;
-        final key = trimmed.substring(0, eqIndex).trim();
-        final value = trimmed.substring(eqIndex + 1).trim();
-        // Strip surrounding quotes if present
-        final unquoted = (value.startsWith('"') && value.endsWith('"'))
-            ? value.substring(1, value.length - 1)
-            : value;
-        _env[key] = unquoted;
-      }
+      await dotenv.load(fileName: '.env');
     } catch (_) {
-      // .env not found — geminiApiKey will return empty string
+      // .env not found — geminiApiKey will return empty string.
+      // This is expected in production environments.
     }
   }
 
-  /// Gemini API key — loaded from .env file
-  static String get geminiApiKey => _env['GEMINI_API_KEY'] ?? '';
+  /// Gemini API key — loaded from .env file (development only).
+  ///
+  /// SECURITY WARNING: This key is exposed in client-side code.
+  /// For production deployments:
+  /// 1. Create a Cloud Function to proxy Gemini API calls
+  /// 2. Store the API key in Firebase environment configuration
+  /// 3. Remove this getter and use the Cloud Function endpoint instead
+  static String get geminiApiKey {
+    if (!dotenv.isInitialized) return '';
+    return dotenv.env['GEMINI_API_KEY'] ?? '';
+  }
 
   /// Gemini model to use for conversation
   static const String geminiModel = 'gemini-3.1-flash-lite';
@@ -47,7 +47,11 @@ class AppConfig {
 
   /// Enable/disable daily rate limiting for AI calls.
   /// Set to `true` to enforce limits; `false` allows unlimited calls (for testing).
-  static const bool rateLimitEnabled = false;
+  ///
+  /// SECURITY WARNING: This MUST be set to `true` in production to prevent abuse.
+  /// Combined with Firebase Security Rules, this provides client-side rate limiting.
+  /// For additional security, implement server-side rate limiting via Cloud Functions.
+  static const bool rateLimitEnabled = true;
 
   /// Maximum daily AI calls for guest users.
   static const int maxDailyCalls = 10;
