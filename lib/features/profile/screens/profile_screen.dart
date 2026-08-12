@@ -4,15 +4,26 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_gradients.dart';
-import '../../../core/theme/app_dimensions.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/shimmer_skeleton.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../../core/widgets/info_row.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_button.dart';
 import '../viewmodels/profile_viewmodel.dart';
 import '../../../core/theme/app_text_styles.dart';
+
+/// Masks an email address for privacy display.
+/// e.g. "heinhtetzaw@gmail.com" → "h***z@gmail.com"
+String _maskEmail(String email) {
+  final at_index = email.indexOf('@');
+  if (at_index <= 1) return email; // too short to mask meaningfully
+  final local = email.substring(0, at_index);
+  final domain = email.substring(at_index);
+  if (local.length <= 2) return '${local[0]}***$domain';
+  return '${local[0]}***${local[local.length - 1]}$domain';
+}
 
 /// Profile tab screen displaying user info and account actions.
 class ProfileScreen extends ConsumerWidget {
@@ -26,9 +37,7 @@ class ProfileScreen extends ConsumerWidget {
       body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.accentStart),
-            ),
+            loading: () => const ProfileScreenSkeleton(),
             error: (e, _) => Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -156,7 +165,7 @@ class ProfileScreen extends ConsumerWidget {
           if (state.email.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
-              state.email,
+              _maskEmail(state.email),
               style: AppTextStyles.bodyMedium(color: AppColors.textSecondary),
             ),
           ],
