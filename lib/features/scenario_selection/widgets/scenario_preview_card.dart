@@ -33,7 +33,7 @@ class ScenarioPreviewCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 scenario.category.toUpperCase(),
-                style: AppTextStyles.labelSmall(color: AppColors.textSecondary),
+                style: AppTextStyles.labelUppercase(color: AppColors.textSecondary),
               ),
             ],
           ),

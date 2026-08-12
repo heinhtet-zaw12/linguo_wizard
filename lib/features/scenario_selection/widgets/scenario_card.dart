@@ -54,7 +54,7 @@ class ScenarioCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         scenario.category.toUpperCase(),
-                        style: AppTextStyles.labelSmall(color: AppColors.textTertiary),
+                        style: AppTextStyles.labelUppercase(color: AppColors.textTertiary),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

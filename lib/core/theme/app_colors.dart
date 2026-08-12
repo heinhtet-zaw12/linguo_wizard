@@ -22,7 +22,7 @@ class AppColors {
   // ─── Semantic Text ───
   static const Color textPrimary = Color(0xFFF1F5F9);
   static const Color textSecondary = Color(0xFF94A3B8);
-  static const Color textTertiary = Color(0xFF64748B);
+  static const Color textTertiary = Color(0xFF7C8BA1);
   static const Color textOnAccent = Color(0xFFFFFFFF);
 
   // ─── Status ───
@@ -35,7 +35,7 @@ class AppColors {
   static const Color borderGlow = Color(0x406366F1);
 
   // ─── Glass ───
-  static const Color surfaceGlass = Color(0x24151B30);
+  static const Color surfaceGlass = Color(0x33151B30);
   static const double glassBlur = 20.0;
   static const double glassBorderOpacity = 0.12;
 }

@@ -15,8 +15,23 @@ class AppTextStyles {
 
   // ─── Display (hero numbers, XP counters) ───
 
+  static TextStyle displayHero({Color? color}) => _heading.copyWith(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        height: 1.25,
+        letterSpacing: -0.5,
+        color: color ?? AppColors.textPrimary,
+      );
+
   static TextStyle displayLarge({Color? color}) => _mono.copyWith(
         fontSize: 32,
+        fontWeight: FontWeight.w700,
+        height: 1.25,
+        color: color ?? AppColors.textPrimary,
+      );
+
+  static TextStyle monoStat({Color? color}) => _mono.copyWith(
+        fontSize: 28,
         fontWeight: FontWeight.w700,
         height: 1.25,
         color: color ?? AppColors.textPrimary,
@@ -95,6 +110,14 @@ class AppTextStyles {
         fontSize: 11,
         fontWeight: FontWeight.w600,
         height: 1.27,
+        color: color ?? AppColors.textTertiary,
+      );
+
+  static TextStyle labelUppercase({Color? color}) => _body.copyWith(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        height: 1.27,
+        letterSpacing: 1.2,
         color: color ?? AppColors.textTertiary,
       );
 }
