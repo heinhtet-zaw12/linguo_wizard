@@ -1,6 +1,6 @@
 # 🧙 Linguo Wizard
 
-**Practice spoken English through simulated real-world dialogues with an AI conversation partner.
+Practice spoken English through simulated real-world dialogues with an AI conversation partner.
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.10-0175C2?logo=dart&logoColor=white)](https://dart.dev)
@@ -57,27 +57,76 @@ Linguo Wizard drops you into realistic real-world conversations from session one
 
 ### Onboarding Flow
 
-<img src="assets/screenshots/onBoarding_screen1.png" alt="Onboarding - Language Selection" width="260"/>
-
-<img src="assets/screenshots/onBoarding_screen2.png" alt="Onboarding - CEFR Level Selection" width="260"/>
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/onBoarding_screen1.png" alt="Onboarding - Language Selection" width="250"/>
+      <br>
+      <sub>Language Selection</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/onBoarding_screen2.png" alt="Onboarding - CEFR Level Selection" width="250"/>
+      <br>
+      <sub>CEFR Level Selection</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/onBoarding_screen1.png" alt="Onboarding - Goal Setting" width="250"/>
+      <br>
+      <sub>Goal Setting</sub>
+    </td>
+  </tr>
+</table>
 
 ### Home & Scenario Selection
 
-<img src="assets/screenshots/home_screen.png" alt="Home Dashboard" width="260"/>
-
-<img src="assets/screenshots/scenario_screen.png" alt="Scenario Selection" width="260"/>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/home_screen.png" alt="Home Dashboard" width="250"/>
+      <br>
+      <sub>Home Dashboard</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/scenario_screen.png" alt="Scenario Selection" width="250"/>
+      <br>
+      <sub>Scenario Selection</sub>
+    </td>
+  </tr>
+</table>
 
 ### Conversation Experience
 
-<img src="assets/screenshots/voiceMode_conversationScreen.png" alt="Voice Mode Conversation" width="260"/>
-
-<img src="assets/screenshots/textMode_conversationScreen.png" alt="Text Mode Conversation" width="260"/>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/voiceMode_conversationScreen.png" alt="Voice Mode Conversation" width="250"/>
+      <br>
+      <sub>Voice Mode Conversation</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/textMode_conversationScreen.png" alt="Text Mode Conversation" width="250"/>
+      <br>
+      <sub>Text-Only Mode</sub>
+    </td>
+  </tr>
+</table>
 
 ### Profile & Custom Scenarios
 
-<img src="assets/screenshots/profile_screen.png" alt="Profile Screen" width="260"/>
-
-<img src="assets/screenshots/create_customScenario.png" alt="Create Custom Scenario" width="260"/>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/profile_screen.png" alt="Profile Screen" width="250"/>
+      <br>
+      <sub>Profile</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/create_customScenario.png" alt="Create Custom Scenario" width="250"/>
+      <br>
+      <sub>Create Custom Scenario</sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
