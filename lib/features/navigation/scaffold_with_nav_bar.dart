@@ -18,18 +18,22 @@ class ScaffoldWithNavBar extends ConsumerWidget {
   static const _allDestinations = [
     GradientNavItem(
       icon: Icons.home_outlined,
+      activeIcon: Icons.home_rounded,
       label: 'Home',
     ),
     GradientNavItem(
       icon: Icons.explore_outlined,
+      activeIcon: Icons.explore_rounded,
       label: 'Scenarios',
     ),
     GradientNavItem(
       icon: Icons.bar_chart_outlined,
+      activeIcon: Icons.bar_chart_rounded,
       label: 'Progress',
     ),
     GradientNavItem(
       icon: Icons.person_outlined,
+      activeIcon: Icons.person_rounded,
       label: 'Profile',
     ),
   ];

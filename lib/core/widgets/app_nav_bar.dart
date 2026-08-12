@@ -10,10 +10,16 @@ import '../theme/app_text_styles.dart';
 class GradientNavItem {
   const GradientNavItem({
     required this.icon,
+    required this.activeIcon,
     required this.label,
   });
 
+  /// Outlined/inactive icon shown when unselected.
   final IconData icon;
+
+  /// Filled/solid icon shown when selected.
+  final IconData activeIcon;
+
   final String label;
 }
 
@@ -63,7 +69,7 @@ class GradientNavBar extends StatelessWidget {
   }
 }
 
-class _NavButton extends StatelessWidget {
+class _NavButton extends StatefulWidget {
   const _NavButton({
     required this.item,
     required this.isSelected,
@@ -74,50 +80,95 @@ class _NavButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
+  @override
+  State<_NavButton> createState() => _NavButtonState();
+}
+
+class _NavButtonState extends State<_NavButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _bounceController;
+  late final Animation<double> _bounceAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _bounceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _bounceAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _bounceController, curve: Curves.easeOutBack),
+    );
+  }
+
+  @override
+  void didUpdateWidget(_NavButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isSelected && !oldWidget.isSelected) {
+      _bounceController.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _bounceController.dispose();
+    super.dispose();
+  }
+
   static const double _iconSize = 20;
   static const double _selectedPillHeight = 28;
   static const double _spacing = 2;
+
+  // Brighter unselected color for better readability on dark backgrounds.
+  static const Color _unselectedColor = Color(0xFF8892A8);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (isSelected)
-            Container(
-              width: 44,
-              height: _selectedPillHeight,
-              decoration: BoxDecoration(
-                gradient: AppGradients.accent,
-                borderRadius: AppRadius.pill,
-                boxShadow: AppShadows.glowBlue,
+          if (widget.isSelected)
+            AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) => Transform.scale(
+                scale: _bounceAnimation.value,
+                child: child,
               ),
-              child: Icon(
-                item.icon,
-                size: _iconSize,
-                color: AppColors.textOnAccent,
+              child: Container(
+                width: 44,
+                height: _selectedPillHeight,
+                decoration: BoxDecoration(
+                  gradient: AppGradients.accent,
+                  borderRadius: AppRadius.pill,
+                  boxShadow: AppShadows.glowBlue,
+                ),
+                child: Icon(
+                  widget.item.activeIcon,
+                  size: _iconSize,
+                  color: AppColors.textOnAccent,
+                ),
               ),
             )
           else
             SizedBox(
               height: _selectedPillHeight,
               child: Icon(
-                item.icon,
+                widget.item.icon,
                 size: _iconSize,
-                color: AppColors.textTertiary,
+                color: _unselectedColor,
               ),
             ),
           const SizedBox(height: _spacing),
           Text(
-            item.label,
+            widget.item.label,
             style: AppTextStyles.labelSmall(
-              color: isSelected
+              color: widget.isSelected
                   ? AppColors.textPrimary
-                  : AppColors.textTertiary,
+                  : _unselectedColor,
             ),
           ),
         ],
