@@ -52,6 +52,7 @@ class GradientNavBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             for (int i = 0; i < items.length; i++)
               Expanded(
@@ -128,7 +129,6 @@ class _NavButtonState extends State<_NavButton>
       behavior: HitTestBehavior.opaque,
       onTap: widget.onTap,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (widget.isSelected)
