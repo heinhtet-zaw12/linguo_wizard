@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_chip.dart' show GlassChip;
+import '../../../core/widgets/cefr_level_selector.dart';
 import '../../../core/widgets/error_banner.dart';
 import '../viewmodels/create_scenario_viewmodel.dart';
 import '../viewmodels/scenario_selection_viewmodel.dart';
@@ -26,7 +27,6 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
   final _contextController = TextEditingController();
   final _goalController = TextEditingController();
 
-  static const _cefrLevels = ['A1', 'A2', 'B1', 'B2', 'C1'];
   static const _tones = ['casual', 'formal'];
 
   @override
@@ -156,8 +156,7 @@ class _CreateScenarioScreenState extends ConsumerState<CreateScenarioScreen> {
         const SizedBox(height: 20),
         _buildFieldLabel('Your level'),
         const SizedBox(height: 8),
-        _buildChipRow(
-          items: _cefrLevels,
+        CefrLevelSelector(
           selected: state.cefrLevel,
           onSelected: notifier.setCefrLevel,
         ),
