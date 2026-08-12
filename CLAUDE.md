@@ -14,7 +14,7 @@ dialogues with an AI conversation partner. Users are dropped into simulated real
 - **Pronunciation scoring**: Not planned — all paid APIs avoided to keep the app 100% free
 
 ## Design Style
-Theme: **3D Claymorphism** (soft, rounded, matte clay-style 3D character illustration + minimal pastel UI)
+Theme: **Futuristic Dark + Glassmorphism** — dark-only UI with deep navy/indigo surfaces, semi-transparent glass cards, neon glow accents (electric blue → violet, cyan), mesh gradient backgrounds, and modern typography (Plus Jakarta Sans headings, Inter body, JetBrains Mono numbers). See `lib/core/theme/` for the full token system.
 
 
 ## Architecture
@@ -42,7 +42,7 @@ Theme: **3D Claymorphism** (soft, rounded, matte clay-style 3D character illustr
 
 ### Phase 1 — Core Loop (MVP, no auth)
 - Splash screen
-- Onboarding (target language, CEFR level A1–C1, goal: travel/work/exam) — follow theme + mascot per Design Style section
+- Onboarding (target language, CEFR level A1–C1, goal: travel/work/exam) — follow theme per Design Style section
 - Scenario Selection screen (curated fixed scenarios + CEFR filter chips)
 - Conversation screen — **voice-message based, not free-typing chat**:
   - User speaks via mic → sent as a voice message bubble (own side)

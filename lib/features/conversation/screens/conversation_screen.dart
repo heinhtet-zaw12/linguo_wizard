@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_gradients.dart';
-import '../../../core/theme/app_dimensions.dart';
 import '../../../core/widgets/gradient_background.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_button.dart';
@@ -46,6 +45,13 @@ class _ConversationScreenState extends ConsumerState<ConversationScreen> {
   void initState() {
     super.initState();
     _scenario = ref.read(selectedScenarioProvider);
+
+    // Clear any stale score data from a previous conversation before this one starts.
+    // This is the safe place to do it — not in the feedback screen, because
+    // FeedbackViewModel watches currentScoreProvider and modifying a watched
+    // provider from within its own notifier triggers a Riverpod assertion.
+    ref.read(currentScoreProvider.notifier).state = null;
+    ref.read(newlyEarnedBadgesProvider.notifier).state = const [];
 
     // Fallback: if scenario never arrives (deep link, app restart), redirect after 3s.
     Future.delayed(const Duration(seconds: 3), () {

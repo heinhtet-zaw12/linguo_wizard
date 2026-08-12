@@ -26,7 +26,7 @@ class LevelProgress extends StatelessWidget {
     final xpRemaining = nextLevelXp - currentXp;
 
     return GlassCard(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.all5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

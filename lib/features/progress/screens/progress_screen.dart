@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/config/level_config.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/gradient_background.dart';
+import '../../../core/widgets/shimmer_skeleton.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../../core/widgets/app_button.dart';
 import '../viewmodels/progress_viewmodel.dart';
@@ -25,9 +26,7 @@ class ProgressScreen extends ConsumerWidget {
       body: GradientBackground(
         child: SafeArea(
           child: asyncState.when(
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: AppColors.accentStart),
-            ),
+            loading: () => const ProgressScreenSkeleton(),
             error: (e, _) => Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,

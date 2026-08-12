@@ -18,7 +18,9 @@ awaiting: user response
 
 ### 1. Toggle Button Visual Rendering
 expected: Open conversation screen on device. Verify icon shows record_voice_over (OFF, gray) and chat (ON, cyan) in the top bar.
-result: [pending]
+result: issue
+reported: "When the user opens the mic to speak, they should be able to stop it mid-speech if they want to cancel while talking. Or, they should also be able to close it without saying anything at all — just cancel/close it without speaking. Right now, this isn't working."
+severity: major
 
 ### 2. Text-Only Mode AI Response
 expected: Enable toggle, send voice message. Verify AI response appears as glass card text bubble with no audio playback.
