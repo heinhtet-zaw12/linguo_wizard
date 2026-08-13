@@ -60,19 +60,14 @@ Linguo Wizard drops you into realistic real-world conversations from session one
 <table>
   <tr>
     <td align="center" width="33%">
-      <img src="assets/screenshots/onBoarding_screen1.png" alt="Onboarding - Language Selection" width="250"/>
-      <br>
-      <sub>Language Selection</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="assets/screenshots/onBoarding_screen2.png" alt="Onboarding - CEFR Level Selection" width="250"/>
-      <br>
-      <sub>Goal Setting</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="assets/screenshots/onBoarding_screen1.png" alt="Onboarding - Goal Setting" width="250"/>
+      <img src="assets/screenshots/onBoarding_screen1.png" alt="Onboarding - CEFR Level Selection" width="250"/>
       <br>
       <sub>CEFR Level Selection</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="assets/screenshots/onBoarding_screen2.png" alt="Onboarding - Goal Setting" width="250"/>
+      <br>
+      <sub>Goal Setting</sub>
     </td>
   </tr>
 </table>
